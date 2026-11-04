@@ -27,34 +27,31 @@ export default function Home() {
                     Vigilo
                 </h1>
 
-                {/* Subtitle: Predictive AI Pedestrian Crowd Intelligence & Flow Management (Bold, High-Visibility, Balanced) */}
+                {/* Subtitle: Predictive AI Pedestrian Crowd Intelligence & Flow Management */}
                 <p className="mt-4 text-lg sm:text-xl md:text-2xl font-semibold text-white tracking-tight max-w-xl leading-relaxed [text-wrap:balance] drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
                     Predictive AI Pedestrian Crowd Intelligence &amp; Flow Management
                 </p>
 
-                {/* macOS Liquid Glass Button */}
-                <div className="mt-8">
+                {/* Modern Ultra-Transparent Liquid Glass Button */}
+                <div className="mt-9">
                     <Link
                         href="/dashboard"
-                        className="mac-liquid-glass group inline-flex items-center gap-3 overflow-hidden rounded-full px-8 py-3.5 text-sm font-medium tracking-wide text-white"
+                        className="liquid-glass-btn group inline-flex items-center gap-3 overflow-hidden rounded-full px-9 py-3.5 text-sm font-medium tracking-wide text-white select-none"
                     >
-                        {/* Upper curved glass specular reflection */}
-                        <span className="pointer-events-none absolute inset-x-2 top-0.5 h-[42%] rounded-t-full bg-gradient-to-b from-white/35 to-transparent opacity-80" />
+                        {/* Dynamic sheen sweep on hover */}
+                        <span className="pointer-events-none absolute -left-full top-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[250%]" />
 
-                        {/* Interactive shimmer sweep on hover */}
-                        <span className="pointer-events-none absolute -left-full top-0 h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[250%]" />
-
-                        <span className="relative z-10 font-semibold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                        <span className="relative z-10 font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
                             Go to Dashboard
                         </span>
 
                         {/* Minimal forward arrow */}
                         <svg
-                            className="relative z-10 h-4 w-4 text-white/80 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white"
+                            className="relative z-10 h-4 w-4 text-white/90 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
-                            strokeWidth="2"
+                            strokeWidth="2.2"
                         >
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
