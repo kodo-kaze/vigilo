@@ -9,6 +9,7 @@ interface UiloraChromeProps {
     speed?: number;          // Rate of the molten flow
     viscosity?: number;      // How "heavy" the liquid feels (0.1 - 1.0)
     distortion?: number;     // Intensity of the mouse "wake"
+    isPaused?: boolean;      // Controls play/pause of molten flow
 }
 
 const VERTEX_SHADER = `
@@ -111,10 +112,16 @@ const UiloraLiquidChrome: React.FC<UiloraChromeProps> = ({
     speed = 0.5,
     viscosity = 0.4,
     distortion = 0.8,
+    isPaused = true,
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const mousePos = useRef(new Vec2(0.5, 0.5));
     const targetMousePos = useRef(new Vec2(0.5, 0.5));
+    const isPausedRef = useRef(isPaused);
+
+    useEffect(() => {
+        isPausedRef.current = isPaused;
+    }, [isPaused]);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -158,12 +165,23 @@ const UiloraLiquidChrome: React.FC<UiloraChromeProps> = ({
         };
         window.addEventListener('mousemove', onMouseMove);
 
+        let lastTime = performance.now();
+        let accumulatedTime = 0;
         let requestId: number;
-        const update = (t: number) => {
+
+        const update = (now: number) => {
             requestId = requestAnimationFrame(update);
+
+            const delta = Math.min((now - lastTime) * 0.001, 0.1);
+            lastTime = now;
+
+            if (!isPausedRef.current) {
+                accumulatedTime += delta;
+            }
+
             // Ultra-smooth viscous lerp
             mousePos.current.lerp(targetMousePos.current, 0.05);
-            program.uniforms.uTime.value = t * 0.001;
+            program.uniforms.uTime.value = accumulatedTime;
             renderer.render({ scene: mesh });
         };
         requestId = requestAnimationFrame(update);
