@@ -30,28 +30,25 @@ export default function ChromeExperience() {
                 <button
                     onClick={() => setIsPaused((prev) => !prev)}
                     aria-label={isPaused ? "Play background animation" : "Pause background animation"}
-                    className="mac-liquid-glass group relative flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
+                    className="mac-liquid-glass group relative flex h-10 w-10 items-center justify-center rounded-full overflow-hidden text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                     title={isPaused ? "Play background animation" : "Pause background animation"}
                 >
                     {/* Top glass reflection arc */}
-                    <span className="pointer-events-none absolute inset-x-2 top-0.5 h-[40%] rounded-t-full bg-gradient-to-b from-white/40 to-transparent opacity-80" />
-
-                    {/* Shimmer sweep effect */}
-                    <span className="pointer-events-none absolute -left-full top-0 h-full w-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[250%]" />
+                    <span className="pointer-events-none absolute inset-x-1.5 top-0.5 h-[40%] rounded-t-full bg-gradient-to-b from-white/40 to-transparent opacity-80" />
 
                     {isPaused ? (
                         /* Play Icon */
                         <svg
-                            className="relative z-10 h-5 w-5 translate-x-0.5 text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] transition-transform duration-200 group-hover:scale-110 group-hover:text-white"
+                            className="relative z-10 h-4 w-4 text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] transition-transform duration-200 group-hover:scale-110 group-hover:text-white"
                             viewBox="0 0 24 24"
                             fill="currentColor"
                         >
-                            <path d="M8 5v14l11-7z" />
+                            <path d="M6 5v14l12-7z" />
                         </svg>
                     ) : (
                         /* Pause Icon */
                         <svg
-                            className="relative z-10 h-5 w-5 text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] transition-transform duration-200 group-hover:scale-110 group-hover:text-white"
+                            className="relative z-10 h-4 w-4 text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] transition-transform duration-200 group-hover:scale-110 group-hover:text-white"
                             viewBox="0 0 24 24"
                             fill="currentColor"
                         >
