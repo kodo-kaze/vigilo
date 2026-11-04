@@ -25,26 +25,6 @@ export default function ChromeExperience() {
                 isPaused={isPaused}
             />
 
-            {/* Hero Overlay */}
-            <div className="relative z-10 flex flex-col items-center text-center">
-                <h1 className="text-black/40 text-8xl md:text-[14rem] font-bold tracking-tighter leading-none italic mix-blend-exclusion select-none">
-                    CHROME<span className="text-black/20 not-italic">.</span>
-                </h1>
-
-                <div className="mt-16 flex flex-col items-center gap-6">
-                    <p className="text-black/40 text-xs font-light tracking-[0.6em] uppercase max-w-lg leading-loose select-none">
-                        A study of molten silver and high-reflectance surfaces.
-                        Disturb the pool to reveal the grain.
-                    </p>
-                </div>
-            </div>
-
-            <div className="absolute bottom-8 right-28 text-right">
-                <button className="px-8 py-3.5 border border-white/10 text-white/40 text-[9px] tracking-[0.5em] uppercase hover:border-white hover:text-white transition-all duration-700">
-                    Enter Simulation
-                </button>
-            </div>
-
             {/* Circular Liquid Glass Play/Pause Button in Right Bottom Corner */}
             <div className="fixed bottom-7 right-7 z-30">
                 <button
