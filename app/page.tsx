@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import UiloraCloudBackground from '@/src/components/Backgrounds&Visuals/NoiseTexture/tsx/UiloraCloudBackground';
+import UiloraCloudBackground from '@/src/components/ui/UiloraCloudBackground';
 
 export default function Home() {
     return (

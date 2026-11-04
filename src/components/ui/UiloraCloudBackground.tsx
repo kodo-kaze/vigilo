@@ -17,7 +17,7 @@ const VERTEX_SHADER = `
   varying vec2 vUv;
   void main() {
     vUv = uv;
-    gl_Position = vec4(position, 0, 1);
+    gl_Position = vec4(position, 0.0, 1.0);
   }
 `;
 
@@ -119,12 +119,26 @@ const UiloraCloudBackground: React.FC<UiloraProps> = ({
   const targetMousePos = useRef(new Vec2(0.5, 0.5));
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const renderer = new Renderer({ alpha: false, antialias: true });
+    let renderer: Renderer;
+    try {
+      renderer = new Renderer({ alpha: false, antialias: true });
+    } catch {
+      return;
+    }
+
     const gl = renderer.gl;
+    if (!gl) return;
+
     gl.canvas.style.display = 'block';
-    containerRef.current.appendChild(gl.canvas);
+    gl.canvas.style.width = '100%';
+    gl.canvas.style.height = '100%';
+    gl.canvas.style.position = 'absolute';
+    gl.canvas.style.top = '0';
+    gl.canvas.style.left = '0';
+    container.appendChild(gl.canvas);
 
     // Full screen triangle geometry
     const geometry = new Geometry(gl, {
@@ -144,6 +158,9 @@ const UiloraCloudBackground: React.FC<UiloraProps> = ({
         uSpeed: { value: speed },
         uIntensity: { value: intensity },
       },
+      depthTest: false,
+      depthWrite: false,
+      cullFace: false,
     });
 
     const mesh = new Mesh(gl, { geometry, program });
@@ -163,8 +180,13 @@ const UiloraCloudBackground: React.FC<UiloraProps> = ({
     window.addEventListener('mousemove', onMouseMove);
 
     let requestId: number;
+    let isCancelled = false;
+
     const update = (t: number) => {
+      if (isCancelled) return;
       requestId = requestAnimationFrame(update);
+
+      if (gl.isContextLost && gl.isContextLost()) return;
 
       // Smooth mouse following
       mousePos.current.lerp(targetMousePos.current, 0.05);
@@ -175,15 +197,22 @@ const UiloraCloudBackground: React.FC<UiloraProps> = ({
     requestId = requestAnimationFrame(update);
 
     return () => {
+      isCancelled = true;
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
       cancelAnimationFrame(requestId);
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
-      if (containerRef.current?.contains(gl.canvas)) containerRef.current.removeChild(gl.canvas);
+      if (container?.contains(gl.canvas)) {
+        container.removeChild(gl.canvas);
+      }
     };
   }, [baseColor, cloudColor, speed, intensity]);
 
-  return <div ref={containerRef} className={`fixed inset-0 z-[-1] w-full h-full bg-black ${className}`} />;
+  return (
+    <div
+      ref={containerRef}
+      className={`fixed inset-0 z-0 pointer-events-none w-full h-full bg-black ${className}`}
+    />
+  );
 };
 
 export default UiloraCloudBackground;
