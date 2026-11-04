@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050505;
-  --foreground: #ededed;
+  --background: #040508;
+  --foreground: #f3f4f6;
 }
 
 @theme inline {
@@ -14,13 +14,58 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #050505;
-    --foreground: #ededed;
+    --background: #040508;
+    --foreground: #f3f4f6;
   }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  selection-background-color: #38bdf8;
+  selection-color: #040508;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.25);
+  color: #ffffff;
+}
+
+/* macOS Liquid Glass Button Styling */
+.mac-liquid-glass {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+  -webkit-backdrop-filter: blur(28px) saturate(210%) brightness(110%);
+  backdrop-filter: blur(28px) saturate(210%) brightness(110%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1.5px 1.5px 0 rgba(255, 255, 255, 0.1),
+    0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.mac-liquid-glass:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1.5px 1.5px 0 rgba(255, 255, 255, 0.15),
+    0 14px 44px 0 rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px) scale(1.025);
+}
+
+.mac-liquid-glass:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 2px 4px 0 rgba(0, 0, 0, 0.3),
+    0 4px 16px 0 rgba(0, 0, 0, 0.3);
 }
