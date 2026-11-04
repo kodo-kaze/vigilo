@@ -19,15 +19,31 @@
   }
 }
 
-html {
-  scroll-behavior: smooth;
+/* Completely remove scrollbars across all browsers */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  height: 0px;
+}
+
+html,
+body {
+  overflow: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  height: 100%;
+  width: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow-x: hidden;
   selection-background-color: #38bdf8;
   selection-color: #040508;
 }

@@ -3,7 +3,7 @@ import UiloraCloudBackground from '@/src/components/Backgrounds&Visuals/NoiseTex
 
 export default function Home() {
     return (
-        <main className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6 text-center">
+        <main className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6 text-center">
 
             {/* Ambient dynamic background */}
             <UiloraCloudBackground
