@@ -27,8 +27,8 @@ export default function Home() {
                     Vigilo
                 </h1>
 
-                {/* Subtitle: Predictive AI Pedestrian Crowd Intelligence & Flow Management */}
-                <p className="mt-4 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed font-normal drop-shadow-md">
+                {/* Subtitle: Predictive AI Pedestrian Crowd Intelligence & Flow Management (Bold, High-Visibility, Balanced) */}
+                <p className="mt-4 text-lg sm:text-xl md:text-2xl font-semibold text-white tracking-tight max-w-xl leading-relaxed [text-wrap:balance] drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
                     Predictive AI Pedestrian Crowd Intelligence &amp; Flow Management
                 </p>
 
