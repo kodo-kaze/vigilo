@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
 import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
+import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
 
 export default function NotFoundExperience() {
   const [isPaused, setIsPaused] = useState(false);
@@ -30,10 +31,7 @@ export default function NotFoundExperience() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(4,5,8,0.5)_0%,rgba(4,5,8,0.25)_40%,rgba(4,5,8,0.88)_100%)] pointer-events-none" />
 
       {/* Centerpiece Liquid Glass Card */}
-      <div className="relative z-10 w-full max-w-lg liquid-glass-card rounded-3xl sm:rounded-[36px] p-8 sm:p-11 text-center shadow-[0_24px_70px_rgba(0,0,0,0.85)] animate-in fade-in zoom-in-95 duration-500">
-        {/* Top Specular Inner Rim */}
-        <div className="pointer-events-none absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-
+      <LiquidGlassCard className="z-10 w-full max-w-lg text-center animate-in fade-in zoom-in-95 duration-500">
         {/* Top Status Capsule Pill (Styled exactly like Landing Page Conflux Pill) */}
         <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-md mb-5 shadow-sm">
           <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-gray-400 uppercase">
@@ -103,7 +101,7 @@ export default function NotFoundExperience() {
             </svg>
           </Link>
         </div>
-      </div>
+      </LiquidGlassCard>
 
       {/* Liquid Glass Speed Dial Navigation & Controls */}
       <LiquidNavMenu
