@@ -113,35 +113,41 @@ export default function DashboardPage() {
 
   return (
     <main className="relative h-screen max-h-screen w-full overflow-hidden bg-[#040508] text-white selection:bg-cyan-500/20 selection:text-white p-2.5 sm:p-3.5 lg:p-4 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
-      {/* Dynamic Molten Chrome Liquid Engine */}
+      {/* 
+        The Animated Liquid Chrome Engine (Matching 404 Page Liquid Dynamics)
+        - baseColor: Deep void shadows
+        - chromeColor: Pure radiant liquid silver highlights (#f0f0f0)
+        - viscosity: 0.3 for heavy fluid mercury feel
+        - distortion: 0.7 for dynamic reactivity
+      */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <UiloraLiquidChrome
-          baseColor="#030408"
-          chromeColor="#d4dce8"
-          viscosity={0.28}
-          speed={0.16}
-          distortion={0.58}
+          baseColor="#040508"
+          chromeColor="#f0f0f0"
+          viscosity={0.3}
+          speed={0.4}
+          distortion={0.7}
           isPaused={isPaused}
         />
       </div>
 
-      {/* Atmospheric Contrast Overlay */}
+      {/* Decorative Vignette matching 404 page (No heavy darkening blanket) */}
       <div
         aria-hidden="true"
-        className="fixed inset-0 z-[1] pointer-events-none bg-[radial-gradient(circle_at_50%_35%,rgba(4,5,8,0.2)_0%,rgba(4,5,8,0.7)_65%,rgba(4,5,8,0.95)_100%)]"
+        className="fixed inset-0 z-[1] pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(4,5,8,0.5)_0%,rgba(4,5,8,0.25)_40%,rgba(4,5,8,0.88)_100%)]"
       />
 
       {/* Main Glass Workspace Container (Wide Bento Frame, Zero-Scroll) */}
       <div className="relative z-10 mx-auto w-full max-w-[1640px] h-full flex flex-col justify-between gap-2.5 sm:gap-3">
         {/* =========================================================================
-            TOP SECTION: LIVE VIDEO FOOTAGE (MAX HORIZONTAL SPACE, FLEX FILL)
+            TOP SECTION: LIVE VIDEO FOOTAGE (TRUE TRANSLUCENT LIQUID GLASS)
             ========================================================================= */}
         <LiquidGlassCard
           hasTopSpecular={false}
-          className="w-full flex-1 min-h-0 p-0 rounded-xl sm:rounded-2xl border-white/[0.08] bg-black/60 shadow-[0_16px_50px_rgba(0,0,0,0.7)] flex flex-col overflow-hidden"
+          className="w-full flex-1 min-h-0 p-0 rounded-xl sm:rounded-2xl border-white/[0.08] shadow-[0_16px_50px_rgba(0,0,0,0.7)] flex flex-col overflow-hidden"
         >
           {/* Video Player Display Area */}
-          <div className="relative w-full h-full min-h-[200px] bg-[#020306] flex items-center justify-center overflow-hidden">
+          <div className="relative w-full h-full min-h-[200px] bg-black/20 flex items-center justify-center overflow-hidden">
             {/* The Live MJPEG Stream */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -161,9 +167,9 @@ export default function DashboardPage() {
               }}
             />
 
-            {/* Offline / Connecting State Overlay */}
+            {/* Offline / Connecting State Overlay (Translucent Glass, Not Muddy Black) */}
             {streamError && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-[#05070d]/90 backdrop-blur-md">
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-black/35 backdrop-blur-md">
                 {/* Radar Grid Animation */}
                 <div className="relative mb-3 flex h-14 w-14 items-center justify-center">
                   <div className="absolute inset-0 rounded-full border border-cyan-500/20 animate-ping" />
@@ -300,7 +306,7 @@ export default function DashboardPage() {
               ----------------------------------------------------------------------- */}
           <LiquidGlassCard
             hasTopSpecular={false}
-            className="lg:col-span-8 rounded-xl border-white/[0.08] bg-black/60 p-2.5 sm:p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
+            className="lg:col-span-8 rounded-xl border-white/[0.08] p-2.5 sm:p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
           >
             <div>
               {/* Header */}
@@ -430,7 +436,7 @@ export default function DashboardPage() {
               ----------------------------------------------------------------------- */}
           <LiquidGlassCard
             hasTopSpecular={false}
-            className="lg:col-span-4 rounded-xl border-white/[0.08] bg-black/60 p-2.5 sm:p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
+            className="lg:col-span-4 rounded-xl border-white/[0.08] p-2.5 sm:p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
           >
             <div>
               {/* Header */}
