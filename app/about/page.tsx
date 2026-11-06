@@ -104,7 +104,7 @@ export default function AboutPage() {
       />
 
       {/* CONTENT */}
-      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 pt-16 sm:pt-24 lg:pt-32">
         {/* HERO SECTION */}
         <section className="relative isolate flex min-h-[570px] flex-col items-center justify-center py-28 text-center">
           {/* Local contrast layer: keeps the chrome visible while protecting hero text */}
