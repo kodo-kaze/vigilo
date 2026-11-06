@@ -48,6 +48,12 @@ export default function LiquidNavMenu({
     "bottom-center": "bottom-7 left-1/2 -translate-x-1/2 items-center",
   }[position];
 
+  const alignClass = {
+    "bottom-right": "items-end",
+    "bottom-left": "items-start",
+    "bottom-center": "items-center",
+  }[position];
+
   const originClass = {
     "bottom-right": "origin-bottom-right",
     "bottom-left": "origin-bottom-left",
@@ -186,7 +192,7 @@ export default function LiquidNavMenu({
         className={`fixed z-50 flex flex-col ${positionClasses}`}
       >
         {/* Animated Staggered Menu Items */}
-        <div className="flex flex-col gap-2.5 mb-3 pointer-events-none">
+        <div className={`flex flex-col gap-2.5 mb-3 pointer-events-none ${alignClass}`}>
           {menuItems.map((item, index) => {
             // Reverse index calculation for bottom-to-top cascading stagger
             const reverseIndex = menuItems.length - 1 - index;
@@ -200,7 +206,7 @@ export default function LiquidNavMenu({
                 </span>
 
                 {/* Text Labels */}
-                <span className="relative z-10 flex flex-col items-start pr-2">
+                <span className="relative z-10 flex flex-col items-start whitespace-nowrap">
                   <span className="flex items-center gap-2">
                     <span className="text-xs font-semibold tracking-wide text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                       {item.label}
@@ -224,7 +230,7 @@ export default function LiquidNavMenu({
 
                 {/* Subtle right chevron */}
                 <svg
-                  className="relative z-10 ml-auto h-3.5 w-3.5 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-white"
+                  className="relative z-10 ml-2.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -245,7 +251,7 @@ export default function LiquidNavMenu({
                     ? "cubic-bezier(0.16, 1, 0.3, 1)"
                     : "cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
-                className={`transform-gpu transition-all ${originClass} ${
+                className={`w-fit transform-gpu transition-all ${originClass} ${
                   isOpen
                     ? "opacity-100 translate-y-0 scale-100 blur-0 pointer-events-auto"
                     : "opacity-0 translate-y-7 scale-[0.92] blur-[3px] pointer-events-none"
@@ -256,7 +262,7 @@ export default function LiquidNavMenu({
                     onClick={() => {
                       item.onClick?.();
                     }}
-                    className="liquid-glass-btn group flex w-full items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
+                    className="liquid-glass-btn group flex w-fit items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
                   >
                     {itemContent}
                   </button>
@@ -264,7 +270,7 @@ export default function LiquidNavMenu({
                   <Link
                     href={item.href || "#"}
                     onClick={() => setIsOpen(false)}
-                    className="liquid-glass-btn group flex items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
+                    className="liquid-glass-btn group flex w-fit items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
                   >
                     {itemContent}
                   </Link>
