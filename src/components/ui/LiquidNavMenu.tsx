@@ -48,6 +48,12 @@ export default function LiquidNavMenu({
     "bottom-center": "bottom-7 left-1/2 -translate-x-1/2 items-center",
   }[position];
 
+  const originClass = {
+    "bottom-right": "origin-bottom-right",
+    "bottom-left": "origin-bottom-left",
+    "bottom-center": "origin-bottom",
+  }[position];
+
   // Navigation and action items (all pure rounded-full capsule pills)
   const menuItems = [
     {
@@ -81,6 +87,19 @@ export default function LiquidNavMenu({
         <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+      ),
+    },
+    {
+      id: "about",
+      label: "About Vigilo",
+      subLabel: "System overview & mission",
+      href: "/about",
+      icon: (
+        <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
       ),
     },
@@ -155,7 +174,7 @@ export default function LiquidNavMenu({
       {/* Dimmed backdrop blur overlay when open */}
       <div
         onClick={() => setIsOpen(false)}
-        className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-[4px] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-[6px] transition-all duration-400 ease-out ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         aria-hidden="true"
@@ -167,11 +186,11 @@ export default function LiquidNavMenu({
         className={`fixed z-50 flex flex-col ${positionClasses}`}
       >
         {/* Animated Staggered Menu Items */}
-        <div className="flex flex-col gap-2 mb-3 pointer-events-none">
+        <div className="flex flex-col gap-2.5 mb-3 pointer-events-none">
           {menuItems.map((item, index) => {
             // Reverse index calculation for bottom-to-top cascading stagger
             const reverseIndex = menuItems.length - 1 - index;
-            const staggerDelay = isOpen ? `${reverseIndex * 35}ms` : `${index * 20}ms`;
+            const staggerDelay = isOpen ? `${reverseIndex * 32}ms` : `${index * 18}ms`;
 
             const itemContent = (
               <>
@@ -221,13 +240,15 @@ export default function LiquidNavMenu({
                 key={item.id}
                 style={{
                   transitionDelay: staggerDelay,
-                  transitionDuration: isOpen ? "320ms" : "180ms",
-                  transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                  transitionDuration: isOpen ? "400ms" : "240ms",
+                  transitionTimingFunction: isOpen
+                    ? "cubic-bezier(0.16, 1, 0.3, 1)"
+                    : "cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
-                className={`transform transition-all ${
+                className={`transform-gpu transition-all ${originClass} ${
                   isOpen
-                    ? "opacity-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 translate-y-5 pointer-events-none"
+                    ? "opacity-100 translate-y-0 scale-100 blur-0 pointer-events-auto"
+                    : "opacity-0 translate-y-7 scale-[0.92] blur-[3px] pointer-events-none"
                 }`}
               >
                 {item.isAction ? (
@@ -235,7 +256,7 @@ export default function LiquidNavMenu({
                     onClick={() => {
                       item.onClick?.();
                     }}
-                    className="liquid-glass-btn group flex w-full items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none hover:scale-[1.02] active:scale-[0.98]"
+                    className="liquid-glass-btn group flex w-full items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
                   >
                     {itemContent}
                   </button>
@@ -243,7 +264,7 @@ export default function LiquidNavMenu({
                   <Link
                     href={item.href || "#"}
                     onClick={() => setIsOpen(false)}
-                    className="liquid-glass-btn group flex items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none hover:scale-[1.02] active:scale-[0.98]"
+                    className="liquid-glass-btn group flex items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
                   >
                     {itemContent}
                   </Link>
@@ -259,16 +280,20 @@ export default function LiquidNavMenu({
           aria-expanded={isOpen}
           aria-label={isOpen ? "Close menu" : "Open navigation menu"}
           title={isOpen ? "Close menu" : "Navigation & Controls"}
-          className="liquid-glass-btn group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-white transition-all duration-300 hover:scale-105 active:scale-95"
+          className={`liquid-glass-btn group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-white transition-all duration-400 hover:scale-105 active:scale-95 ${
+            isOpen ? "ring-2 ring-white/35 bg-white/[0.12]" : ""
+          }`}
         >
           {/* Top specular reflection arc */}
           <span className="pointer-events-none absolute inset-x-2 top-0.5 h-[38%] rounded-t-full bg-gradient-to-b from-white/35 to-transparent opacity-80" />
 
-          {/* Morphing + into × icon */}
+          {/* Morphing + into × icon with buoyant 135deg rotation */}
           <div
-            className={`relative flex h-6 w-6 items-center justify-center transition-transform duration-300 ${
-              isOpen ? "rotate-45" : "rotate-0"
-            }`}
+            className="relative flex h-6 w-6 items-center justify-center transition-transform duration-500"
+            style={{
+              transform: isOpen ? "rotate(135deg)" : "rotate(0deg)",
+              transitionTimingFunction: "cubic-bezier(0.34, 1.25, 0.64, 1)",
+            }}
           >
             {/* Horizontal line */}
             <span className="absolute h-0.5 w-5 rounded-full bg-white transition-colors duration-200" />
