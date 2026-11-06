@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import UiloraCloudBackground from '@/src/components/ui/UiloraCloudBackground';
+import LiquidNavMenu from '@/src/components/ui/LiquidNavMenu';
 
 export default function Home() {
     return (
@@ -58,6 +59,9 @@ export default function Home() {
                     </Link>
                 </div>
             </div>
+
+            {/* Liquid Glass Animated Speed Dial Navigation */}
+            <LiquidNavMenu position="bottom-right" />
 
         </main>
     );

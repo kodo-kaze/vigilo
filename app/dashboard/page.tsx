@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
+import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
 
 export default function ChromeExperience() {
     const [isPaused, setIsPaused] = useState(true);
@@ -57,6 +58,9 @@ export default function ChromeExperience() {
                     )}
                 </button>
             </div>
+
+            {/* Liquid Glass Animated Speed Dial Navigation */}
+            <LiquidNavMenu position="bottom-left" />
 
             {/* Decorative Vignette */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.6)_100%)] pointer-events-none"></div>
