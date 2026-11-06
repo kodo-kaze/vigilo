@@ -1,8 +1,10 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
 import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
+import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
 
 const TEAM = [
   {
@@ -55,8 +57,7 @@ export default function AboutPage() {
       </div>
 
       {/* GLASS VIGNETTE */}
-
-      {/* Sculpted silver reflections: adds defined liquid-metal ribbons over the shader. */}
+      {/* Sculpted silver reflections: adds defined liquid-metal ribbons over the shader */}
       <div
         aria-hidden="true"
         className="fixed inset-0 z-[1] pointer-events-none opacity-80 mix-blend-screen"
@@ -72,7 +73,7 @@ export default function AboutPage() {
         }}
       />
 
-      {/* Deep graphite vignette keeps text and glass panels legible. */}
+      {/* Deep graphite vignette keeps text and glass panels legible */}
       <div
         aria-hidden="true"
         className="fixed inset-0 z-[2] pointer-events-none"
@@ -84,7 +85,7 @@ export default function AboutPage() {
         }}
       />
 
-      {/* Fine glass sheen; deliberately subtle so it doesn't look like fog. */}
+      {/* Fine glass sheen; deliberately subtle so it doesn't look like fog */}
       <div
         aria-hidden="true"
         className="fixed inset-0 z-[3] pointer-events-none opacity-[0.16]"
@@ -99,26 +100,35 @@ export default function AboutPage() {
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
         {/* TOP NAVIGATION */}
         <header className="flex items-center justify-between border-b border-white/10 py-7">
-          <a href="/" className="group flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 backdrop-blur-xl">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 backdrop-blur-xl transition group-hover:scale-105">
               <span className="text-lg font-bold">V</span>
             </div>
             <span className="text-lg font-semibold tracking-[0.28em]">
               VIGILO<span className="text-white/60">.</span>
             </span>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/"
-            className="rounded-full border border-white/15 bg-white/[0.06] px-5 py-2.5 text-xs tracking-widest text-white/75 backdrop-blur-xl transition hover:border-white/40 hover:bg-white/15 hover:text-white"
+            className="liquid-glass-btn group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-mono tracking-widest text-white select-none transition-transform duration-300 hover:scale-105"
           >
-            BACK TO HOME â†—
-          </a>
+            <span>BACK TO HOME</span>
+            <svg
+              className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
+            </svg>
+          </Link>
         </header>
 
         {/* HERO SECTION */}
         <section className="relative isolate flex min-h-[570px] flex-col items-center justify-center py-28 text-center">
-          {/* Local contrast layer: keeps the chrome visible while protecting hero text. */}
+          {/* Local contrast layer: keeps the chrome visible while protecting hero text */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 inset-y-8 z-0 rounded-[48px]"
@@ -131,8 +141,8 @@ export default function AboutPage() {
 
           <div className="relative z-10 mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#080b11]/85 px-5 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-            <span className="text-[10px] uppercase tracking-[0.28em] text-white/70">
-              Predictive Intelligence Â· Powered by AI
+            <span className="text-[10px] uppercase tracking-[0.28em] text-white/70 font-mono">
+              Predictive Intelligence • Powered by AI
             </span>
           </div>
 
@@ -152,16 +162,34 @@ export default function AboutPage() {
           <div className="relative z-10 mt-12 flex flex-wrap justify-center gap-4">
             <a
               href="#mission"
-              className="rounded-full bg-white px-7 py-3.5 text-xs font-semibold tracking-widest text-black transition hover:scale-105 hover:bg-white/85"
+              className="liquid-glass-btn group inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-xs font-semibold tracking-widest text-white select-none transition-transform duration-300 hover:scale-105 active:scale-95 border-white/30"
             >
-              DISCOVER VIGILO â†“
+              <span>DISCOVER VIGILO</span>
+              <svg
+                className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:translate-y-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
             </a>
 
             <a
               href="#team"
-              className="rounded-full border border-white/20 bg-white/[0.06] px-7 py-3.5 text-xs tracking-widest text-white backdrop-blur-xl transition hover:bg-white/15"
+              className="liquid-glass-btn group inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-xs font-semibold tracking-widest text-white select-none transition-transform duration-300 hover:scale-105 active:scale-95"
             >
-              MEET THE TEAM
+              <span>MEET THE TEAM</span>
+              <svg
+                className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:translate-x-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
             </a>
           </div>
 
@@ -170,44 +198,43 @@ export default function AboutPage() {
 
         {/* MISSION SECTION */}
         <section id="mission" className="scroll-mt-20 py-20">
-          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60">
+          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60 font-mono">
             01 / OUR MISSION
           </div>
 
-          <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[32px] border border-white/[0.11] bg-gradient-to-br from-[#171a20]/95 via-[#0b0d12]/95 to-[#050609]/95 p-8 shadow-[0_28px_100px_rgba(0,0,0,0.65),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-[40px] sm:p-14 before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_at_top_left,rgba(210,220,235,0.09),transparent_48%)] before:content-['']">
+          <LiquidGlassCard className="mx-auto max-w-4xl p-8 sm:p-14">
             <div className="mb-8 flex items-center justify-between">
-              <span className="text-xs tracking-[0.25em] text-white/65">
-                WHY WE BUILT IT
+              <span className="text-xs font-mono tracking-[0.25em] text-white/70 uppercase">
+                Why We Built It
               </span>
             </div>
 
-            <h2 className="text-3xl font-medium leading-tight tracking-tight sm:text-5xl">
-              Crowds move.
+            <h2 className="text-3xl font-medium leading-tight tracking-tight sm:text-5xl text-white">
+              Crowds move.{" "}
               <span className="text-white/60">
-                {" "}
                 We help you stay one step ahead.
               </span>
             </h2>
 
-            <p className="mt-8 text-sm leading-8 text-white/75 sm:text-base">
+            <p className="mt-8 text-sm leading-8 text-white/80 sm:text-base">
               Vigilo is a Predictive AI Pedestrian Crowd Intelligence and Flow
               Management project. Our goal is to make understanding pedestrian
               movement easier and help anticipate crowd patterns before they
               become challenges.
             </p>
 
-            <p className="mt-5 text-sm leading-8 text-white/75 sm:text-base">
+            <p className="mt-5 text-sm leading-8 text-white/80 sm:text-base">
               By bringing AI-driven intelligence into crowd analysis, Vigilo
               explores a smarter approach to understanding how people move
               through shared spaces and how pedestrian flow can be managed more
               effectively.
             </p>
-          </div>
+          </LiquidGlassCard>
         </section>
 
         {/* TECHNOLOGY SECTION */}
         <section className="py-20">
-          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60">
+          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60 font-mono">
             02 / THE TECHNOLOGY
           </div>
 
@@ -215,14 +242,12 @@ export default function AboutPage() {
             Intelligence, <span className="text-white/60">reimagined.</span>
           </h2>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             {/* AI MODEL CARD */}
-            <div className="group relative isolate overflow-hidden rounded-[28px] border border-white/[0.12] bg-gradient-to-br from-[#181b21]/95 via-[#0b0d12]/96 to-[#050609]/98 p-8 shadow-[0_24px_80px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-[40px] transition duration-500 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_30px_90px_rgba(0,0,0,0.7),0_0_35px_rgba(190,205,225,0.06)] sm:p-10">
-              <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-slate-300/[0.055] blur-[70px] transition group-hover:bg-slate-200/[0.10]" />
-
+            <LiquidGlassCard className="p-8 sm:p-10 transition duration-500 hover:-translate-y-1">
               <div className="relative">
-                <span className="text-[10px] tracking-[0.3em] text-white/60">
-                  CORE AI TECHNOLOGY
+                <span className="text-[10px] font-mono tracking-[0.3em] text-white/60 uppercase">
+                  Core AI Technology
                 </span>
 
                 <div className="relative my-10 flex h-32 w-32 items-center justify-center">
@@ -267,29 +292,29 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                <h3 className="text-3xl font-semibold tracking-tight">
+                <h3 className="text-3xl font-semibold tracking-tight text-white">
                   Conflux AI
                 </h3>
 
-                <p className="mt-5 text-sm leading-7 text-white/55">
+                <p className="mt-5 text-sm leading-7 text-white/75 font-normal">
                   Vigilo uses the Conflux AI model as part of its intelligence
                   layer, bringing AI-powered capabilities into the project.
                 </p>
 
-                <div className="mt-9 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[10px] tracking-widest text-white/65">
+                <div className="mt-9 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[10px] font-mono tracking-widest text-white/70">
                   <span className="h-1.5 w-1.5 rounded-full bg-white" />
                   POWERED BY CONFLUX
                 </div>
               </div>
-            </div>
+            </LiquidGlassCard>
 
             {/* VISION CARD */}
-            <div className="relative isolate overflow-hidden rounded-[28px] border border-white/[0.12] bg-gradient-to-br from-[#171a20]/95 via-[#0b0d12]/97 to-[#050609]/98 p-8 shadow-[0_24px_80px_rgba(0,0,0,0.58),inset_0_1px_0_rgba(255,255,255,0.055)] backdrop-blur-[40px] sm:p-10">
-              <span className="text-[10px] tracking-[0.3em] text-white/60">
-                OUR APPROACH
+            <LiquidGlassCard className="p-8 sm:p-10 transition duration-500 hover:-translate-y-1">
+              <span className="text-[10px] font-mono tracking-[0.3em] text-white/60 uppercase">
+                Our Approach
               </span>
 
-              <h3 className="mt-10 text-3xl font-semibold leading-tight">
+              <h3 className="mt-10 text-3xl font-semibold leading-tight text-white">
                 From movement
                 <br />
                 to meaningful insight.
@@ -317,42 +342,42 @@ export default function AboutPage() {
                     key={item[0]}
                     className="flex gap-5 border-t border-white/10 pt-5"
                   >
-                    <span className="text-xs text-white/35">{item[0]}</span>
+                    <span className="text-xs font-mono text-white/40">{item[0]}</span>
                     <div>
-                      <h4 className="text-sm font-medium">{item[1]}</h4>
-                      <p className="mt-1 text-xs leading-6 text-white/65">
+                      <h4 className="text-sm font-semibold text-white">{item[1]}</h4>
+                      <p className="mt-1 text-xs leading-6 text-white/70 font-normal">
                         {item[2]}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </LiquidGlassCard>
           </div>
         </section>
 
         {/* TEAM SECTION */}
         <section id="team" className="scroll-mt-20 py-24">
-          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60">
+          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60 font-mono">
             03 / THE PEOPLE BEHIND VIGILO
           </div>
 
-          <h2 className="text-center text-4xl font-semibold tracking-tight sm:text-6xl">
+          <h2 className="text-center text-4xl font-semibold tracking-tight sm:text-6xl text-white">
             Five minds. <span className="text-white/60">One vision.</span>
           </h2>
 
-          <p className="mx-auto mt-6 max-w-xl text-center text-sm leading-7 text-white/65">
+          <p className="mx-auto mt-6 max-w-xl text-center text-sm leading-7 text-white/70">
             Built through collaboration, curiosity and a shared passion for
             technology. Meet the people behind Vigilo.
           </p>
 
           <div className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
             {TEAM.map((member) => (
-              <div
+              <LiquidGlassCard
                 key={member.number}
-                className="group relative flex flex-col items-center overflow-hidden rounded-[26px] border border-white/[0.11] bg-gradient-to-b from-[#171a20]/95 via-[#0b0d12]/97 to-[#050609]/98 px-5 py-9 text-center shadow-[0_18px_55px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.055)] backdrop-blur-[40px] transition duration-500 hover:-translate-y-2 hover:border-white/25 hover:shadow-[0_25px_65px_rgba(0,0,0,0.72),0_0_28px_rgba(190,205,225,0.055)]"
+                className="group flex flex-col items-center px-5 py-9 text-center transition duration-500 hover:-translate-y-2 hover:scale-[1.02]"
               >
-                <span className="absolute right-5 top-5 text-[10px] tracking-widest text-white/25">
+                <span className="absolute right-5 top-5 text-[10px] font-mono tracking-widest text-white/30">
                   {member.number}
                 </span>
 
@@ -380,16 +405,16 @@ export default function AboutPage() {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-2xl text-white/30">
+                      <div className="flex h-full items-center justify-center text-2xl text-white/30 font-mono">
                         {member.number}
                       </div>
                     )}
                   </div>
                 </div>
 
-                <h3 className="text-base font-semibold">{member.name}</h3>
+                <h3 className="text-base font-semibold text-white">{member.name}</h3>
 
-                <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-white/60">
+                <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-white/60 font-mono">
                   {member.role}
                 </p>
 
@@ -398,48 +423,66 @@ export default function AboutPage() {
                     href={`https://github.com/${member.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-7 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[10px] tracking-wider text-white/65 transition hover:border-white/40 hover:bg-white/15 hover:text-white"
+                    className="liquid-glass-btn mt-7 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[10px] font-mono tracking-wider text-white select-none transition-transform duration-300 hover:scale-105"
                   >
-                    <span className="mr-2">â†—</span>@{member.username}
+                    <span>@{member.username}</span>
+                    <svg
+                      className="h-3 w-3 text-white/80"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
                   </a>
                 ) : (
-                  <span className="mt-7 rounded-full border border-white/10 px-4 py-2 text-[10px] text-white/30">
+                  <span className="mt-7 rounded-full border border-white/10 px-4 py-2 text-[10px] font-mono text-white/30">
                     GitHub profile
                   </span>
                 )}
-              </div>
+              </LiquidGlassCard>
             ))}
           </div>
         </section>
 
         {/* FINAL SECTION */}
         <section className="pb-28 pt-16">
-          <div className="relative isolate overflow-hidden rounded-[32px] border border-white/[0.12] bg-gradient-to-br from-[#181b21]/96 via-[#0b0d12]/97 to-[#050609]/98 px-7 py-16 text-center shadow-[0_30px_100px_rgba(0,0,0,0.68),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-[40px] sm:px-16">
-            <div className="absolute left-1/2 top-0 h-40 w-80 -translate-x-1/2 rounded-full bg-white/[0.10] blur-[90px]" />
+          <LiquidGlassCard className="px-7 py-16 text-center sm:px-16">
+            <div className="absolute left-1/2 top-0 h-40 w-80 -translate-x-1/2 rounded-full bg-white/[0.10] blur-[90px] pointer-events-none" />
 
-            <div className="relative">
-              <p className="text-[10px] tracking-[0.4em] text-white/60">
-                THE FUTURE IS PREDICTIVE
+            <div className="relative z-10">
+              <p className="text-[10px] tracking-[0.4em] text-white/60 font-mono uppercase">
+                The Future is Predictive
               </p>
 
-              <h2 className="mt-7 text-4xl font-semibold tracking-tight sm:text-6xl">
+              <h2 className="mt-7 text-4xl font-semibold tracking-tight sm:text-6xl text-white">
                 Stay ahead.
-                <span className="block text-white/35">Stay Vigilo.</span>
+                <span className="block text-white/40">Stay Vigilo.</span>
               </h2>
 
-              <p className="mx-auto mt-6 max-w-lg text-sm leading-7 text-white/50">
+              <p className="mx-auto mt-6 max-w-lg text-sm leading-7 text-white/70">
                 Better insights. Smarter decisions. A new perspective on
                 pedestrian crowd intelligence.
               </p>
 
-              <a
+              <Link
                 href="/"
-                className="mt-10 inline-flex rounded-full bg-white px-8 py-4 text-xs font-semibold tracking-[0.2em] text-black transition hover:scale-105 hover:bg-white/85"
+                className="liquid-glass-btn group mt-10 inline-flex items-center gap-3 rounded-full px-9 py-4 text-xs font-semibold tracking-[0.2em] text-white select-none transition-transform duration-300 hover:scale-105 active:scale-95"
               >
-                EXPLORE VIGILO â†—
-              </a>
+                <span>EXPLORE VIGILO</span>
+                <svg
+                  className="h-4 w-4 text-white/90 transition-transform duration-300 group-hover:translate-x-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
             </div>
-          </div>
+          </LiquidGlassCard>
         </section>
 
         {/* FOOTER */}
@@ -448,16 +491,17 @@ export default function AboutPage() {
             VIGILO<span className="text-white/30">.</span>
           </span>
 
-          <p className="text-[10px] tracking-wider text-white/35">
+          <p className="text-[10px] tracking-wider text-white/40 font-mono">
             BUILT WITH PURPOSE. POWERED BY INTELLIGENCE.
           </p>
 
-          <a
+          <Link
             href="/"
-            className="text-xs text-white/45 transition hover:text-white"
+            className="text-xs text-white/50 transition hover:text-white flex items-center gap-1.5"
           >
-            Back to homepage â†‘
-          </a>
+            <span>Back to homepage</span>
+            <span>↑</span>
+          </Link>
         </footer>
       </div>
 
