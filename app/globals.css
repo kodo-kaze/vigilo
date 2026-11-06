@@ -106,7 +106,7 @@ body {
 }
 
 /* =========================================================================
-   VIGILO PAGE TRANSITION ANIMATION
+   VIGILO PAGE TRANSITION ANIMATION (HIGH-REFRACTION LIQUID ELEGANCE)
    ========================================================================= */
 
 .page-transition-wrapper {
@@ -118,53 +118,80 @@ body {
 }
 
 .page-transition-wrapper.page-entering {
-  animation: vigiloPageEnter 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform, filter;
+  animation: vigiloPageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
 }
 
 @keyframes vigiloPageEnter {
   0% {
     opacity: 0;
-    transform: translateY(10px) scale(0.992);
-    filter: blur(8px);
+    transform: translate3d(0, 10px, 0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-/* Futuristic liquid cyan-silver scan line running across top edge during page change */
+/* Atmospheric soft liquid sheen radiance at the top of the viewport */
+.page-transit-sheen {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99998;
+  background: radial-gradient(
+    ellipse 80% 35% at 50% 0%,
+    rgba(255, 255, 255, 0.045) 0%,
+    rgba(56, 189, 248, 0.02) 45%,
+    transparent 80%
+  );
+  animation: vigiloSheenDissolve 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes vigiloSheenDissolve {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Refined 1.5px specular silver & cyan fluid streak across the top edge */
 .page-transit-glow {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 1.5px;
   z-index: 99999;
   pointer-events: none;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(56, 189, 248, 0.4) 15%,
+    rgba(255, 255, 255, 0.15) 15%,
     rgba(255, 255, 255, 0.95) 50%,
-    rgba(56, 189, 248, 0.8) 85%,
+    rgba(56, 189, 248, 0.6) 80%,
     transparent 100%
   );
-  box-shadow: 0 0 16px 2px rgba(56, 189, 248, 0.75), 0 0 5px rgba(255, 255, 255, 0.9);
-  animation: vigiloTransitGlow 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 
+    0 0 10px 1px rgba(255, 255, 255, 0.55),
+    0 0 20px 2px rgba(56, 189, 248, 0.4);
+  animation: vigiloTransitGlow 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes vigiloTransitGlow {
   0% {
     opacity: 0;
-    transform: scaleX(0.05);
+    transform: scaleX(0.04);
     transform-origin: left;
   }
-  25% {
+  30% {
     opacity: 1;
-    transform: scaleX(0.65);
+    transform: scaleX(0.7);
   }
   100% {
     opacity: 0;
@@ -177,9 +204,9 @@ body {
   .page-transition-wrapper.page-entering {
     animation: vigiloPageFade 0.2s ease-out forwards;
     transform: none !important;
-    filter: none !important;
   }
-  .page-transit-glow {
+  .page-transit-glow,
+  .page-transit-sheen {
     display: none !important;
   }
   @keyframes vigiloPageFade {
