@@ -175,9 +175,6 @@ export default function LiquidNavMenu({
 
             const itemContent = (
               <>
-                {/* Sheen reflection sweep */}
-                <span className="pointer-events-none absolute -left-full top-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[250%]" />
-
                 {/* Left Icon (Smoothly embedded without boxy frames) */}
                 <span className="relative z-10 flex items-center justify-center text-white/90 shrink-0">
                   {item.icon}
@@ -238,7 +235,7 @@ export default function LiquidNavMenu({
                     onClick={() => {
                       item.onClick?.();
                     }}
-                    className="liquid-glass-btn group flex w-full items-center gap-3.5 rounded-full px-5 py-3 text-left select-none shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:scale-[1.02] active:scale-[0.98]"
+                    className="liquid-glass-btn group flex w-full items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {itemContent}
                   </button>
@@ -246,7 +243,7 @@ export default function LiquidNavMenu({
                   <Link
                     href={item.href || "#"}
                     onClick={() => setIsOpen(false)}
-                    className="liquid-glass-btn group flex items-center gap-3.5 rounded-full px-5 py-3 text-left select-none shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:scale-[1.02] active:scale-[0.98]"
+                    className="liquid-glass-btn group flex items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {itemContent}
                   </Link>
@@ -262,13 +259,10 @@ export default function LiquidNavMenu({
           aria-expanded={isOpen}
           aria-label={isOpen ? "Close menu" : "Open navigation menu"}
           title={isOpen ? "Close menu" : "Navigation & Controls"}
-          className="liquid-glass-btn group relative flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_10px_35px_rgba(0,0,0,0.6)] transition-all duration-300 hover:scale-105 active:scale-95"
+          className="liquid-glass-btn group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-white transition-all duration-300 hover:scale-105 active:scale-95"
         >
           {/* Top specular reflection arc */}
           <span className="pointer-events-none absolute inset-x-2 top-0.5 h-[38%] rounded-t-full bg-gradient-to-b from-white/35 to-transparent opacity-80" />
-
-          {/* Shimmer sweep effect */}
-          <span className="pointer-events-none absolute -left-full top-0 h-full w-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[250%]" />
 
           {/* Morphing + into × icon */}
           <div

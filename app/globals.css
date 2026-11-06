@@ -58,6 +58,7 @@ body {
 /* Modern Liquid Glass (Ultra-Transparent, High-Refraction) */
 .liquid-glass-btn {
   position: relative;
+  overflow: hidden;
   background: rgba(255, 255, 255, 0.05);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
   backdrop-filter: blur(18px) saturate(180%);
@@ -76,8 +77,7 @@ body {
   box-shadow: 
     inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.65),
     inset 0 -1px 1px 0 rgba(255, 255, 255, 0.1),
-    0 12px 36px 0 rgba(0, 0, 0, 0.4),
-    0 0 24px 0 rgba(255, 255, 255, 0.15);
+    0 12px 36px 0 rgba(0, 0, 0, 0.4);
   transform: translateY(-1px) scale(1.025);
 }
 
