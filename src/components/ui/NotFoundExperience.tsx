@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
 import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
 import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
+import LiquidGlassButton from "@/src/components/ui/LiquidGlassButton";
 
 export default function NotFoundExperience() {
   const [isPaused, setIsPaused] = useState(false);
@@ -63,43 +63,36 @@ export default function NotFoundExperience() {
           <span className="text-gray-300 font-medium">Signal Null</span>
         </div>
 
-        {/* Liquid Glass Navigation Buttons with bold typography */}
+        {/* Liquid Glass Navigation Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
-          <Link
+          <LiquidGlassButton
             href="/"
-            className="liquid-glass-btn group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
+            className="w-full sm:w-auto"
+            iconLeft={
+              <svg
+                className="w-4 h-4 text-white transition-transform duration-300 group-hover:-translate-x-0.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            }
           >
-            <svg
-              className="w-4 h-4 text-white transition-transform duration-300 group-hover:-translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span>Return to Portal</span>
-          </Link>
+            Return to Portal
+          </LiquidGlassButton>
 
-          <Link
+          <LiquidGlassButton
             href="/dashboard"
-            className="liquid-glass-btn group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
+            variant="cyan"
+            className="w-full sm:w-auto"
+            showArrow
           >
-            <span>Live Dashboard</span>
-            <svg
-              className="w-4 h-4 text-white transition-transform duration-300 group-hover:translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+            Live Dashboard
+          </LiquidGlassButton>
         </div>
       </LiquidGlassCard>
 

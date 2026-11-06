@@ -5,6 +5,7 @@ import Link from "next/link";
 import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
 import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
 import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
+import LiquidGlassButton from "@/src/components/ui/LiquidGlassButton";
 
 const TEAM = [
   {
@@ -109,21 +110,24 @@ export default function AboutPage() {
             </span>
           </Link>
 
-          <Link
+          <LiquidGlassButton
             href="/"
-            className="liquid-glass-btn group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-mono tracking-widest text-white select-none transition-transform duration-300 hover:scale-105"
+            size="sm"
+            className="font-mono text-xs tracking-widest"
+            iconRight={
+              <svg
+                className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
+              </svg>
+            }
           >
-            <span>BACK TO HOME</span>
-            <svg
-              className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
-            </svg>
-          </Link>
+            BACK TO HOME
+          </LiquidGlassButton>
         </header>
 
         {/* HERO SECTION */}
@@ -160,37 +164,31 @@ export default function AboutPage() {
           </p>
 
           <div className="relative z-10 mt-12 flex flex-wrap justify-center gap-4">
-            <a
+            <LiquidGlassButton
               href="#mission"
-              className="liquid-glass-btn group inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-xs font-semibold tracking-widest text-white select-none transition-transform duration-300 hover:scale-105 active:scale-95 border-white/30"
+              className="border-white/30 text-xs font-semibold tracking-widest"
+              iconRight={
+                <svg
+                  className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:translate-y-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              }
             >
-              <span>DISCOVER VIGILO</span>
-              <svg
-                className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:translate-y-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </a>
+              DISCOVER VIGILO
+            </LiquidGlassButton>
 
-            <a
+            <LiquidGlassButton
               href="#team"
-              className="liquid-glass-btn group inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-xs font-semibold tracking-widest text-white select-none transition-transform duration-300 hover:scale-105 active:scale-95"
+              className="text-xs font-semibold tracking-widest"
+              showArrow
             >
-              <span>MEET THE TEAM</span>
-              <svg
-                className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:translate-x-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
+              MEET THE TEAM
+            </LiquidGlassButton>
           </div>
 
           <div className="pointer-events-none absolute bottom-7 left-1/2 h-14 w-px bg-gradient-to-b from-white/50 to-transparent" />
@@ -419,23 +417,25 @@ export default function AboutPage() {
                 </p>
 
                 {member.username ? (
-                  <a
+                  <LiquidGlassButton
                     href={`https://github.com/${member.username}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="liquid-glass-btn mt-7 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[10px] font-mono tracking-wider text-white select-none transition-transform duration-300 hover:scale-105"
+                    size="sm"
+                    external
+                    className="mt-7 font-mono text-[10px] tracking-wider"
+                    iconRight={
+                      <svg
+                        className="h-3 w-3 text-white/80"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
+                      </svg>
+                    }
                   >
-                    <span>@{member.username}</span>
-                    <svg
-                      className="h-3 w-3 text-white/80"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
-                    </svg>
-                  </a>
+                    @{member.username}
+                  </LiquidGlassButton>
                 ) : (
                   <span className="mt-7 rounded-full border border-white/10 px-4 py-2 text-[10px] font-mono text-white/30">
                     GitHub profile
@@ -466,21 +466,14 @@ export default function AboutPage() {
                 pedestrian crowd intelligence.
               </p>
 
-              <Link
+              <LiquidGlassButton
                 href="/"
-                className="liquid-glass-btn group mt-10 inline-flex items-center gap-3 rounded-full px-9 py-4 text-xs font-semibold tracking-[0.2em] text-white select-none transition-transform duration-300 hover:scale-105 active:scale-95"
+                size="lg"
+                className="mt-10 text-xs font-semibold tracking-[0.2em]"
+                showArrow
               >
-                <span>EXPLORE VIGILO</span>
-                <svg
-                  className="h-4 w-4 text-white/90 transition-transform duration-300 group-hover:translate-x-0.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+                EXPLORE VIGILO
+              </LiquidGlassButton>
             </div>
           </LiquidGlassCard>
         </section>
