@@ -1,5 +1,8 @@
-import Link from 'next/link';
-import UiloraCloudBackground from '@/src/components/ui/UiloraCloudBackground';
+import {
+    UiloraCloudBackground,
+    LiquidGlassButton,
+    LiquidPill,
+} from '@/src/components/ui';
 
 export default function Home() {
     return (
@@ -16,11 +19,9 @@ export default function Home() {
             {/* Content Overlay */}
             <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
                 {/* Top: Powered by Conflux Model */}
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-md mb-5 shadow-sm">
-                    <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-gray-400 uppercase">
-                        Powered by Conflux Model
-                    </span>
-                </div>
+                <LiquidPill className="mb-5">
+                    Powered by Conflux Model
+                </LiquidPill>
 
                 {/* Title: Vigilo */}
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight drop-shadow-2xl select-none">
@@ -34,28 +35,9 @@ export default function Home() {
 
                 {/* Modern Ultra-Transparent Liquid Glass Button */}
                 <div className="mt-9">
-                    <Link
-                        href="/dashboard"
-                        className="liquid-glass-btn group inline-flex items-center gap-3 overflow-hidden rounded-full px-9 py-3.5 text-sm font-medium tracking-wide text-white select-none"
-                    >
-                        {/* Dynamic sheen sweep on hover */}
-                        <span className="pointer-events-none absolute -left-full top-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[250%]" />
-
-                        <span className="relative z-10 font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-                            Go to Dashboard
-                        </span>
-
-                        {/* Minimal forward arrow */}
-                        <svg
-                            className="relative z-10 h-4 w-4 text-white/90 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2.2"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </Link>
+                    <LiquidGlassButton href="/dashboard" size="lg" showArrow>
+                        Go to Dashboard
+                    </LiquidGlassButton>
                 </div>
             </div>
 

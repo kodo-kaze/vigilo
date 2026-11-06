@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
-import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
+import {
+    UiloraLiquidChrome,
+    LiquidNavMenu,
+} from "@/src/components/ui";
 
 export default function ChromeExperience() {
     const [isPaused, setIsPaused] = useState(true);

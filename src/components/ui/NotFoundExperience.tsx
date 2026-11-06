@@ -1,9 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
-import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
+import {
+  UiloraLiquidChrome,
+  LiquidNavMenu,
+  LiquidGlassCard,
+  LiquidGlassButton,
+  LiquidPill,
+  TelemetryStrip,
+} from "@/src/components/ui";
 
 export default function NotFoundExperience() {
   const [isPaused, setIsPaused] = useState(false);
@@ -30,16 +35,11 @@ export default function NotFoundExperience() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(4,5,8,0.5)_0%,rgba(4,5,8,0.25)_40%,rgba(4,5,8,0.88)_100%)] pointer-events-none" />
 
       {/* Centerpiece Liquid Glass Card */}
-      <div className="relative z-10 w-full max-w-lg liquid-glass-card rounded-3xl sm:rounded-[36px] p-8 sm:p-11 text-center shadow-[0_24px_70px_rgba(0,0,0,0.85)] animate-in fade-in zoom-in-95 duration-500">
-        {/* Top Specular Inner Rim */}
-        <div className="pointer-events-none absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-
-        {/* Top Status Capsule Pill (Styled exactly like Landing Page Conflux Pill) */}
-        <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-md mb-5 shadow-sm">
-          <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-gray-400 uppercase">
-            Anomaly // Coordinate Dissolved
-          </span>
-        </div>
+      <LiquidGlassCard className="z-10 w-full max-w-lg text-center animate-in fade-in zoom-in-95 duration-500">
+        {/* Top Status Capsule Pill */}
+        <LiquidPill className="mb-5">
+          Anomaly // Coordinate Dissolved
+        </LiquidPill>
 
         {/* Hero Liquid Chrome Typography: 404 */}
         <div className="relative my-2 select-none">
@@ -57,53 +57,43 @@ export default function NotFoundExperience() {
         </p>
 
         {/* Minimalist Industrial Telemetry Strip (No AI dots) */}
-        <div className="flex items-center justify-center gap-3 sm:gap-5 py-2.5 my-6 border-y border-white/10 font-mono text-[11px] sm:text-xs tracking-[0.2em] uppercase">
-          <span className="text-gray-300 font-medium">Mesh Grid</span>
-          <span className="text-white/20 select-none">/</span>
-          <span className="text-gray-300 font-medium">0x404_VOID</span>
-          <span className="text-white/20 select-none">/</span>
-          <span className="text-gray-300 font-medium">Signal Null</span>
-        </div>
+        <TelemetryStrip
+          items={["Mesh Grid", "0x404_VOID", "Signal Null"]}
+          className="my-6"
+        />
 
-        {/* Liquid Glass Navigation Buttons with bold typography */}
+        {/* Liquid Glass Navigation Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
-          <Link
+          <LiquidGlassButton
             href="/"
-            className="liquid-glass-btn group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
+            className="w-full sm:w-auto"
+            iconLeft={
+              <svg
+                className="w-4 h-4 text-white transition-transform duration-300 group-hover:-translate-x-0.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            }
           >
-            <svg
-              className="w-4 h-4 text-white transition-transform duration-300 group-hover:-translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span>Return to Portal</span>
-          </Link>
+            Return to Portal
+          </LiquidGlassButton>
 
-          <Link
+          <LiquidGlassButton
             href="/dashboard"
-            className="liquid-glass-btn group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
+            variant="cyan"
+            className="w-full sm:w-auto"
+            showArrow
           >
-            <span>Live Dashboard</span>
-            <svg
-              className="w-4 h-4 text-white transition-transform duration-300 group-hover:translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+            Live Dashboard
+          </LiquidGlassButton>
         </div>
-      </div>
+      </LiquidGlassCard>
 
       {/* Liquid Glass Speed Dial Navigation & Controls */}
       <LiquidNavMenu
