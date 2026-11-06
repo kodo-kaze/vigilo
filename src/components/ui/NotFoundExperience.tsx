@@ -34,13 +34,9 @@ export default function NotFoundExperience() {
         {/* Top Specular Inner Rim */}
         <div className="pointer-events-none absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
 
-        {/* System Error Pulse Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-rose-500/40 bg-rose-950/70 backdrop-blur-md mb-5 shadow-sm">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
-          </span>
-          <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.24em] text-rose-300 uppercase drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+        {/* Top Status Capsule Pill (Styled exactly like Landing Page Conflux Pill) */}
+        <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-md mb-5 shadow-sm">
+          <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-gray-400 uppercase">
             Anomaly // Coordinate Dissolved
           </span>
         </div>
@@ -60,21 +56,13 @@ export default function NotFoundExperience() {
           The requested surveillance feed or sensor coordinate does not exist or has drifted outside the mesh topology.
         </p>
 
-        {/* Telemetry Status Strip with bold legible styling */}
-        <div className="flex items-center justify-center gap-3 sm:gap-5 py-2.5 my-6 rounded-2xl border border-white/15 bg-black/40 backdrop-blur-sm px-4 font-mono text-xs font-semibold tracking-wider uppercase drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-          <span className="flex items-center gap-1.5 text-cyan-300">
-            <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
-            Mesh Grid
-          </span>
-          <span className="text-white/30">•</span>
-          <span className="flex items-center gap-1.5 text-rose-300">
-            <span className="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.9)]" />
-            0x404_VOID
-          </span>
-          <span className="text-white/30">•</span>
-          <span className="text-white font-bold">
-            Signal Null
-          </span>
+        {/* Minimalist Industrial Telemetry Strip (No AI dots) */}
+        <div className="flex items-center justify-center gap-3 sm:gap-5 py-2.5 my-6 border-y border-white/10 font-mono text-[11px] sm:text-xs tracking-[0.2em] uppercase">
+          <span className="text-gray-300 font-medium">Mesh Grid</span>
+          <span className="text-white/20 select-none">/</span>
+          <span className="text-gray-300 font-medium">0x404_VOID</span>
+          <span className="text-white/20 select-none">/</span>
+          <span className="text-gray-300 font-medium">Signal Null</span>
         </div>
 
         {/* Liquid Glass Navigation Buttons with bold typography */}
@@ -99,12 +87,8 @@ export default function NotFoundExperience() {
 
           <Link
             href="/dashboard"
-            className="liquid-glass-btn group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] border-cyan-400/40 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
+            className="liquid-glass-btn group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" />
-            </span>
             <span>Live Dashboard</span>
             <svg
               className="w-4 h-4 text-white transition-transform duration-300 group-hover:translate-x-0.5"
