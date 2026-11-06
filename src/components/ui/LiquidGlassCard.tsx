@@ -24,17 +24,22 @@ const LiquidGlassCard = forwardRef<HTMLDivElement, LiquidGlassCardProps>(
     },
     ref
   ) => {
+    // If consumer specifies custom padding (e.g. p-0, p-5, px-), don't inject default large card padding
+    const hasCustomPadding = /\bp[xytrbl]?-/.test(className);
+    const defaultPadding = hasCustomPadding ? "" : "p-8 sm:p-11";
+    const defaultRounded = /\brounded-/.test(className) ? "" : "rounded-2xl sm:rounded-3xl";
+
     return (
       <div
         ref={ref}
-        className={`relative liquid-glass-card rounded-3xl sm:rounded-[36px] p-8 sm:p-11 shadow-[0_24px_70px_rgba(0,0,0,0.85)] ${className}`}
+        className={`relative liquid-glass-card overflow-hidden ${defaultRounded} ${defaultPadding} shadow-[0_20px_50px_rgba(0,0,0,0.7)] ${className}`}
         {...props}
       >
         {/* Top Specular Inner Rim */}
         {hasTopSpecular && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/60 to-transparent"
+            className="pointer-events-none absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
           />
         )}
         {children}

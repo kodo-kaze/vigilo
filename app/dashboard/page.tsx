@@ -136,7 +136,10 @@ export default function DashboardPage() {
         {/* =========================================================================
             TOP SECTION: LIVE VIDEO FOOTAGE (CLEAN BORDERLESS LIQUID GLASS ENCLOSURE)
             ========================================================================= */}
-        <LiquidGlassCard className="w-full border-white/15 bg-black/60 shadow-[0_16px_50px_rgba(0,0,0,0.7)]">
+        <LiquidGlassCard
+          hasTopSpecular={false}
+          className="w-full p-0 rounded-2xl border-white/[0.08] bg-black/60 shadow-[0_16px_50px_rgba(0,0,0,0.7)]"
+        >
           {/* Video Player Display Area */}
           <div className="relative aspect-video w-full max-h-[66vh] min-h-[320px] sm:min-h-[440px] bg-[#020306] flex items-center justify-center overflow-hidden">
             {/* The Live MJPEG Stream */}
@@ -144,9 +147,9 @@ export default function DashboardPage() {
             <img
               key={streamKey}
               src={`${backendUrl}/video_feed`}
-              alt="Live Vigilo CCTV Stream"
-              className={`h-full w-full object-contain transition-opacity duration-500 ${
-                streamError ? "opacity-0 pointer-events-none" : "opacity-100"
+              alt=""
+              className={`h-full w-full object-contain transition-opacity duration-300 select-none pointer-events-none ${
+                streamConnected && !streamError ? "opacity-100" : "opacity-0 hidden"
               }`}
               onLoad={() => {
                 setStreamError(false);
@@ -228,52 +231,52 @@ export default function DashboardPage() {
             )}
 
             {/* Top-Left Floating Overlay HUD */}
-            <div className="pointer-events-none absolute top-3.5 left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
-              <span className="flex items-center gap-2 rounded-lg border border-white/15 bg-black/65 px-3 py-1.5 text-[11px] font-mono tracking-wider text-white backdrop-blur-md shadow-lg">
+            <div className="pointer-events-none absolute top-3 left-3 sm:top-3.5 sm:left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
+              <span className="flex items-center gap-2 rounded-md border border-white/[0.08] bg-black/50 px-2.5 py-1 text-[10px] font-mono tracking-widest text-white/90 backdrop-blur-md">
                 <span
-                  className={`h-2 w-2 rounded-full ${
+                  className={`h-1.5 w-1.5 rounded-full ${
                     streamConnected
                       ? isAlert
                         ? "bg-red-400 animate-ping"
                         : "bg-emerald-400 animate-pulse"
-                      : "bg-amber-400 animate-pulse"
+                      : "bg-amber-400/80"
                   }`}
                 />
-                <span className="font-semibold uppercase tracking-widest text-white">
+                <span className="font-semibold uppercase tracking-wider text-white/90">
                   Live Video Footage
                 </span>
-                <span className="text-white/40">{"//"}</span>
-                <span className="text-cyan-300 text-[10px]">
+                <span className="text-white/20 select-none">/</span>
+                <span className="text-cyan-300/90 text-[10px]">
                   {streamConnected
                     ? isAlert
                       ? "Surge Alert"
-                      : "AI Annotations Active"
+                      : "AI Active"
                     : "Connecting"}
                 </span>
               </span>
             </div>
 
             {/* Top-Right Floating Overlay HUD */}
-            <div className="pointer-events-none absolute top-3.5 right-3.5 z-20 flex items-center gap-2 select-none">
-              <span className="flex items-center gap-2 rounded-lg border border-white/15 bg-black/65 px-3 py-1.5 text-[11px] font-mono tracking-wider text-white/80 backdrop-blur-md shadow-lg">
-                <span className="text-white/60">{stats.resolution || "1280x720"}</span>
-                <span className="text-white/30">•</span>
-                <span className="text-emerald-400 font-semibold">
+            <div className="pointer-events-none absolute top-3 right-3 sm:top-3.5 sm:right-3.5 z-20 flex items-center gap-2 select-none">
+              <span className="flex items-center gap-2 rounded-md border border-white/[0.08] bg-black/50 px-2.5 py-1 text-[10px] font-mono tracking-widest text-white/70 backdrop-blur-md">
+                <span className="text-white/50">{stats.resolution || "1280x720"}</span>
+                <span className="text-white/20 select-none">•</span>
+                <span className="text-emerald-400/90 font-medium">
                   {stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Ingestion"}
                 </span>
               </span>
             </div>
 
             {/* Bottom-Left Floating Overlay HUD */}
-            <div className="pointer-events-none absolute bottom-3.5 left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
-              <span className="rounded-lg border border-white/15 bg-black/65 px-2.5 py-1 text-[10px] font-mono tracking-wider text-white/90 backdrop-blur-md shadow-lg">
+            <div className="pointer-events-none absolute bottom-3 left-3 sm:bottom-3.5 sm:left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
+              <span className="rounded-md border border-white/[0.08] bg-black/50 px-2 py-0.5 text-[10px] font-mono tracking-wider text-white/70 backdrop-blur-md">
                 ZONE: {stats.zone?.split("•")[0]?.trim() || "ZONE 01"}
               </span>
               <span
-                className={`rounded-lg border px-2.5 py-1 text-[10px] font-mono tracking-wider backdrop-blur-md font-semibold shadow-lg ${
+                className={`rounded-md border px-2 py-0.5 text-[10px] font-mono tracking-wider backdrop-blur-md font-medium ${
                   isAlert
-                    ? "border-red-500/40 bg-red-950/80 text-red-300"
-                    : "border-emerald-500/40 bg-emerald-950/80 text-emerald-300"
+                    ? "border-red-500/25 bg-red-950/40 text-red-300"
+                    : "border-emerald-500/25 bg-emerald-950/40 text-emerald-300"
                 }`}
               >
                 {stats.status}
@@ -281,8 +284,8 @@ export default function DashboardPage() {
             </div>
 
             {/* Bottom-Right Floating Overlay HUD */}
-            <div className="pointer-events-none absolute bottom-3.5 right-3.5 z-20 select-none">
-              <span className="rounded-lg border border-white/15 bg-black/65 px-2.5 py-1 text-[10px] font-mono tracking-wider text-cyan-300 backdrop-blur-md shadow-lg">
+            <div className="pointer-events-none absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 z-20 select-none">
+              <span className="rounded-md border border-white/[0.08] bg-black/50 px-2 py-0.5 text-[10px] font-mono tracking-wider text-cyan-300/80 backdrop-blur-md">
                 FPS: {stats.fps.toFixed(1)}
               </span>
             </div>
@@ -296,7 +299,10 @@ export default function DashboardPage() {
           {/* -----------------------------------------------------------------------
               BOTTOM-LEFT BOX: VIDEO CROWD DETAILS (FPS, DENSITY, PEOPLE COUNT, ETC.)
               ----------------------------------------------------------------------- */}
-          <LiquidGlassCard className="lg:col-span-7 border-white/15 bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between">
+          <LiquidGlassCard
+            hasTopSpecular={false}
+            className="lg:col-span-7 rounded-2xl border-white/[0.08] bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
+          >
             <div>
               {/* Box Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-5">
@@ -418,7 +424,10 @@ export default function DashboardPage() {
           {/* -----------------------------------------------------------------------
               BOTTOM-RIGHT BOX: LOCATION AND CAMERA DETAILS
               ----------------------------------------------------------------------- */}
-          <LiquidGlassCard className="lg:col-span-5 border-white/15 bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between">
+          <LiquidGlassCard
+            hasTopSpecular={false}
+            className="lg:col-span-5 rounded-2xl border-white/[0.08] bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
+          >
             <div>
               {/* Box Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-5">
