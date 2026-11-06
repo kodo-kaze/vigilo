@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
-import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
-import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
+import {
+  UiloraLiquidChrome,
+  LiquidNavMenu,
+  LiquidGlassCard,
+  LiquidGlassButton,
+} from "@/src/components/ui";
 
 interface TelemetryStats {
   status: string;
@@ -129,86 +132,13 @@ export default function DashboardPage() {
       />
 
       {/* Main Glass Workspace Container */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl flex-1 flex flex-col gap-4 sm:gap-5">
-        {/* Top Minimal Branding & Status Bar */}
-        <header className="flex flex-wrap items-center justify-between gap-3 px-1 py-1 select-none">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-2.5 transition hover:opacity-85"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/20 bg-white/10 backdrop-blur-xl">
-                <span className="text-sm font-bold tracking-wider text-white">V</span>
-              </div>
-              <span className="text-base font-semibold tracking-[0.25em] text-white">
-                VIGILO<span className="text-cyan-400">.</span>
-              </span>
-            </Link>
-            <span className="hidden sm:inline-block h-3.5 w-px bg-white/20" />
-            <span className="hidden sm:inline-block text-[11px] font-mono tracking-widest text-white/50 uppercase">
-              Predictive AI Conflux Terminal
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            {/* Live Stream Heartbeat Indicator */}
-            <div
-              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-mono tracking-wider transition-colors duration-300 ${
-                streamConnected
-                  ? isAlert
-                    ? "border-red-500/40 bg-red-950/40 text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.25)]"
-                    : "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-                  : "border-amber-500/40 bg-amber-950/40 text-amber-300"
-              }`}
-            >
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  streamConnected
-                    ? isAlert
-                      ? "bg-red-400 animate-ping"
-                      : "bg-emerald-400 animate-pulse"
-                    : "bg-amber-400 animate-pulse"
-                }`}
-              />
-              <span className="font-semibold">
-                {streamConnected
-                  ? isAlert
-                    ? "CROWD SURGE ALERT"
-                    : "NORMAL FLOW • CONNECTED"
-                  : "CAMERA STANDBY"}
-              </span>
-            </div>
-          </div>
-        </header>
-
+      <div className="relative z-10 mx-auto w-full max-w-7xl flex-1 flex flex-col gap-4 sm:gap-5 pt-2 sm:pt-4">
         {/* =========================================================================
-            TOP SECTION: LIVE VIDEO FOOTAGE WITH ANNOTATIONS MARKERS
+            TOP SECTION: LIVE VIDEO FOOTAGE (CLEAN BORDERLESS LIQUID GLASS ENCLOSURE)
             ========================================================================= */}
-        <section className="relative w-full rounded-2xl border border-white/15 bg-black/60 backdrop-blur-2xl overflow-hidden shadow-[0_16px_50px_rgba(0,0,0,0.7)] flex flex-col">
-          {/* Header Bar inside Video Enclosure */}
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5 bg-black/40 text-xs font-mono select-none">
-            <div className="flex items-center gap-2.5 text-white/80">
-              <span className="inline-block h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-              <span className="tracking-widest uppercase font-semibold text-white">
-                Live Video Footage
-              </span>
-              <span className="text-white/40">{"//"}</span>
-              <span className="text-cyan-300 text-[11px]">
-                AI Bounding Annotations Active
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 text-[11px] text-white/60">
-              <span>{stats.resolution || "1280x720"}</span>
-              <span className="text-white/30">•</span>
-              <span className="text-emerald-400 font-semibold">
-                {stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Ingestion"}
-              </span>
-            </div>
-          </div>
-
+        <LiquidGlassCard className="w-full border-white/15 bg-black/60 shadow-[0_16px_50px_rgba(0,0,0,0.7)]">
           {/* Video Player Display Area */}
-          <div className="relative aspect-video w-full max-h-[62vh] min-h-[320px] sm:min-h-[420px] bg-[#020306] flex items-center justify-center overflow-hidden">
+          <div className="relative aspect-video w-full max-h-[66vh] min-h-[320px] sm:min-h-[440px] bg-[#020306] flex items-center justify-center overflow-hidden">
             {/* The Live MJPEG Stream */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -230,7 +160,7 @@ export default function DashboardPage() {
 
             {/* Offline / Connecting State Overlay */}
             {streamError && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[#05070d]/90 backdrop-blur-md">
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-[#05070d]/90 backdrop-blur-md">
                 {/* Radar Grid Animation */}
                 <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
                   <div className="absolute inset-0 rounded-full border border-cyan-500/20 animate-ping" />
@@ -262,45 +192,85 @@ export default function DashboardPage() {
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                  <button
+                  <LiquidGlassButton
                     onClick={handleRetry}
-                    className="liquid-glass-btn flex items-center gap-2 rounded-full px-5 py-2 text-xs font-mono font-medium tracking-wider text-white transition hover:scale-105 active:scale-95"
+                    size="sm"
+                    className="font-mono text-xs tracking-wider"
+                    iconLeft={
+                      <svg
+                        className="h-3.5 w-3.5 text-cyan-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                    }
                   >
-                    <svg
-                      className="h-3.5 w-3.5 text-cyan-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
                     RETRY FEED CONNECTION
-                  </button>
+                  </LiquidGlassButton>
 
-                  <a
+                  <LiquidGlassButton
                     href={`${backendUrl}/docs`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-white/10 px-4 py-2 text-xs font-mono text-white/60 hover:text-white transition"
+                    size="sm"
+                    external
+                    className="font-mono text-xs text-white/60"
                   >
                     API Docs ↗
-                  </a>
+                  </LiquidGlassButton>
                 </div>
               </div>
             )}
 
-            {/* In-feed subtle corner telemetry tags */}
-            <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
-              <span className="rounded-md border border-white/15 bg-black/70 px-2.5 py-1 text-[10px] font-mono tracking-wider text-white/90 backdrop-blur-md">
+            {/* Top-Left Floating Overlay HUD */}
+            <div className="pointer-events-none absolute top-3.5 left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
+              <span className="flex items-center gap-2 rounded-lg border border-white/15 bg-black/65 px-3 py-1.5 text-[11px] font-mono tracking-wider text-white backdrop-blur-md shadow-lg">
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    streamConnected
+                      ? isAlert
+                        ? "bg-red-400 animate-ping"
+                        : "bg-emerald-400 animate-pulse"
+                      : "bg-amber-400 animate-pulse"
+                  }`}
+                />
+                <span className="font-semibold uppercase tracking-widest text-white">
+                  Live Video Footage
+                </span>
+                <span className="text-white/40">{"//"}</span>
+                <span className="text-cyan-300 text-[10px]">
+                  {streamConnected
+                    ? isAlert
+                      ? "Surge Alert"
+                      : "AI Annotations Active"
+                    : "Connecting"}
+                </span>
+              </span>
+            </div>
+
+            {/* Top-Right Floating Overlay HUD */}
+            <div className="pointer-events-none absolute top-3.5 right-3.5 z-20 flex items-center gap-2 select-none">
+              <span className="flex items-center gap-2 rounded-lg border border-white/15 bg-black/65 px-3 py-1.5 text-[11px] font-mono tracking-wider text-white/80 backdrop-blur-md shadow-lg">
+                <span className="text-white/60">{stats.resolution || "1280x720"}</span>
+                <span className="text-white/30">•</span>
+                <span className="text-emerald-400 font-semibold">
+                  {stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Ingestion"}
+                </span>
+              </span>
+            </div>
+
+            {/* Bottom-Left Floating Overlay HUD */}
+            <div className="pointer-events-none absolute bottom-3.5 left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
+              <span className="rounded-lg border border-white/15 bg-black/65 px-2.5 py-1 text-[10px] font-mono tracking-wider text-white/90 backdrop-blur-md shadow-lg">
                 ZONE: {stats.zone?.split("•")[0]?.trim() || "ZONE 01"}
               </span>
               <span
-                className={`rounded-md border px-2.5 py-1 text-[10px] font-mono tracking-wider backdrop-blur-md font-semibold ${
+                className={`rounded-lg border px-2.5 py-1 text-[10px] font-mono tracking-wider backdrop-blur-md font-semibold shadow-lg ${
                   isAlert
                     ? "border-red-500/40 bg-red-950/80 text-red-300"
                     : "border-emerald-500/40 bg-emerald-950/80 text-emerald-300"
@@ -310,13 +280,14 @@ export default function DashboardPage() {
               </span>
             </div>
 
-            <div className="pointer-events-none absolute bottom-3 right-3">
-              <span className="rounded-md border border-white/15 bg-black/70 px-2.5 py-1 text-[10px] font-mono tracking-wider text-cyan-300 backdrop-blur-md">
+            {/* Bottom-Right Floating Overlay HUD */}
+            <div className="pointer-events-none absolute bottom-3.5 right-3.5 z-20 select-none">
+              <span className="rounded-lg border border-white/15 bg-black/65 px-2.5 py-1 text-[10px] font-mono tracking-wider text-cyan-300 backdrop-blur-md shadow-lg">
                 FPS: {stats.fps.toFixed(1)}
               </span>
             </div>
           </div>
-        </section>
+        </LiquidGlassCard>
 
         {/* =========================================================================
             BOTTOM ROW: SEPARATED DETAILS BOXES (MATCHING WIREFRAME LAYOUT)
@@ -325,7 +296,7 @@ export default function DashboardPage() {
           {/* -----------------------------------------------------------------------
               BOTTOM-LEFT BOX: VIDEO CROWD DETAILS (FPS, DENSITY, PEOPLE COUNT, ETC.)
               ----------------------------------------------------------------------- */}
-          <div className="lg:col-span-7 rounded-2xl border border-white/15 bg-black/60 backdrop-blur-2xl p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between">
+          <LiquidGlassCard className="lg:col-span-7 border-white/15 bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between">
             <div>
               {/* Box Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-5">
@@ -442,12 +413,12 @@ export default function DashboardPage() {
               <span>Telemetry Ingestion: Active (0.45s loop)</span>
               <span>Classification: Random Forest Temporal Smoothing</span>
             </div>
-          </div>
+          </LiquidGlassCard>
 
           {/* -----------------------------------------------------------------------
               BOTTOM-RIGHT BOX: LOCATION AND CAMERA DETAILS
               ----------------------------------------------------------------------- */}
-          <div className="lg:col-span-5 rounded-2xl border border-white/15 bg-black/60 backdrop-blur-2xl p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between">
+          <LiquidGlassCard className="lg:col-span-5 border-white/15 bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between">
             <div>
               {/* Box Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-5">
@@ -522,7 +493,7 @@ export default function DashboardPage() {
               </span>
               <span>Mesh Sync: Nominal</span>
             </div>
-          </div>
+          </LiquidGlassCard>
         </section>
       </div>
 
