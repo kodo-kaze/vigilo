@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
-import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
-import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
-import LiquidGlassButton from "@/src/components/ui/LiquidGlassButton";
-import LiquidPill from "@/src/components/ui/LiquidPill";
+import {
+  UiloraLiquidChrome,
+  LiquidNavMenu,
+  LiquidGlassCard,
+  LiquidGlassButton,
+  LiquidPill,
+  TelemetryStrip,
+} from "@/src/components/ui";
 
 export default function NotFoundExperience() {
   const [isPaused, setIsPaused] = useState(false);
@@ -54,13 +57,10 @@ export default function NotFoundExperience() {
         </p>
 
         {/* Minimalist Industrial Telemetry Strip (No AI dots) */}
-        <div className="flex items-center justify-center gap-3 sm:gap-5 py-2.5 my-6 border-y border-white/10 font-mono text-[11px] sm:text-xs tracking-[0.2em] uppercase">
-          <span className="text-gray-300 font-medium">Mesh Grid</span>
-          <span className="text-white/20 select-none">/</span>
-          <span className="text-gray-300 font-medium">0x404_VOID</span>
-          <span className="text-white/20 select-none">/</span>
-          <span className="text-gray-300 font-medium">Signal Null</span>
-        </div>
+        <TelemetryStrip
+          items={["Mesh Grid", "0x404_VOID", "Signal Null"]}
+          className="my-6"
+        />
 
         {/* Liquid Glass Navigation Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">

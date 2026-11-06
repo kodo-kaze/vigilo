@@ -1,6 +1,8 @@
-import UiloraCloudBackground from '@/src/components/ui/UiloraCloudBackground';
-import LiquidGlassButton from '@/src/components/ui/LiquidGlassButton';
-import LiquidPill from '@/src/components/ui/LiquidPill';
+import {
+    UiloraCloudBackground,
+    LiquidGlassButton,
+    LiquidPill,
+} from '@/src/components/ui';
 
 export default function Home() {
     return (

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
-interface LiquidNavMenuProps {
+export interface LiquidNavMenuProps {
   isPaused?: boolean;
   onTogglePlayPause?: () => void;
   position?: "bottom-right" | "bottom-left" | "bottom-center";

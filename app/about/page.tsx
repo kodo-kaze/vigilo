@@ -2,13 +2,20 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
-import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
-import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
-import LiquidGlassButton from "@/src/components/ui/LiquidGlassButton";
-import LiquidPill from "@/src/components/ui/LiquidPill";
+import {
+  UiloraLiquidChrome,
+  LiquidNavMenu,
+  LiquidGlassCard,
+  LiquidGlassButton,
+  LiquidPill,
+  SiteHeader,
+  SiteFooter,
+  SectionHeading,
+  TeamMemberCard,
+  type TeamMember,
+} from "@/src/components/ui";
 
-const TEAM = [
+const TEAM: TeamMember[] = [
   {
     name: "Aditya Paul",
     username: "adityapaul26",
@@ -101,35 +108,7 @@ export default function AboutPage() {
       {/* CONTENT */}
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
         {/* TOP NAVIGATION */}
-        <header className="flex items-center justify-between border-b border-white/10 py-7">
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 backdrop-blur-xl transition group-hover:scale-105">
-              <span className="text-lg font-bold">V</span>
-            </div>
-            <span className="text-lg font-semibold tracking-[0.28em]">
-              VIGILO<span className="text-white/60">.</span>
-            </span>
-          </Link>
-
-          <LiquidGlassButton
-            href="/"
-            size="sm"
-            className="font-mono text-xs tracking-widest"
-            iconRight={
-              <svg
-                className="h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
-              </svg>
-            }
-          >
-            BACK TO HOME
-          </LiquidGlassButton>
-        </header>
+        <SiteHeader backHref="/" backLabel="BACK TO HOME" />
 
         {/* HERO SECTION */}
         <section className="relative isolate flex min-h-[570px] flex-col items-center justify-center py-28 text-center">
@@ -196,9 +175,7 @@ export default function AboutPage() {
 
         {/* MISSION SECTION */}
         <section id="mission" className="scroll-mt-20 py-20">
-          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60 font-mono">
-            01 / OUR MISSION
-          </div>
+          <SectionHeading tag="01 / OUR MISSION" className="mb-5" />
 
           <LiquidGlassCard className="mx-auto max-w-4xl p-8 sm:p-14">
             <div className="mb-8 flex items-center justify-between">
@@ -232,13 +209,15 @@ export default function AboutPage() {
 
         {/* TECHNOLOGY SECTION */}
         <section className="py-20">
-          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60 font-mono">
-            02 / THE TECHNOLOGY
-          </div>
-
-          <h2 className="mb-12 text-center text-4xl font-semibold tracking-tight sm:text-6xl">
-            Intelligence, <span className="text-white/60">reimagined.</span>
-          </h2>
+          <SectionHeading
+            tag="02 / THE TECHNOLOGY"
+            title={
+              <>
+                Intelligence, <span className="text-white/60">reimagined.</span>
+              </>
+            }
+            className="mb-12"
+          />
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* AI MODEL CARD */}
@@ -357,92 +336,19 @@ export default function AboutPage() {
 
         {/* TEAM SECTION */}
         <section id="team" className="scroll-mt-20 py-24">
-          <div className="mb-5 text-center text-[10px] tracking-[0.4em] text-white/60 font-mono">
-            03 / THE PEOPLE BEHIND VIGILO
-          </div>
-
-          <h2 className="text-center text-4xl font-semibold tracking-tight sm:text-6xl text-white">
-            Five minds. <span className="text-white/60">One vision.</span>
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-xl text-center text-sm leading-7 text-white/70">
-            Built through collaboration, curiosity and a shared passion for
-            technology. Meet the people behind Vigilo.
-          </p>
+          <SectionHeading
+            tag="03 / THE PEOPLE BEHIND VIGILO"
+            title={
+              <>
+                Five minds. <span className="text-white/60">One vision.</span>
+              </>
+            }
+            subtitle="Built through collaboration, curiosity and a shared passion for technology. Meet the people behind Vigilo."
+          />
 
           <div className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
             {TEAM.map((member) => (
-              <LiquidGlassCard
-                key={member.number}
-                className="group flex flex-col items-center px-5 py-9 text-center transition duration-500 hover:-translate-y-2 hover:scale-[1.02]"
-              >
-                <span className="absolute right-5 top-5 text-[10px] font-mono tracking-widest text-white/30">
-                  {member.number}
-                </span>
-
-                {/* HEXAGON PROFILE IMAGE */}
-                <div className="relative mb-7 h-28 w-28 transition duration-500 group-hover:scale-105">
-                  <div
-                    className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/20 to-white/5"
-                    style={{
-                      clipPath:
-                        "polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0% 50%)",
-                    }}
-                  />
-
-                  <div
-                    className="absolute inset-[3px] overflow-hidden bg-[#080a0e]"
-                    style={{
-                      clipPath:
-                        "polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0% 50%)",
-                    }}
-                  >
-                    {member.username ? (
-                      <img
-                        src={`https://github.com/${member.username}.png?size=300`}
-                        alt={`${member.name} GitHub profile`}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-2xl text-white/30 font-mono">
-                        {member.number}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <h3 className="text-base font-semibold text-white">{member.name}</h3>
-
-                <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-white/60 font-mono">
-                  {member.role}
-                </p>
-
-                {member.username ? (
-                  <LiquidGlassButton
-                    href={`https://github.com/${member.username}`}
-                    size="sm"
-                    external
-                    className="mt-7 font-mono text-[10px] tracking-wider"
-                    iconRight={
-                      <svg
-                        className="h-3 w-3 text-white/80"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
-                      </svg>
-                    }
-                  >
-                    @{member.username}
-                  </LiquidGlassButton>
-                ) : (
-                  <span className="mt-7 rounded-full border border-white/10 px-4 py-2 text-[10px] font-mono text-white/30">
-                    GitHub profile
-                  </span>
-                )}
-              </LiquidGlassCard>
+              <TeamMemberCard key={member.number} member={member} />
             ))}
           </div>
         </section>
@@ -480,23 +386,7 @@ export default function AboutPage() {
         </section>
 
         {/* FOOTER */}
-        <footer className="flex flex-col items-center justify-between gap-4 border-t border-white/10 py-8 text-center sm:flex-row sm:text-left">
-          <span className="text-sm font-semibold tracking-[0.3em]">
-            VIGILO<span className="text-white/30">.</span>
-          </span>
-
-          <p className="text-[10px] tracking-wider text-white/40 font-mono">
-            BUILT WITH PURPOSE. POWERED BY INTELLIGENCE.
-          </p>
-
-          <Link
-            href="/"
-            className="text-xs text-white/50 transition hover:text-white flex items-center gap-1.5"
-          >
-            <span>Back to homepage</span>
-            <span>↑</span>
-          </Link>
-        </footer>
+        <SiteFooter />
       </div>
 
       {/* LIQUID GLASS CONTROL */}
