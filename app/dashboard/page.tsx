@@ -112,7 +112,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden bg-[#040508] text-white selection:bg-cyan-500/20 selection:text-white p-3 sm:p-5 lg:p-7 flex flex-col justify-between">
+    <main className="relative h-screen max-h-screen w-full overflow-hidden bg-[#040508] text-white selection:bg-cyan-500/20 selection:text-white p-2 sm:p-3 lg:p-3.5 flex flex-col justify-between">
       {/* Dynamic Molten Chrome Liquid Engine */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <UiloraLiquidChrome
@@ -131,17 +131,17 @@ export default function DashboardPage() {
         className="fixed inset-0 z-[1] pointer-events-none bg-[radial-gradient(circle_at_50%_35%,rgba(4,5,8,0.2)_0%,rgba(4,5,8,0.7)_65%,rgba(4,5,8,0.95)_100%)]"
       />
 
-      {/* Main Glass Workspace Container */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl flex-1 flex flex-col gap-4 sm:gap-5 pt-2 sm:pt-4">
+      {/* Main Glass Workspace Container (Wide Bento Frame, Zero-Scroll) */}
+      <div className="relative z-10 mx-auto w-full max-w-[1780px] h-full flex flex-col justify-between gap-2 sm:gap-2.5">
         {/* =========================================================================
-            TOP SECTION: LIVE VIDEO FOOTAGE (CLEAN BORDERLESS LIQUID GLASS ENCLOSURE)
+            TOP SECTION: LIVE VIDEO FOOTAGE (MAX HORIZONTAL SPACE, FLEX FILL)
             ========================================================================= */}
         <LiquidGlassCard
           hasTopSpecular={false}
-          className="w-full p-0 rounded-2xl border-white/[0.08] bg-black/60 shadow-[0_16px_50px_rgba(0,0,0,0.7)]"
+          className="w-full flex-1 min-h-0 p-0 rounded-xl sm:rounded-2xl border-white/[0.08] bg-black/60 shadow-[0_16px_50px_rgba(0,0,0,0.7)] flex flex-col overflow-hidden"
         >
           {/* Video Player Display Area */}
-          <div className="relative aspect-video w-full max-h-[66vh] min-h-[320px] sm:min-h-[440px] bg-[#020306] flex items-center justify-center overflow-hidden">
+          <div className="relative w-full h-full min-h-[200px] bg-[#020306] flex items-center justify-center overflow-hidden">
             {/* The Live MJPEG Stream */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -163,14 +163,14 @@ export default function DashboardPage() {
 
             {/* Offline / Connecting State Overlay */}
             {streamError && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-[#05070d]/90 backdrop-blur-md">
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-[#05070d]/90 backdrop-blur-md">
                 {/* Radar Grid Animation */}
-                <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
+                <div className="relative mb-3 flex h-14 w-14 items-center justify-center">
                   <div className="absolute inset-0 rounded-full border border-cyan-500/20 animate-ping" />
                   <div className="absolute inset-2 rounded-full border border-cyan-400/30" />
-                  <div className="absolute inset-5 rounded-full border border-white/20" />
+                  <div className="absolute inset-4 rounded-full border border-white/20" />
                   <svg
-                    className="h-7 w-7 text-cyan-400 animate-pulse"
+                    className="h-5 w-5 text-cyan-400 animate-pulse"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -184,24 +184,23 @@ export default function DashboardPage() {
                   </svg>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-semibold tracking-wide text-white">
+                <h3 className="text-sm sm:text-base font-semibold tracking-wide text-white">
                   Camera Feed Offline or Initializing
                 </h3>
-                <p className="mt-2 max-w-md text-xs sm:text-sm text-gray-400 leading-relaxed font-sans">
+                <p className="mt-1 max-w-md text-[11px] sm:text-xs text-gray-400 leading-relaxed font-sans">
                   The AI stream server is waiting for optical ingestion. Ensure the backend
-                  server is running on{" "}
-                  <code className="text-cyan-300 font-mono text-xs">{backendUrl}</code> with
-                  your integrated webcam or camera enabled.
+                  is running on <code className="text-cyan-300 font-mono text-[10px]">{backendUrl}</code> with
+                  your camera enabled.
                 </p>
 
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
                   <LiquidGlassButton
                     onClick={handleRetry}
                     size="sm"
-                    className="font-mono text-xs tracking-wider"
+                    className="font-mono text-[10px] tracking-wider"
                     iconLeft={
                       <svg
-                        className="h-3.5 w-3.5 text-cyan-400"
+                        className="h-3 w-3 text-cyan-400"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -222,7 +221,7 @@ export default function DashboardPage() {
                     href={`${backendUrl}/docs`}
                     size="sm"
                     external
-                    className="font-mono text-xs text-white/60"
+                    className="font-mono text-[10px] text-white/60"
                   >
                     API Docs ↗
                   </LiquidGlassButton>
@@ -231,7 +230,7 @@ export default function DashboardPage() {
             )}
 
             {/* Top-Left Floating Overlay HUD */}
-            <div className="pointer-events-none absolute top-3 left-3 sm:top-3.5 sm:left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
+            <div className="pointer-events-none absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
               <span className="flex items-center gap-2 rounded-md border border-white/[0.08] bg-black/50 px-2.5 py-1 text-[10px] font-mono tracking-widest text-white/90 backdrop-blur-md">
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
@@ -257,7 +256,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Top-Right Floating Overlay HUD */}
-            <div className="pointer-events-none absolute top-3 right-3 sm:top-3.5 sm:right-3.5 z-20 flex items-center gap-2 select-none">
+            <div className="pointer-events-none absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 flex items-center gap-2 select-none">
               <span className="flex items-center gap-2 rounded-md border border-white/[0.08] bg-black/50 px-2.5 py-1 text-[10px] font-mono tracking-widest text-white/70 backdrop-blur-md">
                 <span className="text-white/50">{stats.resolution || "1280x720"}</span>
                 <span className="text-white/20 select-none">•</span>
@@ -268,7 +267,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Bottom-Left Floating Overlay HUD */}
-            <div className="pointer-events-none absolute bottom-3 left-3 sm:bottom-3.5 sm:left-3.5 z-20 flex flex-wrap items-center gap-2 select-none">
+            <div className="pointer-events-none absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
               <span className="rounded-md border border-white/[0.08] bg-black/50 px-2 py-0.5 text-[10px] font-mono tracking-wider text-white/70 backdrop-blur-md">
                 ZONE: {stats.zone?.split("•")[0]?.trim() || "ZONE 01"}
               </span>
@@ -284,7 +283,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Bottom-Right Floating Overlay HUD */}
-            <div className="pointer-events-none absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 z-20 select-none">
+            <div className="pointer-events-none absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 z-20 select-none">
               <span className="rounded-md border border-white/[0.08] bg-black/50 px-2 py-0.5 text-[10px] font-mono tracking-wider text-cyan-300/80 backdrop-blur-md">
                 FPS: {stats.fps.toFixed(1)}
               </span>
@@ -293,121 +292,126 @@ export default function DashboardPage() {
         </LiquidGlassCard>
 
         {/* =========================================================================
-            BOTTOM ROW: SEPARATED DETAILS BOXES (MATCHING WIREFRAME LAYOUT)
+            BOTTOM ROW: RECTANGULAR BENTO GRID (WIDE LEFT CARD, COMPACT RIGHT CARD)
             ========================================================================= */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 select-none">
+        <section className="shrink-0 w-full grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-2.5 select-none">
           {/* -----------------------------------------------------------------------
-              BOTTOM-LEFT BOX: VIDEO CROWD DETAILS (FPS, DENSITY, PEOPLE COUNT, ETC.)
+              BOTTOM-LEFT BENTO CARD: CROWD DYNAMICS (8 COLUMNS WIDE RECTANGLE)
               ----------------------------------------------------------------------- */}
           <LiquidGlassCard
             hasTopSpecular={false}
-            className="lg:col-span-7 rounded-2xl border-white/[0.08] bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
+            className="lg:col-span-8 rounded-xl border-white/[0.08] bg-black/60 p-2.5 sm:p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
           >
             <div>
-              {/* Box Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-5">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/[0.08] pb-1.5 mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-cyan-400" />
-                  <h2 className="text-xs font-mono font-semibold uppercase tracking-[0.2em] text-white/90">
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  <h2 className="text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-white/90">
                     Crowd Dynamics & Flow Telemetry
                   </h2>
                 </div>
-                <span className="text-[10px] font-mono text-white/40">
-                  REAL-TIME INFERENCE
+                <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
+                  Real-Time Inference
                 </span>
               </div>
 
-              {/* Crowd Probability Progress Gauge */}
-              <div className="mb-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                <div className="flex items-center justify-between text-xs font-mono mb-2">
+              {/* Crowd Probability Progress Gauge (Slim Horizontal Strip) */}
+              <div className="mb-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 flex flex-col justify-center gap-1">
+                <div className="flex items-center justify-between text-[11px] font-mono">
                   <span className="text-white/70">Crowd Surge Probability</span>
-                  <span
-                    className={`font-semibold text-sm ${
-                      isAlert ? "text-red-400" : "text-emerald-400"
-                    }`}
-                  >
-                    {probabilityPercent}%
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-mono text-white/40 hidden sm:inline">
+                      {probabilityPercent < 50 ? "Sparse" : probabilityPercent < 80 ? "Elevated" : "Surge Threshold"}
+                    </span>
+                    <span
+                      className={`font-semibold text-xs sm:text-sm font-mono ${
+                        isAlert ? "text-red-400" : "text-emerald-400"
+                      }`}
+                    >
+                      {probabilityPercent}%
+                    </span>
+                  </div>
                 </div>
-                {/* Smooth Animated Gauge Bar */}
-                <div className="relative h-2 w-full overflow-hidden rounded-full bg-white/10">
+                {/* Gauge Bar */}
+                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/10">
                   <div
                     className={`h-full transition-all duration-500 rounded-full ${
                       isAlert
-                        ? "bg-gradient-to-r from-amber-500 via-red-500 to-rose-600 shadow-[0_0_12px_rgba(239,68,68,0.8)]"
-                        : "bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 shadow-[0_0_12px_rgba(56,189,248,0.6)]"
+                        ? "bg-gradient-to-r from-amber-500 via-red-500 to-rose-600 shadow-[0_0_10px_rgba(239,68,68,0.7)]"
+                        : "bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]"
                     }`}
                     style={{ width: `${Math.min(100, Math.max(0, probabilityPercent))}%` }}
                   />
                 </div>
-                <div className="mt-2 flex items-center justify-between text-[10px] font-mono text-white/40">
+                <div className="flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-white/35">
                   <span>0% (Safe Sparse)</span>
                   <span>50% (Surge Threshold)</span>
                   <span>100% (Dense Bottleneck)</span>
                 </div>
               </div>
 
-              {/* Primary 4 Metric Tiles */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {/* 4 Metric Tiles in 1 Row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-1.5">
                 {/* Metric 1: People Count */}
-                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5 flex flex-col justify-between">
-                  <span className="text-[10px] font-mono tracking-wider text-white/50 uppercase">
+                <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-2 flex flex-col justify-between">
+                  <span className="text-[9px] font-mono tracking-wider text-white/50 uppercase truncate">
                     Detected People
                   </span>
-                  <div className="my-1.5 flex items-baseline gap-1">
-                    <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white">
+                  <div className="my-0.5 flex items-baseline gap-1">
+                    <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-white">
                       {stats.people_count}
                     </span>
-                    <span className="text-[10px] font-mono text-cyan-400">pedestrians</span>
+                    <span className="text-[9px] font-mono text-cyan-400">pedestrians</span>
                   </div>
-                  <span className="text-[9px] font-mono text-white/40">
+                  <span className="text-[8px] font-mono text-white/35 truncate">
                     Instant Bounding Count
                   </span>
                 </div>
 
-                {/* Metric 2: Density per Megapixel */}
-                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5 flex flex-col justify-between">
-                  <span className="text-[10px] font-mono tracking-wider text-white/50 uppercase">
+                {/* Metric 2: Spatial Density */}
+                <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-2 flex flex-col justify-between">
+                  <span className="text-[9px] font-mono tracking-wider text-white/50 uppercase truncate">
                     Spatial Density
                   </span>
-                  <div className="my-1.5 flex items-baseline gap-1">
-                    <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white">
+                  <div className="my-0.5 flex items-baseline gap-1">
+                    <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-white">
                       {stats.density_per_megapixel.toFixed(1)}
                     </span>
-                    <span className="text-[10px] font-mono text-white/60">/ MP</span>
+                    <span className="text-[9px] font-mono text-white/60">/ MP</span>
                   </div>
-                  <span className="text-[9px] font-mono text-white/40">
+                  <span className="text-[8px] font-mono text-white/35 truncate">
                     Area Saturation Index
                   </span>
                 </div>
 
-                {/* Metric 3: Nearest Neighbor Distance */}
-                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5 flex flex-col justify-between">
-                  <span className="text-[10px] font-mono tracking-wider text-white/50 uppercase">
+                {/* Metric 3: NN Proximity */}
+                <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-2 flex flex-col justify-between">
+                  <span className="text-[9px] font-mono tracking-wider text-white/50 uppercase truncate">
                     NN Proximity
                   </span>
-                  <div className="my-1.5 flex items-baseline gap-1">
-                    <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white">
+                  <div className="my-0.5 flex items-baseline gap-1">
+                    <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-white">
                       {stats.nearest_neighbor_distance.toFixed(3)}
                     </span>
                   </div>
-                  <span className="text-[9px] font-mono text-white/40">
+                  <span className="text-[8px] font-mono text-white/35 truncate">
                     Cluster Tightness Ratio
                   </span>
                 </div>
 
-                {/* Metric 4: AI Inference FPS */}
-                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5 flex flex-col justify-between">
-                  <span className="text-[10px] font-mono tracking-wider text-white/50 uppercase">
+                {/* Metric 4: Inference FPS */}
+                <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-2 flex flex-col justify-between">
+                  <span className="text-[9px] font-mono tracking-wider text-white/50 uppercase truncate">
                     Inference FPS
                   </span>
-                  <div className="my-1.5 flex items-baseline gap-1">
-                    <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-cyan-300">
+                  <div className="my-0.5 flex items-baseline gap-1">
+                    <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-cyan-300">
                       {stats.fps.toFixed(1)}
                     </span>
-                    <span className="text-[10px] font-mono text-cyan-400">fps</span>
+                    <span className="text-[9px] font-mono text-cyan-400">fps</span>
                   </div>
-                  <span className="text-[9px] font-mono text-white/40">
+                  <span className="text-[8px] font-mono text-white/35 truncate">
                     Neural Engine Speed
                   </span>
                 </div>
@@ -415,79 +419,79 @@ export default function DashboardPage() {
             </div>
 
             {/* Bottom footnote */}
-            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-white/40">
+            <div className="pt-1.5 border-t border-white/[0.08] flex items-center justify-between text-[9px] font-mono text-white/40">
               <span>Telemetry Ingestion: Active (0.45s loop)</span>
-              <span>Classification: Random Forest Temporal Smoothing</span>
+              <span className="hidden sm:inline">Classification: Random Forest Temporal Smoothing</span>
             </div>
           </LiquidGlassCard>
 
           {/* -----------------------------------------------------------------------
-              BOTTOM-RIGHT BOX: LOCATION AND CAMERA DETAILS
+              BOTTOM-RIGHT BENTO CARD: LOCATION & CAMERA DETAILS (4 COLUMNS RECTANGLE)
               ----------------------------------------------------------------------- */}
           <LiquidGlassCard
             hasTopSpecular={false}
-            className="lg:col-span-5 rounded-2xl border-white/[0.08] bg-black/60 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
+            className="lg:col-span-4 rounded-xl border-white/[0.08] bg-black/60 p-2.5 sm:p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between"
           >
             <div>
-              {/* Box Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-5">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/[0.08] pb-1.5 mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                  <h2 className="text-xs font-mono font-semibold uppercase tracking-[0.2em] text-white/90">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  <h2 className="text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-white/90">
                     Location &amp; Camera Details
                   </h2>
                 </div>
-                <span className="text-[10px] font-mono text-white/40">
-                  NODE CONFIG
+                <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
+                  Node Config
                 </span>
               </div>
 
-              {/* Key/Value Specification Rows */}
-              <div className="space-y-3 font-mono text-xs">
+              {/* 2-Column Bento Specs Grid */}
+              <div className="grid grid-cols-2 gap-1.5 font-mono text-[10px]">
                 {/* Active Camera Device */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/5 bg-white/[0.02]">
-                  <span className="text-white/50 text-[11px]">OPTICAL SENSOR</span>
-                  <span className="font-medium text-white text-right truncate max-w-[200px]" title={stats.camera_source}>
-                    {stats.camera_source || "Integrated Camera (0)"}
+                <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
+                  <span className="text-white/45 text-[8.5px] uppercase truncate">OPTICAL SENSOR</span>
+                  <span className="font-medium text-white truncate text-[10px]" title={stats.camera_source}>
+                    {stats.camera_source || "Integrated (0)"}
                   </span>
                 </div>
 
                 {/* Facility Location / Zone */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/5 bg-white/[0.02]">
-                  <span className="text-white/50 text-[11px]">ZONE / FACILITY</span>
-                  <span className="font-medium text-cyan-300 text-right truncate max-w-[200px]">
-                    {stats.zone || "Terminal Concourse 04"}
+                <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
+                  <span className="text-white/45 text-[8.5px] uppercase truncate">ZONE / FACILITY</span>
+                  <span className="font-medium text-cyan-300 truncate text-[10px]">
+                    {stats.zone?.split("•")[0]?.trim() || "Terminal 04"}
                   </span>
                 </div>
 
                 {/* Resolution & Ingestion FPS */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/5 bg-white/[0.02]">
-                  <span className="text-white/50 text-[11px]">RESOLUTION / CAPTURE</span>
-                  <span className="font-medium text-white">
-                    {stats.resolution || "1280x720"} @ {stats.capture_fps || 30} FPS
+                <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
+                  <span className="text-white/45 text-[8.5px] uppercase truncate">CAPTURE</span>
+                  <span className="font-medium text-white text-[10px]">
+                    {stats.resolution || "1280x720"} @ {stats.capture_fps || 30}
                   </span>
                 </div>
 
                 {/* Protocol & Ingestion */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/5 bg-white/[0.02]">
-                  <span className="text-white/50 text-[11px]">STREAM PROTOCOL</span>
-                  <span className="font-medium text-white/90">
-                    MJPEG Zero-latency Ingest
+                <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
+                  <span className="text-white/45 text-[8.5px] uppercase truncate">STREAM PROTOCOL</span>
+                  <span className="font-medium text-white/90 text-[10px]">
+                    MJPEG Zero-latency
                   </span>
                 </div>
 
                 {/* AI Model Pipeline */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/5 bg-white/[0.02]">
-                  <span className="text-white/50 text-[11px]">AI PIPELINE</span>
-                  <span className="font-medium text-white/90">
-                    YOLO26m + RF-21 Features
+                <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
+                  <span className="text-white/45 text-[8.5px] uppercase truncate">AI PIPELINE</span>
+                  <span className="font-medium text-white/90 text-[10px]">
+                    YOLO26m + RF-21
                   </span>
                 </div>
 
                 {/* Operational Uptime */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/5 bg-white/[0.02]">
-                  <span className="text-white/50 text-[11px]">SYSTEM UPTIME</span>
-                  <span className="font-medium text-emerald-400">
+                <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
+                  <span className="text-white/45 text-[8.5px] uppercase truncate">SYSTEM UPTIME</span>
+                  <span className="font-medium text-emerald-400 text-[10px]">
                     {formatUptime(stats.uptime_seconds)}
                   </span>
                 </div>
@@ -495,10 +499,10 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions / Status Footer */}
-            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-white/50">
+            <div className="pt-1.5 mt-2 border-t border-white/[0.08] flex items-center justify-between text-[9px] font-mono text-white/50">
               <span className="flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                Driver: AVFoundation / OpenCV
+                Driver: AVFoundation
               </span>
               <span>Mesh Sync: Nominal</span>
             </div>
