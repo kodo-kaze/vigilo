@@ -112,7 +112,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="relative h-screen max-h-screen w-full overflow-hidden bg-[#040508] text-white selection:bg-cyan-500/20 selection:text-white p-2 sm:p-3 lg:p-3.5 flex flex-col justify-between">
+    <main className="relative h-screen max-h-screen w-full overflow-hidden bg-[#040508] text-white selection:bg-cyan-500/20 selection:text-white p-2.5 sm:p-3.5 lg:p-4 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
       {/* Dynamic Molten Chrome Liquid Engine */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <UiloraLiquidChrome
@@ -132,7 +132,7 @@ export default function DashboardPage() {
       />
 
       {/* Main Glass Workspace Container (Wide Bento Frame, Zero-Scroll) */}
-      <div className="relative z-10 mx-auto w-full max-w-[1780px] h-full flex flex-col justify-between gap-2 sm:gap-2.5">
+      <div className="relative z-10 mx-auto w-full max-w-[1640px] h-full flex flex-col justify-between gap-2.5 sm:gap-3">
         {/* =========================================================================
             TOP SECTION: LIVE VIDEO FOOTAGE (MAX HORIZONTAL SPACE, FLEX FILL)
             ========================================================================= */}
@@ -292,9 +292,9 @@ export default function DashboardPage() {
         </LiquidGlassCard>
 
         {/* =========================================================================
-            BOTTOM ROW: RECTANGULAR BENTO GRID (WIDE LEFT CARD, COMPACT RIGHT CARD)
+            BOTTOM ROW: RECTANGULAR BENTO GRID (INSET SLIGHTLY LESSER WIDTH THAN VIDEO)
             ========================================================================= */}
-        <section className="shrink-0 w-full grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-2.5 select-none">
+        <section className="shrink-0 w-full max-w-[92%] sm:max-w-[90%] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-2.5 select-none">
           {/* -----------------------------------------------------------------------
               BOTTOM-LEFT BENTO CARD: CROWD DYNAMICS (8 COLUMNS WIDE RECTANGLE)
               ----------------------------------------------------------------------- */}
