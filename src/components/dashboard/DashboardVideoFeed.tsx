@@ -118,7 +118,7 @@ export default function DashboardVideoFeed({
               </LiquidGlassButton>
 
               <LiquidGlassButton
-                href={`${backendUrl}/docs`}
+                href="https://github.com/kodo-kaze/pedestrian-crowd-detection-models"
                 size="sm"
                 external
                 className="font-mono text-[10px] text-white/60"
