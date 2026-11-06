@@ -32,3 +32,6 @@ export { default as NotFoundExperience } from "./NotFoundExperience";
 
 export { default as UiloraLiquidChrome } from "./UiloraLiquidChrome";
 export { default as UiloraCloudBackground } from "./UiloraCloudBackground";
+
+// Dashboard Specialized Components
+export * from "../dashboard";
