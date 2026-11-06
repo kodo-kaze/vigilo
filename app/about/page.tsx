@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import {
   UiloraLiquidChrome,
   LiquidNavMenu,
   LiquidGlassCard,
   LiquidGlassButton,
   LiquidPill,
-  SiteHeader,
   SiteFooter,
   SectionHeading,
   TeamMemberCard,
@@ -107,9 +105,6 @@ export default function AboutPage() {
 
       {/* CONTENT */}
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-        {/* TOP NAVIGATION */}
-        <SiteHeader backHref="/" backLabel="BACK TO HOME" />
-
         {/* HERO SECTION */}
         <section className="relative isolate flex min-h-[570px] flex-col items-center justify-center py-28 text-center">
           {/* Local contrast layer: keeps the chrome visible while protecting hero text */}
