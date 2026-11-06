@@ -6,6 +6,7 @@ import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
 import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
 import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
 import LiquidGlassButton from "@/src/components/ui/LiquidGlassButton";
+import LiquidPill from "@/src/components/ui/LiquidPill";
 
 const TEAM = [
   {
@@ -143,11 +144,10 @@ export default function AboutPage() {
             }}
           />
 
-          <div className="relative z-10 mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#080b11]/85 px-5 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-            <span className="text-[10px] uppercase tracking-[0.28em] text-white/70 font-mono">
+          <div className="relative z-10 mb-8">
+            <LiquidPill>
               Predictive Intelligence • Powered by AI
-            </span>
+            </LiquidPill>
           </div>
 
           <h1 className="relative z-10 text-6xl font-semibold tracking-[-0.07em] text-white drop-shadow-[0_5px_28px_rgba(0,0,0,0.8)] sm:text-8xl md:text-[110px]">
@@ -299,9 +299,10 @@ export default function AboutPage() {
                   layer, bringing AI-powered capabilities into the project.
                 </p>
 
-                <div className="mt-9 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[10px] font-mono tracking-widest text-white/70">
-                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                  POWERED BY CONFLUX
+                <div className="mt-9">
+                  <LiquidPill>
+                    Powered by Conflux
+                  </LiquidPill>
                 </div>
               </div>
             </LiquidGlassCard>

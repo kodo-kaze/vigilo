@@ -5,6 +5,7 @@ import UiloraLiquidChrome from "@/src/components/ui/UiloraLiquidChrome";
 import LiquidNavMenu from "@/src/components/ui/LiquidNavMenu";
 import LiquidGlassCard from "@/src/components/ui/LiquidGlassCard";
 import LiquidGlassButton from "@/src/components/ui/LiquidGlassButton";
+import LiquidPill from "@/src/components/ui/LiquidPill";
 
 export default function NotFoundExperience() {
   const [isPaused, setIsPaused] = useState(false);
@@ -32,12 +33,10 @@ export default function NotFoundExperience() {
 
       {/* Centerpiece Liquid Glass Card */}
       <LiquidGlassCard className="z-10 w-full max-w-lg text-center animate-in fade-in zoom-in-95 duration-500">
-        {/* Top Status Capsule Pill (Styled exactly like Landing Page Conflux Pill) */}
-        <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-md mb-5 shadow-sm">
-          <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-gray-400 uppercase">
-            Anomaly // Coordinate Dissolved
-          </span>
-        </div>
+        {/* Top Status Capsule Pill */}
+        <LiquidPill className="mb-5">
+          Anomaly // Coordinate Dissolved
+        </LiquidPill>
 
         {/* Hero Liquid Chrome Typography: 404 */}
         <div className="relative my-2 select-none">

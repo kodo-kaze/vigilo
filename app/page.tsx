@@ -1,5 +1,6 @@
 import UiloraCloudBackground from '@/src/components/ui/UiloraCloudBackground';
 import LiquidGlassButton from '@/src/components/ui/LiquidGlassButton';
+import LiquidPill from '@/src/components/ui/LiquidPill';
 
 export default function Home() {
     return (
@@ -16,11 +17,9 @@ export default function Home() {
             {/* Content Overlay */}
             <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
                 {/* Top: Powered by Conflux Model */}
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-md mb-5 shadow-sm">
-                    <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-gray-400 uppercase">
-                        Powered by Conflux Model
-                    </span>
-                </div>
+                <LiquidPill className="mb-5">
+                    Powered by Conflux Model
+                </LiquidPill>
 
                 {/* Title: Vigilo */}
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight drop-shadow-2xl select-none">
