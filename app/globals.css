@@ -56,17 +56,29 @@ body {
 }
 
 /* Modern Liquid Glass (Ultra-Transparent, High-Refraction) */
+.liquid-glass-card {
+  position: relative;
+  background: rgba(6, 8, 12, 0.72);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 64px -12px rgba(0, 0, 0, 0.75);
+}
+
 .liquid-glass-btn {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
   backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.45),
     inset 0 -1px 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 32px 0 rgba(0, 0, 0, 0.35);
+    0 8px 32px 0 rgba(0, 0, 0, 0.4);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: var(--font-geist-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
