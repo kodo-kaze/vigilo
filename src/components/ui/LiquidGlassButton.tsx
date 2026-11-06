@@ -65,11 +65,11 @@ const LiquidGlassButton = forwardRef<HTMLElement, LiquidGlassButtonProps>(
       subtle: "border-white/10 bg-white/[0.04]",
     }[variant];
 
-    const baseClasses = `liquid-glass-btn group relative inline-flex items-center justify-center overflow-hidden rounded-full font-medium tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.025] active:scale-[0.985] ${sizeClasses} ${variantClasses} ${className}`;
+    const baseClasses = `liquid-glass-btn group relative inline-flex max-w-full items-center justify-center overflow-hidden rounded-full font-medium tracking-wide text-white select-none transition-all duration-300 hover:scale-[1.025] active:scale-[0.985] ${sizeClasses} ${variantClasses} ${className}`;
 
     const defaultArrow = (
       <svg
-        className="relative z-10 h-4 w-4 text-white/90 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white"
+        className="relative z-10 h-4 w-4 shrink-0 text-white/90 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -94,7 +94,7 @@ const LiquidGlassButton = forwardRef<HTMLElement, LiquidGlassButtonProps>(
         )}
 
         {/* Button Label */}
-        <span className="relative z-10 font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+        <span className="relative z-10 min-w-0 truncate font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
           {children}
         </span>
 

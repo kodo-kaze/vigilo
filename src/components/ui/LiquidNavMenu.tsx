@@ -230,7 +230,7 @@ export default function LiquidNavMenu({
 
                 {/* Subtle right chevron */}
                 <svg
-                  className="relative z-10 ml-2.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-white"
+                  className="relative z-10 ml-auto h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -262,7 +262,7 @@ export default function LiquidNavMenu({
                     onClick={() => {
                       item.onClick?.();
                     }}
-                    className="liquid-glass-btn group flex w-fit items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
+                    className="liquid-glass-btn group flex w-fit min-w-[260px] items-center gap-4 overflow-hidden rounded-full px-7 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
                   >
                     {itemContent}
                   </button>
@@ -270,7 +270,7 @@ export default function LiquidNavMenu({
                   <Link
                     href={item.href || "#"}
                     onClick={() => setIsOpen(false)}
-                    className="liquid-glass-btn group flex w-fit items-center gap-3.5 overflow-hidden rounded-full px-5 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
+                    className="liquid-glass-btn group flex w-fit min-w-[260px] items-center gap-4 overflow-hidden rounded-full px-7 py-3 text-left select-none transition-all duration-300 hover:scale-[1.025] hover:bg-white/[0.08] active:scale-[0.985]"
                   >
                     {itemContent}
                   </Link>

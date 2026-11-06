@@ -28,11 +28,6 @@ export default function TeamMemberCard({
     <LiquidGlassCard
       className={`group flex flex-col items-center px-5 py-9 text-center transition duration-500 hover:-translate-y-2 hover:scale-[1.02] ${className}`}
     >
-      {/* Index Tag */}
-      <span className="absolute right-5 top-5 text-[10px] font-mono tracking-widest text-white/30 select-none">
-        {member.number}
-      </span>
-
       {/* Hexagonal profile container */}
       <div className="relative mb-7 h-28 w-28 transition duration-500 group-hover:scale-105 select-none">
         {/* Subtle iridescent border ring */}
@@ -82,10 +77,11 @@ export default function TeamMemberCard({
           href={`https://github.com/${member.username}`}
           size="sm"
           external
-          className="mt-7 font-mono text-[10px] tracking-wider"
+          title={`@${member.username}`}
+          className="mt-7 max-w-full font-mono text-[10px] tracking-wider px-3.5 sm:px-4"
           iconRight={
             <svg
-              className="h-3 w-3 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              className="h-3 w-3 shrink-0 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
