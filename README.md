@@ -90,12 +90,14 @@ Vigilo incorporates a custom hardware-accelerated WebGL rendering pipeline built
 
 ## Tech Stack
 
-* **Framework**: [Next.js](https://nextjs.org) 16 (App Router, Turbopack)
+* **Frontend Framework**: [Next.js](https://nextjs.org) 16 (App Router, Turbopack)
 * **Frontend Library**: [React](https://react.dev) 19
 * **Styling**: [Tailwind CSS](https://tailwindcss.com) v4
 * **Graphics & Shaders**: WebGL via [`ogl`](https://github.com/oframe/ogl)
+* **Backend & Stream API**: [FastAPI](https://fastapi.tiangolo.com) & [Uvicorn](https://www.uvicorn.org) (Python 3.9+)
+* **Computer Vision & Inference**: [Ultralytics YOLO](https://docs.ultralytics.com), [scikit-learn](https://scikit-learn.org) Random Forest, OpenCV
 * **Typography**: [Geist Sans & Geist Mono](https://vercel.com/font)
-* **Language**: [TypeScript](https://www.typescriptlang.org) 5
+* **Language**: [TypeScript](https://www.typescriptlang.org) 5 & Python 3
 
 ---
 
@@ -105,33 +107,77 @@ Vigilo incorporates a custom hardware-accelerated WebGL rendering pipeline built
 
 * **Node.js**: `20.x` or higher
 * **Package Manager**: `npm`, `pnpm`, or `yarn`
+* **Python**: `3.9` or higher (with `pip` and virtual environment support)
+* **Video Ingestion Device**: Integrated/external webcam (default: index `0`), or RTSP/video file source
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/your-username/vigilo.git
    cd vigilo
    ```
 
-2. Install dependencies:
+2. **Install frontend dependencies:**
    ```bash
    npm install
    ```
 
-3. Launch the development server with Turbopack:
+3. **Install Python backend dependencies:**
    ```bash
-   npm run dev
+   # Set up a virtual environment in backend/ (start.sh detects .venv, venv, or system python3)
+   python3 -m venv backend/.venv
+   source backend/.venv/bin/activate
+   pip install -r backend/requirements.txt
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+---
+
+### Running the Application
+
+Vigilo consists of two decoupled services: the **Python AI Streaming Backend** (port `8000`) and the **Next.js Web UI** (port `3000`). Both must run concurrently.
+
+#### Step 1: Start the AI Vision Backend
+Open your first terminal and run:
+```bash
+npm run backend
+```
+*(Or directly: `bash backend/start.sh`)*
+
+> [!NOTE]
+> By default, the backend boots into **Standby Mode** (camera suspended for energy conservation) until toggled on in the UI.
+>
+> * **Auto-Start Camera on Boot**:
+>   ```bash
+>   npm run backend -- --auto-start
+>   ```
+> * **Custom Video or RTSP Stream Source**:
+>   ```bash
+>   npm run backend -- --source "rtsp://camera-ip:554/live"
+>   # or stream a recorded video file:
+>   npm run backend -- --source "path/to/cctv_sample.mp4"
+>   ```
+
+#### Step 2: Start the Next.js Frontend
+Open a second terminal and run:
+```bash
+npm run dev
+```
+
+#### Step 3: Open the Dashboard
+Navigate to [http://localhost:3000/dashboard](http://localhost:3000/dashboard). Click the **Power** button on the CCTV monitor card to engage the camera stream and view live crowd density inference, nearest-neighbor metrics, and bottleneck telemetry.
+
+---
 
 ### Available Scripts
 
-* `npm run dev` — Starts the Next.js development server with Turbopack.
-* `npm run build` — Compiles and optimizes the application for production.
-* `npm run start` — Runs the compiled production build.
-* `npm run lint` — Runs ESLint checks across TypeScript and React source files.
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Starts the Next.js development server with Turbopack on `http://localhost:3000`. |
+| `npm run backend` | Boots the FastAPI CCTV & YOLO inference streaming backend on `http://localhost:8000`. |
+| `npm run build` | Compiles and optimizes the Next.js frontend for production. |
+| `npm run start` | Serves the compiled production build. |
+| `npm run lint` | Runs ESLint checks across TypeScript and React source files. |
 
 ---
 
@@ -140,18 +186,31 @@ Vigilo incorporates a custom hardware-accelerated WebGL rendering pipeline built
 ```text
 vigilo/
 ├── app/
+│   ├── about/                    # About & documentation page
 │   ├── dashboard/
-│   │   └── page.tsx              # Interactive dashboard with UiloraLiquidChrome shader
+│   │   └── page.tsx              # Live CCTV monitor, telemetry cards & liquid shader
 │   ├── globals.css               # Global styles, Tailwind v4 theme, macOS Liquid Glass
 │   ├── layout.tsx                # Root layout with Geist font configurations & metadata
 │   └── page.tsx                  # Landing page hero with UiloraCloudBackground
+├── backend/
+│   ├── config.py                 # Backend runtime settings, thresholds, and model paths
+│   ├── detector.py               # YOLO object detector & 21-feature Random Forest engine
+│   ├── main.py                   # FastAPI REST API, MJPEG video feed, & power toggles
+│   ├── model/                    # Trained weights (best.pt, crowd_random_forest_v1.pkl)
+│   ├── requirements.txt          # Python dependencies (PyTorch, Ultralytics, OpenCV, etc.)
+│   ├── start.sh                  # Virtualenv discovery and backend launcher script
+│   └── stream.py                 # Multi-threaded camera frame grabber & broadcaster
 ├── public/                       # Static public assets and SVGs
 ├── src/
 │   └── components/
 │       └── ui/
-│           ├── UiloraCloudBackground.tsx   # WebGL domain-warping cloud shader
-│           └── UiloraLiquidChrome.tsx      # WebGL molten chrome flow shader with mouse interaction
-├── package.json                  # Dependencies, scripts, and package metadata
+│           ├── CameraDetailsCard.tsx     # CCTV hardware telemetry & auto-start toggle
+│           ├── CrowdDynamicsCard.tsx     # Spatial density, neighbor distance & alert status
+│           ├── DashboardVideoFeed.tsx    # Live MJPEG stream display & HUD overlays
+│           ├── LiquidNavMenu.tsx         # macOS glass floating navigation bar
+│           ├── UiloraCloudBackground.tsx # WebGL domain-warping cloud shader
+│           └── UiloraLiquidChrome.tsx    # WebGL molten chrome flow shader
+├── package.json                  # Frontend scripts & dependencies
 ├── tsconfig.json                 # TypeScript compiler configurations
 └── README.md                     # Project documentation
 ```
