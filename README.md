@@ -151,7 +151,9 @@ npm run backend
 >   ```bash
 >   npm run backend -- --auto-start
 >   ```
-> * **Custom Video or RTSP Stream Source**:
+> * **Runtime Camera Selection (Recommended)**:
+>   You no longer need to pass `--source` when running the backend! You can switch cameras and connect directly to any IP camera by entering its **IP Address and Port Number** in real-time from the dashboard UI.
+> * **CLI Override (Optional)**:
 >   ```bash
 >   npm run backend -- --source "rtsp://camera-ip:554/live"
 >   # or stream a recorded video file:
@@ -164,8 +166,14 @@ Open a second terminal and run:
 npm run dev
 ```
 
-#### Step 3: Open the Dashboard
-Navigate to [http://localhost:3000/dashboard](http://localhost:3000/dashboard). Click the **Power** button on the CCTV monitor card to engage the camera stream and view live crowd density inference, nearest-neighbor metrics, and bottleneck telemetry.
+#### Step 3: Open the Dashboard & Select Camera
+1. Navigate to [http://localhost:3000/dashboard](http://localhost:3000/dashboard).
+2. Click the **Camera / Switch Node** button on the CCTV monitor card or the **Change** action under Optical Sensor.
+3. Choose your ingestion interface:
+   * **Network IP & Port**: Enter the camera's IP Address (e.g. `192.168.1.100`) and Port Number (`554` for RTSP, `8080` for HTTP), select protocol, and click **Connect & Stream**.
+   * **Interfaces & Presets**: Switch instantly between local hardware sensors (Integrated Webcam 0, USB Webcam 1) or pre-configured facility CCTV nodes.
+   * **Direct URI**: Provide any full RTSP stream or looping video clip.
+4. Click the **Power** button to toggle camera capture and neural inference on demand.
 
 ---
 

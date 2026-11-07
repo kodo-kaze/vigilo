@@ -7,7 +7,16 @@ export type { CrowdDynamicsCardProps } from "./CrowdDynamicsCard";
 export { default as CameraDetailsCard } from "./CameraDetailsCard";
 export type { CameraDetailsCardProps } from "./CameraDetailsCard";
 
+export { default as CameraSourceModal } from "./CameraSourceModal";
+export type { CameraSourceModalProps } from "./CameraSourceModal";
+
 export { default as TelemetryMetricTile } from "./TelemetryMetricTile";
 export type { TelemetryMetricTileProps } from "./TelemetryMetricTile";
 
-export type { TelemetryStats } from "./types";
+export type {
+  TelemetryStats,
+  CameraPreset,
+  CameraSourcesResponse,
+  SwitchCameraRequest,
+  TestConnectionResponse,
+} from "./types";

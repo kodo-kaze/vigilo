@@ -20,6 +20,7 @@ export interface DashboardVideoFeedProps {
   isPowerToggling?: boolean;
   autoStartCamera?: boolean;
   onToggleAutoStart?: () => void;
+  onOpenSourceModal?: () => void;
   className?: string;
 }
 
@@ -44,6 +45,7 @@ export default function DashboardVideoFeed({
   isPowerToggling = false,
   autoStartCamera = false,
   onToggleAutoStart,
+  onOpenSourceModal,
   className = "",
 }: DashboardVideoFeedProps) {
   const isSuspended = Boolean(stats.is_suspended || stats.status === "SUSPENDED");
@@ -116,6 +118,17 @@ export default function DashboardVideoFeed({
               >
                 {isPowerToggling ? "INITIALIZING SENSOR..." : "TURN ON CAMERA & INFERENCE"}
               </LiquidGlassButton>
+
+              {onOpenSourceModal && (
+                <button
+                  type="button"
+                  onClick={onOpenSourceModal}
+                  className="pointer-events-auto flex items-center gap-1.5 text-[10.5px] font-mono text-cyan-300/90 hover:text-cyan-200 transition-colors py-1 px-3 rounded border border-cyan-500/20 bg-cyan-950/30 hover:border-cyan-400/50 hover:bg-cyan-950/60"
+                >
+                  <span>🌐</span>
+                  <span>Switch Camera Node or Configure IP &amp; Port ↗</span>
+                </button>
+              )}
 
               {onToggleAutoStart && (
                 <label
@@ -194,6 +207,31 @@ export default function DashboardVideoFeed({
                 RETRY FEED CONNECTION
               </LiquidGlassButton>
 
+              {onOpenSourceModal && (
+                <LiquidGlassButton
+                  onClick={onOpenSourceModal}
+                  size="sm"
+                  className="font-mono text-[10px] tracking-wider border-cyan-400/40 text-cyan-300"
+                  iconLeft={
+                    <svg
+                      className="h-3 w-3 text-cyan-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  }
+                >
+                  SWITCH CAMERA / IP PORT ↗
+                </LiquidGlassButton>
+              )}
+
               <LiquidGlassButton
                 href="https://github.com/kodo-kaze/pedestrian-crowd-detection-models"
                 size="sm"
@@ -244,6 +282,33 @@ export default function DashboardVideoFeed({
                 : "Connecting"}
             </span>
           </LiquidPill>
+
+          {/* Camera Node / Source Selector Quick Switch */}
+          {onOpenSourceModal && (
+            <button
+              onClick={onOpenSourceModal}
+              title="Click to switch optical camera node or configure IP & Port"
+              className="pointer-events-auto flex items-center gap-1.5 rounded-md border border-white/[0.1] bg-black/60 px-2.5 py-1 text-[10px] font-mono tracking-wider text-cyan-300 hover:border-cyan-400/50 hover:bg-cyan-950/40 hover:text-cyan-200 backdrop-blur-md transition-all duration-200 active:scale-95 shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+            >
+              <svg
+                className="h-3 w-3 text-cyan-400 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="font-medium truncate max-w-[130px] sm:max-w-[200px]">
+                {stats.camera_ip ? `${stats.camera_ip}:${stats.camera_port}` : stats.camera_source?.split("(")[0]?.trim() || "Select Camera"}
+              </span>
+              <span className="text-white/40">▾</span>
+            </button>
+          )}
 
           {/* Quick Camera On/Off Power Action */}
           {onTogglePower && (

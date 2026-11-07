@@ -9,6 +9,7 @@ export interface CameraDetailsCardProps {
   isPowerToggling?: boolean;
   autoStartCamera?: boolean;
   onToggleAutoStart?: () => void;
+  onOpenSourceModal?: () => void;
   className?: string;
 }
 
@@ -25,6 +26,7 @@ export default function CameraDetailsCard({
   isPowerToggling = false,
   autoStartCamera = false,
   onToggleAutoStart,
+  onOpenSourceModal,
   className = "",
 }: CameraDetailsCardProps) {
   const isSuspended = Boolean(stats.is_suspended || stats.status === "SUSPENDED");
@@ -47,25 +49,54 @@ export default function CameraDetailsCard({
               Location &amp; Camera Details
             </h2>
           </div>
-          <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
-            {isSuspended ? "Engine Standby" : "Node Config"}
-          </span>
+          <div className="flex items-center gap-2">
+            {onOpenSourceModal && (
+              <button
+                type="button"
+                onClick={onOpenSourceModal}
+                className="text-[9px] font-mono tracking-wider text-cyan-400 hover:text-cyan-300 uppercase transition-colors hover:underline flex items-center gap-0.5"
+                title="Switch optical camera node or configure IP & Port"
+              >
+                <span>Switch Node</span>
+                <span>↗</span>
+              </button>
+            )}
+            <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
+              {isSuspended ? "Engine Standby" : "Node Config"}
+            </span>
+          </div>
         </div>
 
         {/* 2-Column Bento Specs Grid */}
         <div className="grid grid-cols-2 gap-1.5 font-mono text-[10px]">
           {/* Active Camera Device */}
-          <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
-            <span className="text-white/45 text-[8.5px] uppercase truncate">
-              OPTICAL SENSOR
-            </span>
+          <div className="flex flex-col justify-between p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
+            <div className="flex items-center justify-between">
+              <span className="text-white/45 text-[8.5px] uppercase truncate">
+                OPTICAL SENSOR
+              </span>
+              {onOpenSourceModal && (
+                <button
+                  type="button"
+                  onClick={onOpenSourceModal}
+                  className="text-[8px] font-mono uppercase text-cyan-400 hover:text-cyan-300 transition-colors hover:underline"
+                  title="Configure Camera IP & Port"
+                >
+                  Change
+                </button>
+              )}
+            </div>
             <span
               className={`font-medium truncate text-[10px] ${
                 isSuspended ? "text-amber-300/80" : "text-white"
               }`}
               title={stats.camera_source}
             >
-              {isSuspended ? "Powered Off (Idle)" : stats.camera_source || "Integrated (0)"}
+              {isSuspended
+                ? "Powered Off (Idle)"
+                : stats.camera_ip
+                ? `${stats.camera_ip}:${stats.camera_port}`
+                : stats.camera_source || "Integrated (0)"}
             </span>
           </div>
 
@@ -96,8 +127,12 @@ export default function CameraDetailsCard({
             <span className="text-white/45 text-[8.5px] uppercase truncate">
               STREAM PROTOCOL
             </span>
-            <span className="font-medium text-white/90 text-[10px]">
-              {isSuspended ? "Standby / Suspended" : "MJPEG Zero-latency"}
+            <span className="font-medium text-white/90 text-[10px] truncate">
+              {isSuspended
+                ? "Standby / Suspended"
+                : stats.camera_ip
+                ? `RTSP (${stats.camera_ip})`
+                : "MJPEG Zero-latency"}
             </span>
           </div>
 

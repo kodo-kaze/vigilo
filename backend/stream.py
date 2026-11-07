@@ -1,12 +1,104 @@
 from collections import deque
+import os
+from pathlib import Path
+import re
 import threading
 import time
 from typing import Optional, Dict, Any
+from urllib.parse import urlparse
 import cv2
 import numpy as np
 
+# Optimize OpenCV RTSP streaming: prioritize TCP to prevent packet fragmentation and set 5s socket timeout
+os.environ.setdefault("OPENCV_FFMPEG_CAPTURE_OPTIONS", "rtsp_transport;tcp|timeout;5000000")
+
 from config import DEFAULT_CONF, DEFAULT_IOU, DEFAULT_STRIDE, DEFAULT_SMOOTH, DEFAULT_ZONE
 from detector import CrowdDetector, draw_annotations
+
+
+def parse_camera_source(source) -> Dict[str, Any]:
+    """
+    Parses a camera source identifier (index, URL, IP:port, or file)
+    into a structured telemetry metadata dictionary.
+    """
+    s = str(source).strip()
+
+    # Hardware device index (0, 1, 2...)
+    if s.isdigit():
+        idx = int(s)
+        name = "Integrated HD Camera (Index 0)" if idx == 0 else f"External USB Camera (Index {idx})"
+        return {
+            "type": "webcam",
+            "index": idx,
+            "ip": None,
+            "port": None,
+            "protocol": "Hardware Ingest",
+            "path": None,
+            "display_name": name,
+            "masked_source": str(idx),
+            "raw_source": str(idx),
+        }
+
+    # Direct IP:Port format without protocol prefix (e.g. "192.168.1.50:554" or "192.168.1.50:554/live")
+    ip_port_pattern = re.match(r"^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})(.*)$", s)
+    if ip_port_pattern:
+        ip = ip_port_pattern.group(1)
+        port = int(ip_port_pattern.group(2))
+        path = ip_port_pattern.group(3) or ""
+        protocol = "rtsp"
+        url = f"{protocol}://{ip}:{port}{path}"
+        return {
+            "type": "ip_camera",
+            "index": None,
+            "ip": ip,
+            "port": port,
+            "protocol": protocol,
+            "path": path,
+            "display_name": f"IP Camera ({ip}:{port})",
+            "masked_source": url,
+            "raw_source": url,
+        }
+
+    # Full RTSP / HTTP URL
+    if s.startswith("rtsp://") or s.startswith("http://") or s.startswith("https://"):
+        try:
+            parsed = urlparse(s)
+            scheme = parsed.scheme.lower()
+            ip = parsed.hostname or "remote-camera"
+            port = parsed.port or (554 if scheme == "rtsp" else (443 if scheme == "https" else 80))
+            masked_netloc = ip
+            if parsed.username:
+                masked_netloc = f"{parsed.username}:••••••@{ip}:{port}"
+            elif parsed.port:
+                masked_netloc = f"{ip}:{port}"
+            masked_url = f"{scheme}://{masked_netloc}{parsed.path}"
+            return {
+                "type": "ip_camera",
+                "index": None,
+                "ip": ip,
+                "port": port,
+                "protocol": scheme,
+                "path": parsed.path,
+                "display_name": f"IP Camera ({ip}:{port})",
+                "masked_source": masked_url,
+                "raw_source": s,
+            }
+        except Exception:
+            pass
+
+    # Video file or other local media
+    filename = Path(s).name or s
+    return {
+        "type": "video_file",
+        "index": None,
+        "ip": None,
+        "port": None,
+        "protocol": "file",
+        "path": s,
+        "display_name": f"Video Stream ({filename})",
+        "masked_source": s,
+        "raw_source": s,
+    }
 
 
 class RTSPCameraStream:
@@ -30,9 +122,7 @@ class RTSPCameraStream:
         self.capture_fps = 0.0
         self.cap: Optional[cv2.VideoCapture] = None
 
-        if not self.suspended:
-            self._open_capture()
-
+        # Asynchronously manage capture in _update_loop to avoid blocking HTTP threads
         self.thread = threading.Thread(target=self._update_loop, daemon=True)
         self.thread.start()
 
@@ -41,6 +131,11 @@ class RTSPCameraStream:
             if self.cap is not None and self.cap.isOpened():
                 return True
             self.cap = cv2.VideoCapture(self.source)
+            if hasattr(cv2, "CAP_PROP_BUFFERSIZE"):
+                try:
+                    self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+                except Exception:
+                    pass
             if self.cap.isOpened():
                 self.connected = True
                 ret, frame = self.cap.read()
@@ -159,6 +254,7 @@ class CrowdStreamBroadcaster:
 
         self.detector = CrowdDetector(conf=self.conf, iou=self.iou)
         self.camera = RTSPCameraStream(self.source, suspended=self.suspended)
+        self.source_meta = parse_camera_source(self.source)
 
         # Thread-safe broadcast state
         self.lock = threading.Lock()
@@ -172,10 +268,15 @@ class CrowdStreamBroadcaster:
             "density_per_megapixel": 0.0,
             "nearest_neighbor_distance": 0.0,
             "fps": 0.0,
+            "capture_fps": 0.0,
             "camera_connected": False,
             "uptime_seconds": 0,
             "resolution": "Suspended (Idle)" if self.suspended else "Offline",
-            "camera_source": self._human_source_name(self.source),
+            "camera_source": self.source_meta.get("display_name", self._human_source_name(self.source)),
+            "camera_raw_source": self.source_meta.get("masked_source", str(self.source)),
+            "camera_type": self.source_meta.get("type", "unknown"),
+            "camera_ip": self.source_meta.get("ip"),
+            "camera_port": self.source_meta.get("port"),
             "zone": self.zone,
             "model_mesh": "YOLO26m + Conflux Random Forest",
         }
@@ -186,14 +287,8 @@ class CrowdStreamBroadcaster:
         self.worker_thread.start()
 
     def _human_source_name(self, source) -> str:
-        s = str(source)
-        if s == "0":
-            return "Integrated HD Camera (Index 0)"
-        elif s == "1":
-            return "External USB Webcam (Index 1)"
-        elif s.startswith("rtsp://") or s.startswith("http://"):
-            return f"IP Camera Stream ({s[:30]}...)"
-        return f"Video Stream ({s})"
+        meta = parse_camera_source(source)
+        return meta.get("display_name", f"Source ({source})")
 
     def suspend(self):
         """Immediately halts camera hardware polling and neural inference pipeline."""
@@ -227,15 +322,58 @@ class CrowdStreamBroadcaster:
             self.suspend()
             return True
 
-    def switch_source(self, new_source):
+    def switch_source(
+        self,
+        new_source,
+        display_name: Optional[str] = None,
+        zone: Optional[str] = None,
+        auto_resume: bool = True
+    ):
         """Allows switching camera sources without restarting the FastAPI server."""
         with self.lock:
             old_cam = self.camera
             self.source = new_source
+            self.source_meta = parse_camera_source(self.source)
+
+            if zone:
+                self.zone = zone
+                self.stats["zone"] = zone
+
+            if auto_resume and self.suspended:
+                self.suspended = False
+                self.stats["is_suspended"] = False
+
+            # Create new camera capture instance
             self.camera = RTSPCameraStream(self.source, suspended=self.suspended)
-            self.stats["camera_source"] = self._human_source_name(self.source)
+
+            human_name = display_name or self.source_meta.get("display_name") or self._human_source_name(self.source)
+            self.stats["camera_source"] = human_name
+            self.stats["camera_type"] = self.source_meta.get("type", "unknown")
+            self.stats["camera_ip"] = self.source_meta.get("ip")
+            self.stats["camera_port"] = self.source_meta.get("port")
+            self.stats["camera_raw_source"] = self.source_meta.get("masked_source", str(self.source))
+            self.stats["camera_connected"] = False
+            self.stats["status"] = "INITIALIZING"
+            self.latest_jpeg = None
+
         if old_cam:
             old_cam.stop()
+
+    def get_source_info(self) -> Dict[str, Any]:
+        with self.lock:
+            meta = parse_camera_source(self.source)
+            return {
+                "source": meta.get("masked_source", str(self.source)),
+                "display_name": self.stats.get("camera_source", meta.get("display_name")),
+                "type": self.stats.get("camera_type", meta.get("type", "unknown")),
+                "ip": self.stats.get("camera_ip", meta.get("ip")),
+                "port": self.stats.get("camera_port", meta.get("port")),
+                "zone": self.zone,
+                "connected": self.stats.get("camera_connected", False),
+                "is_suspended": self.suspended,
+                "resolution": self.stats.get("resolution", "Standby"),
+                "capture_fps": self.stats.get("capture_fps", 0.0),
+            }
 
     def _inference_loop(self):
         prob_history = deque(maxlen=self.smooth)
@@ -316,7 +454,11 @@ class CrowdStreamBroadcaster:
                         "capture_fps": cam_info["capture_fps"],
                         "camera_connected": cam_info["connected"],
                         "resolution": cam_info["resolution"],
-                        "camera_source": self._human_source_name(self.source),
+                        "camera_source": self.stats.get("camera_source") or self._human_source_name(self.source),
+                        "camera_raw_source": self.source_meta.get("masked_source", str(self.source)),
+                        "camera_type": self.source_meta.get("type", "unknown"),
+                        "camera_ip": self.source_meta.get("ip"),
+                        "camera_port": self.source_meta.get("port"),
                         "zone": self.zone,
                         "model_mesh": "YOLO26m + Conflux Random Forest",
                         "uptime_seconds": int(time.time() - self.start_time),

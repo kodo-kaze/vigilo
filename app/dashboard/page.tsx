@@ -7,6 +7,7 @@ import {
   DashboardVideoFeed,
   CrowdDynamicsCard,
   CameraDetailsCard,
+  CameraSourceModal,
   type TelemetryStats,
 } from "@/src/components/ui";
 
@@ -21,7 +22,23 @@ export default function DashboardPage() {
   const [streamConnected, setStreamConnected] = useState(false);
   const [streamError, setStreamError] = useState(false);
   const [isPowerToggling, setIsPowerToggling] = useState(false);
-  const [autoStartCamera, setAutoStartCamera] = useState<boolean>(false);
+  const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
+
+  // Initialize autoStartCamera lazily from localStorage to prevent setState in effect
+  const [autoStartCamera, setAutoStartCamera] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem(AUTO_START_STORAGE_KEY);
+        if (stored !== null) {
+          return stored === "true";
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return false;
+  });
+
   const hasAutoEngagedRef = useRef(false);
 
   const [stats, setStats] = useState<TelemetryStats>({
@@ -44,18 +61,6 @@ export default function DashboardPage() {
 
   const [streamKey, setStreamKey] = useState(0);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Load auto-start preference from localStorage on mount
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(AUTO_START_STORAGE_KEY);
-      if (stored !== null) {
-        setAutoStartCamera(stored === "true");
-      }
-    } catch {
-      // localStorage may be unavailable
-    }
-  }, []);
 
   const handleToggleAutoStart = useCallback(() => {
     setAutoStartCamera((prev) => {
@@ -132,6 +137,14 @@ export default function DashboardPage() {
     setStreamKey((prev) => prev + 1);
     fetchTelemetry();
   };
+
+  // Called when camera is switched via modal (IP:Port, preset, etc.)
+  const handleCameraSwitched = useCallback(() => {
+    setStreamError(false);
+    setStreamConnected(true);
+    setStreamKey((prev) => prev + 1);
+    fetchTelemetry();
+  }, [fetchTelemetry]);
 
   // Toggle backend camera & inference power suspension
   const handleTogglePower = useCallback(async () => {
@@ -225,6 +238,7 @@ export default function DashboardPage() {
           isPowerToggling={isPowerToggling}
           autoStartCamera={autoStartCamera}
           onToggleAutoStart={handleToggleAutoStart}
+          onOpenSourceModal={() => setIsSourceModalOpen(true)}
         />
 
         {/* BOTTOM ROW: RECTANGULAR BENTO GRID (INSET SLIGHTLY LESSER WIDTH THAN VIDEO) */}
@@ -244,9 +258,19 @@ export default function DashboardPage() {
             isPowerToggling={isPowerToggling}
             autoStartCamera={autoStartCamera}
             onToggleAutoStart={handleToggleAutoStart}
+            onOpenSourceModal={() => setIsSourceModalOpen(true)}
           />
         </section>
       </div>
+
+      {/* Camera Ingestion Source & IP Modal */}
+      <CameraSourceModal
+        isOpen={isSourceModalOpen}
+        onClose={() => setIsSourceModalOpen(false)}
+        backendUrl={backendUrl}
+        stats={stats}
+        onCameraSwitched={handleCameraSwitched}
+      />
 
       {/* Floating Speed Dial Controls (Bottom Right - Matching Circle in Wireframe) */}
       <LiquidNavMenu

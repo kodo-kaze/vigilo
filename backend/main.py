@@ -2,8 +2,9 @@
 import argparse
 import asyncio
 from contextlib import asynccontextmanager
+import socket
 import time
-from typing import Optional
+from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -66,6 +67,77 @@ app.add_middleware(
 )
 
 
+DEFAULT_HARDWARE_INTERFACES: List[Dict[str, Any]] = [
+    {
+        "id": "webcam-0",
+        "name": "Integrated HD Camera (Index 0)",
+        "type": "webcam",
+        "source": "0",
+        "zone": "Terminal Concourse 04 • Zone B",
+        "description": "Default integrated optical sensor (hardware index 0)",
+    },
+    {
+        "id": "webcam-1",
+        "name": "External USB Camera (Index 1)",
+        "type": "webcam",
+        "source": "1",
+        "zone": "Peripheral Ingest • Zone Auxiliary",
+        "description": "Secondary USB peripheral optical ingestion (hardware index 1)",
+    },
+]
+
+DEFAULT_PRESETS: List[Dict[str, Any]] = [
+    {
+        "id": "cctv-concourse-a",
+        "name": "Concourse A — Turnstiles",
+        "type": "ip_camera",
+        "ip": "192.168.1.101",
+        "port": 554,
+        "protocol": "rtsp",
+        "path": "/live",
+        "source": "rtsp://192.168.1.101:554/live",
+        "zone": "Terminal Concourse 04 • Gate South",
+        "description": "High-throughput turnstile bottleneck monitoring",
+    },
+    {
+        "id": "cctv-concourse-b",
+        "name": "Concourse B — Main Escalator Gate",
+        "type": "ip_camera",
+        "ip": "192.168.1.102",
+        "port": 554,
+        "protocol": "rtsp",
+        "path": "/live",
+        "source": "rtsp://192.168.1.102:554/live",
+        "zone": "Terminal Concourse 04 • Escalator Flow",
+        "description": "Vertical escalator transit & flow choke point",
+    },
+    {
+        "id": "cctv-platform-3",
+        "name": "Platform 03 — Boarding Hall",
+        "type": "ip_camera",
+        "ip": "192.168.1.103",
+        "port": 554,
+        "protocol": "rtsp",
+        "path": "/h264",
+        "source": "rtsp://192.168.1.103:554/h264",
+        "zone": "Platform Hub • Level 2 North",
+        "description": "Staging area & platform edge crowd distribution",
+    },
+    {
+        "id": "cctv-security-gate",
+        "name": "Security Checkpoint 01 Entry",
+        "type": "ip_camera",
+        "ip": "192.168.1.104",
+        "port": 8080,
+        "protocol": "http",
+        "path": "/video",
+        "source": "http://192.168.1.104:8080/video",
+        "zone": "North Terminal • Security Screening",
+        "description": "Passenger queue and throughput checkpoint",
+    },
+]
+
+
 @app.get("/")
 def index():
     return {
@@ -75,6 +147,9 @@ def index():
             "stream": "/video_feed",
             "telemetry": "/stats",
             "camera_info": "/camera/info",
+            "sources": "/camera/sources",
+            "switch": "/camera/switch",
+            "test": "/camera/test",
             "suspend": "/camera/suspend",
             "resume": "/camera/resume",
             "toggle": "/camera/toggle",
@@ -151,6 +226,10 @@ def get_stats():
             "camera_connected": False,
             "resolution": "Offline",
             "camera_source": "Standby",
+            "camera_raw_source": "Standby",
+            "camera_type": "unknown",
+            "camera_ip": None,
+            "camera_port": None,
             "zone": DEFAULT_ZONE,
             "uptime_seconds": 0
         }
@@ -165,6 +244,10 @@ def get_camera_info():
     stats = get_stats()
     return {
         "source": stats.get("camera_source", "Unknown"),
+        "raw_source": stats.get("camera_raw_source", "Unknown"),
+        "type": stats.get("camera_type", "unknown"),
+        "ip": stats.get("camera_ip"),
+        "port": stats.get("camera_port"),
         "resolution": stats.get("resolution", "Standby"),
         "zone": stats.get("zone", DEFAULT_ZONE),
         "capture_fps": stats.get("capture_fps", 0.0),
@@ -177,30 +260,132 @@ def get_camera_info():
     }
 
 
+@app.get("/camera/sources")
+def get_camera_sources():
+    """
+    Returns standard optical interfaces (webcams), preset CCTV nodes,
+    and current active camera status for the runtime switcher UI.
+    """
+    current_info = broadcaster.get_source_info() if broadcaster else {
+        "source": "0",
+        "display_name": "Integrated HD Camera (Index 0)",
+        "type": "webcam",
+        "ip": None,
+        "port": None,
+        "zone": DEFAULT_ZONE,
+        "connected": False,
+        "is_suspended": True
+    }
+    return {
+        "current": current_info,
+        "interfaces": DEFAULT_HARDWARE_INTERFACES,
+        "presets": DEFAULT_PRESETS
+    }
+
+
 class SwitchSourceRequest(BaseModel):
-    source: str
+    source: Optional[str] = None
+    ip: Optional[str] = None
+    port: Optional[int] = None
+    protocol: Optional[str] = "rtsp"
+    path: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    name: Optional[str] = None
     zone: Optional[str] = None
+    auto_resume: Optional[bool] = True
 
 
 @app.post("/camera/switch")
 def switch_camera(req: SwitchSourceRequest):
     """
-    Switches camera index or RTSP source dynamically without restarting the server.
+    Switches camera index or RTSP / HTTP IP camera dynamically in runtime
+    without restarting the server. Supports direct IP and Port input.
     """
     global broadcaster
     if broadcaster is None:
         return JSONResponse(status_code=503, content={"error": "Broadcaster not initialized"})
 
-    broadcaster.switch_source(req.source)
-    if req.zone:
-        broadcaster.zone = req.zone
-        broadcaster.stats["zone"] = req.zone
+    # Determine target source URL or index
+    if req.ip:
+        ip = req.ip.strip()
+        protocol = (req.protocol or "rtsp").lower().strip()
+        port = req.port if req.port is not None else (554 if protocol == "rtsp" else 8080)
+        path = (req.path or "").strip()
+        if path and not path.startswith("/"):
+            path = f"/{path}"
 
+        auth_str = ""
+        if req.username:
+            user = req.username.strip()
+            pwd = req.password.strip() if req.password else ""
+            auth_str = f"{user}:{pwd}@" if pwd else f"{user}@"
+
+        target_source = f"{protocol}://{auth_str}{ip}:{port}{path}"
+        display_name = req.name or f"IP Camera ({ip}:{port})"
+    elif req.source is not None:
+        target_source = str(req.source).strip()
+        display_name = req.name
+    else:
+        return JSONResponse(status_code=400, content={"error": "Must provide either 'ip' and 'port', or 'source'"})
+
+    auto_resume = True if req.auto_resume is None else bool(req.auto_resume)
+
+    broadcaster.switch_source(
+        new_source=target_source,
+        display_name=display_name,
+        zone=req.zone,
+        auto_resume=auto_resume
+    )
+
+    stats = broadcaster.get_stats()
     return {
         "status": "success",
-        "new_source": req.source,
-        "zone": broadcaster.zone
+        "new_source": stats.get("camera_raw_source", str(target_source)),
+        "display_name": stats.get("camera_source"),
+        "camera_type": stats.get("camera_type"),
+        "camera_ip": stats.get("camera_ip"),
+        "camera_port": stats.get("camera_port"),
+        "zone": broadcaster.zone,
+        "is_suspended": broadcaster.suspended,
+        "message": f"Successfully switched camera feed to {stats.get('camera_source')}"
     }
+
+
+class TestConnectionRequest(BaseModel):
+    ip: str
+    port: int
+    timeout: Optional[float] = 2.0
+
+
+@app.post("/camera/test")
+def test_camera_connection(req: TestConnectionRequest):
+    """
+    Rapidly tests TCP socket reachability for an IP camera host and port.
+    Prevents locking or configuring non-existent CCTV nodes.
+    """
+    t0 = time.time()
+    try:
+        sock = socket.create_connection((req.ip.strip(), req.port), timeout=req.timeout or 2.0)
+        sock.close()
+        latency_ms = round((time.time() - t0) * 1000, 1)
+        return {
+            "reachable": True,
+            "ip": req.ip.strip(),
+            "port": req.port,
+            "latency_ms": latency_ms,
+            "message": f"Online: successfully reached {req.ip}:{req.port} in {latency_ms}ms"
+        }
+    except Exception as e:
+        latency_ms = round((time.time() - t0) * 1000, 1)
+        return {
+            "reachable": False,
+            "ip": req.ip.strip(),
+            "port": req.port,
+            "latency_ms": latency_ms,
+            "error": str(e),
+            "message": f"Unreachable: failed to reach {req.ip}:{req.port} ({e})"
+        }
 
 
 @app.post("/camera/suspend")

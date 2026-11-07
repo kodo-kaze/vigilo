@@ -48,6 +48,7 @@ export default function TeamMemberCard({
           }}
         >
           {member.username ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={`https://github.com/${member.username}.png?size=300`}
               alt={`${member.name} GitHub profile`}
