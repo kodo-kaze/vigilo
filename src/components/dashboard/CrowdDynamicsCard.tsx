@@ -1,5 +1,5 @@
 import React from "react";
-import { LiquidGlassCard } from "@/src/components/ui";
+import { LiquidGlassCard, LiquidPill } from "@/src/components/ui";
 import { TelemetryStats } from "./types";
 import TelemetryMetricTile from "./TelemetryMetricTile";
 
@@ -36,9 +36,9 @@ export default function CrowdDynamicsCard({
               Crowd Dynamics &amp; Flow Telemetry
             </h2>
           </div>
-          <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-[10px] font-sans font-medium text-white/60">
+          <LiquidPill size="xs" className="text-[10px] text-white/70">
             Real-Time Inference
-          </span>
+          </LiquidPill>
         </div>
 
         {/* Crowd Probability Progress Gauge (Clean integrated section) */}

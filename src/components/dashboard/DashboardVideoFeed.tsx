@@ -281,19 +281,20 @@ export default function DashboardVideoFeed({
 
         {/* Top-Left Floating Overlay HUD */}
         <div className="pointer-events-none absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
-          {/* Status Pill (Crisp visible liquid glass boundary) */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-1.5 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)] text-xs font-sans select-none">
-            <span
-              className={`h-2 w-2 rounded-full ${
-                isSuspended
-                  ? "bg-amber-400"
-                  : streamConnected
-                  ? isAlert
-                    ? "bg-red-400 animate-ping"
-                    : "bg-emerald-400 animate-pulse"
-                  : "bg-amber-400/80"
-              }`}
-            />
+          {/* Status Pill (LiquidPill) */}
+          <LiquidPill
+            size="md"
+            dotColor={
+              isSuspended
+                ? "bg-amber-400"
+                : streamConnected
+                ? isAlert
+                  ? "bg-red-400"
+                  : "bg-emerald-400"
+                : "bg-amber-400/80"
+            }
+            dotPulse={Boolean(streamConnected && isAlert)}
+          >
             <span className="font-medium text-white/95">Live Video</span>
             <span className="text-white/25 select-none">•</span>
             <span className="text-[11px] font-normal text-white/60">
@@ -305,7 +306,7 @@ export default function DashboardVideoFeed({
                   : "Active"
                 : "Connecting"}
             </span>
-          </div>
+          </LiquidPill>
 
           {/* Camera Node / Source Selector Quick Switch (LiquidGlassButton) */}
           {onOpenSourceModal && (
@@ -368,33 +369,39 @@ export default function DashboardVideoFeed({
           )}
         </div>
 
-        {/* Top-Right Floating Overlay HUD (Crisp visible liquid glass boundary) */}
+        {/* Top-Right Floating Overlay HUD (LiquidPill) */}
         <div className="pointer-events-none absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 flex items-center gap-2 select-none">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-1.5 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)] text-xs font-sans select-none">
-            <span className="text-white/60">{stats.resolution || (isSuspended ? "Ready" : "1280×720")}</span>
+          <LiquidPill size="md">
+            <span className="text-white/60">
+              {stats.resolution || (isSuspended ? "Ready" : "1280×720")}
+            </span>
             <span className="text-white/25 select-none">•</span>
             <span className="font-medium text-white/90">
-              {isSuspended ? "Standby" : stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Feed"}
+              {isSuspended
+                ? "Standby"
+                : stats.capture_fps
+                ? `${stats.capture_fps} FPS`
+                : "Live Feed"}
             </span>
-          </div>
+          </LiquidPill>
         </div>
 
         {/* Bottom-Left Floating Overlay HUD */}
         <div className="pointer-events-none absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.5)] text-[11px] font-sans text-white/80 select-none">
+          <LiquidPill size="xs" className="!px-3 !py-1 text-[11px] text-white/80">
             <span className="text-white/40">Zone:</span>
             <span>{stats.zone?.split("•")[0]?.trim() || "Main Zone"}</span>
-          </div>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.5)] text-[11px] font-sans text-white/80 select-none">
+          </LiquidPill>
+          <LiquidPill size="xs" className="!px-3 !py-1 text-[11px] text-white/80">
             <span>{stats.status}</span>
-          </div>
+          </LiquidPill>
         </div>
 
         {/* Bottom-Right Floating Overlay HUD */}
         <div className="pointer-events-none absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 z-20 select-none">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.5)] text-[11px] font-mono text-white/80 select-none">
+          <LiquidPill size="xs" textClassName="font-mono text-white/80" className="!px-3 !py-1 text-[11px]">
             <span>FPS: {isSuspended ? "0.0" : stats.fps.toFixed(1)}</span>
-          </div>
+          </LiquidPill>
         </div>
       </div>
     </LiquidGlassCard>

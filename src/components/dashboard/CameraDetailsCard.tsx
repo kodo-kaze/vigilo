@@ -1,5 +1,5 @@
 import React from "react";
-import { LiquidGlassCard, LiquidGlassButton } from "@/src/components/ui";
+import { LiquidGlassCard, LiquidGlassButton, LiquidPill } from "@/src/components/ui";
 import { TelemetryStats } from "./types";
 
 export interface CameraDetailsCardProps {
@@ -62,9 +62,13 @@ export default function CameraDetailsCard({
                 Switch Node
               </LiquidGlassButton>
             )}
-            <span className="text-[10px] font-sans font-medium text-white/40 hidden sm:inline">
+            <LiquidPill
+              size="xs"
+              dotColor={isSuspended ? "bg-amber-400" : "bg-emerald-400"}
+              className="hidden sm:inline-flex text-[10px] text-white/70"
+            >
               {isSuspended ? "Standby" : "Active"}
-            </span>
+            </LiquidPill>
           </div>
         </div>
 
