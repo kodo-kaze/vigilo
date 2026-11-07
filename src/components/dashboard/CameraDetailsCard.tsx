@@ -34,18 +34,18 @@ export default function CameraDetailsCard({
   return (
     <LiquidGlassCard
       hasTopSpecular={false}
-      className={`lg:col-span-4 rounded-xl border-white/[0.08] p-2.5 sm:p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between ${className}`}
+      className={`lg:col-span-4 rounded-xl border-white/[0.08] p-3 sm:p-4 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between ${className}`}
     >
       <div>
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-1.5 mb-2">
-          <div className="flex items-center gap-2">
+        {/* Header (Clean, steady indicator, aesthetic typography) */}
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-3">
+          <div className="flex items-center gap-2.5">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${
+              className={`h-2 w-2 rounded-full shrink-0 ${
                 isSuspended ? "bg-amber-400" : "bg-emerald-400"
               }`}
             />
-            <h2 className="text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-white/90">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-tight text-white/95 font-sans">
               Location &amp; Camera Details
             </h2>
           </div>
@@ -54,145 +54,146 @@ export default function CameraDetailsCard({
               <button
                 type="button"
                 onClick={onOpenSourceModal}
-                className="text-[9px] font-mono tracking-wider text-cyan-400 hover:text-cyan-300 uppercase transition-colors hover:underline flex items-center gap-0.5"
+                className="inline-flex items-center gap-1 text-[11px] font-sans font-medium text-white/70 hover:text-white px-2.5 py-0.5 rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
                 title="Switch optical camera node or configure IP & Port"
               >
                 <span>Switch Node</span>
-                <span>↗</span>
+                <span className="text-[10px]">↗</span>
               </button>
             )}
-            <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
-              {isSuspended ? "Engine Standby" : "Node Config"}
+            <span className="text-[10px] font-sans font-medium text-white/40 hidden sm:inline">
+              {isSuspended ? "Standby" : "Active"}
             </span>
           </div>
         </div>
 
-        {/* 2-Column Bento Specs Grid */}
-        <div className="grid grid-cols-2 gap-1.5 font-mono text-[10px]">
-          {/* Active Camera Device */}
-          <div className="flex flex-col justify-between p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
-            <div className="flex items-center justify-between">
-              <span className="text-white/45 text-[8.5px] uppercase truncate">
-                OPTICAL SENSOR
+        {/* 2-Column Bento Specs Grid (Unified clean container, no crowded separate boxes) */}
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 mb-3">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 font-sans">
+            {/* 1. Optical Sensor */}
+            <div className="flex flex-col justify-center">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-medium text-white/45">
+                  Optical Sensor
+                </span>
+                {onOpenSourceModal && (
+                  <button
+                    type="button"
+                    onClick={onOpenSourceModal}
+                    className="text-[10px] font-sans font-medium text-white/60 hover:text-white transition-colors hover:underline"
+                    title="Configure Camera IP & Port"
+                  >
+                    Change
+                  </button>
+                )}
+              </div>
+              <span
+                className="mt-0.5 text-xs font-medium text-white/90 truncate"
+                title={stats.camera_source}
+              >
+                {isSuspended
+                  ? "Powered Off (Idle)"
+                  : stats.camera_ip
+                  ? `${stats.camera_ip}:${stats.camera_port}`
+                  : stats.camera_source || "Integrated (0)"}
               </span>
-              {onOpenSourceModal && (
-                <button
-                  type="button"
-                  onClick={onOpenSourceModal}
-                  className="text-[8px] font-mono uppercase text-cyan-400 hover:text-cyan-300 transition-colors hover:underline"
-                  title="Configure Camera IP & Port"
-                >
-                  Change
-                </button>
-              )}
             </div>
-            <span
-              className={`font-medium truncate text-[10px] ${
-                isSuspended ? "text-amber-300/80" : "text-white"
-              }`}
-              title={stats.camera_source}
-            >
-              {isSuspended
-                ? "Powered Off (Idle)"
-                : stats.camera_ip
-                ? `${stats.camera_ip}:${stats.camera_port}`
-                : stats.camera_source || "Integrated (0)"}
-            </span>
-          </div>
 
-          {/* Facility Location / Zone */}
-          <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
-            <span className="text-white/45 text-[8.5px] uppercase truncate">
-              ZONE / FACILITY
-            </span>
-            <span className="font-medium text-cyan-300 truncate text-[10px]">
-              {stats.zone?.split("•")[0]?.trim() || "Terminal 04"}
-            </span>
-          </div>
+            {/* 2. Facility Location / Zone */}
+            <div className="flex flex-col justify-center">
+              <span className="text-[10px] font-medium text-white/45">
+                Zone / Facility
+              </span>
+              <span className="mt-0.5 text-xs font-medium text-white/90 truncate">
+                {stats.zone?.split("•")[0]?.trim() || "Terminal Concourse 04"}
+              </span>
+            </div>
 
-          {/* Resolution & Ingestion FPS */}
-          <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
-            <span className="text-white/45 text-[8.5px] uppercase truncate">
-              CAPTURE
-            </span>
-            <span className="font-medium text-white text-[10px]">
-              {isSuspended
-                ? "Standby @ 0 FPS"
-                : `${stats.resolution || "1280x720"} @ ${stats.capture_fps || 30}`}
-            </span>
-          </div>
+            {/* 3. Resolution & Capture Rate */}
+            <div className="flex flex-col justify-center">
+              <span className="text-[10px] font-medium text-white/45">
+                Capture Rate
+              </span>
+              <span className="mt-0.5 text-xs font-medium text-white/90 truncate">
+                {isSuspended
+                  ? "Standby @ 0 FPS"
+                  : `${stats.resolution || "1280×720"} @ ${stats.capture_fps || 30} FPS`}
+              </span>
+            </div>
 
-          {/* Protocol & Ingestion */}
-          <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
-            <span className="text-white/45 text-[8.5px] uppercase truncate">
-              STREAM PROTOCOL
-            </span>
-            <span className="font-medium text-white/90 text-[10px] truncate">
-              {isSuspended
-                ? "Standby / Suspended"
-                : stats.camera_ip
-                ? `RTSP (${stats.camera_ip})`
-                : "MJPEG Zero-latency"}
-            </span>
-          </div>
+            {/* 4. Stream Protocol */}
+            <div className="flex flex-col justify-center">
+              <span className="text-[10px] font-medium text-white/45">
+                Stream Protocol
+              </span>
+              <span className="mt-0.5 text-xs font-medium text-white/90 truncate">
+                {isSuspended
+                  ? "Standby / Suspended"
+                  : stats.camera_ip
+                  ? `RTSP (${stats.camera_ip})`
+                  : "MJPEG Zero-latency"}
+              </span>
+            </div>
 
-          {/* AI Model Pipeline */}
-          <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
-            <span className="text-white/45 text-[8.5px] uppercase truncate">
-              AI PIPELINE
-            </span>
-            <span
-              className={`font-medium text-[10px] ${
-                isSuspended ? "text-amber-300/80" : "text-white/90"
-              }`}
-            >
-              {isSuspended ? "Suspended (0% Compute)" : "YOLO26m + RF-21"}
-            </span>
-          </div>
+            {/* 5. AI Vision Pipeline */}
+            <div className="flex flex-col justify-center">
+              <span className="text-[10px] font-medium text-white/45">
+                AI Vision Pipeline
+              </span>
+              <span className="mt-0.5 text-xs font-medium text-white/90 truncate">
+                {isSuspended ? "Suspended (0% Compute)" : "YOLO26m + RF-21"}
+              </span>
+            </div>
 
-          {/* Operational Uptime */}
-          <div className="flex flex-col justify-center p-1.5 rounded border border-white/[0.04] bg-white/[0.02]">
-            <span className="text-white/45 text-[8.5px] uppercase truncate">
-              SYSTEM UPTIME
-            </span>
-            <span className="font-medium text-emerald-400 text-[10px]">
-              {formatUptime(stats.uptime_seconds)}
-            </span>
+            {/* 6. System Uptime */}
+            <div className="flex flex-col justify-center">
+              <span className="text-[10px] font-medium text-white/45">
+                System Uptime
+              </span>
+              <span className="mt-0.5 text-xs font-mono font-medium text-white/90 truncate">
+                {formatUptime(stats.uptime_seconds)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Quick Actions / Status Footer */}
-      <div className="pt-1.5 mt-2 border-t border-white/[0.08] flex items-center justify-between text-[9px] font-mono text-white/50">
-        <span className="flex items-center gap-1.5">
+      {/* Quick Actions / Status Footer (Steady dot, clean font-sans) */}
+      <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-[10px] font-sans text-white/60">
+        <span className="flex items-center gap-1.5 truncate">
           <span
-            className={`h-1.5 w-1.5 rounded-full ${
+            className={`h-1.5 w-1.5 rounded-full shrink-0 ${
               isSuspended ? "bg-amber-400" : "bg-emerald-400"
             }`}
           />
-          {isSuspended ? "Engine: Standby (Idle)" : "Engine: Nominal (Inference Active)"}
+          <span className="truncate">
+            {isSuspended ? "Engine: Standby (Idle)" : "Engine: Nominal (Active)"}
+          </span>
         </span>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 shrink-0">
           {onToggleAutoStart && (
             <button
+              type="button"
               onClick={onToggleAutoStart}
               title="Remember to auto-start camera directly on dashboard visit"
-              className={`text-[9px] font-mono uppercase tracking-wider transition-colors hover:underline ${
-                autoStartCamera ? "text-cyan-300 font-semibold" : "text-white/40 hover:text-white/70"
-              }`}
+              className="text-[10px] font-sans text-white/50 hover:text-white transition-colors"
             >
-              Auto-Start: {autoStartCamera ? "ON" : "OFF"}
+              Auto-Start:{" "}
+              <span
+                className={`font-medium ${
+                  autoStartCamera ? "text-white" : "text-white/40"
+                }`}
+              >
+                {autoStartCamera ? "ON" : "OFF"}
+              </span>
             </button>
           )}
           {onTogglePower && (
             <button
+              type="button"
               onClick={onTogglePower}
               disabled={isPowerToggling}
-              className={`text-[9px] font-mono uppercase tracking-wider transition-colors hover:underline ${
-                isSuspended
-                  ? "text-emerald-400 hover:text-emerald-300"
-                  : "text-amber-400/80 hover:text-amber-300"
-              }`}
+              className="text-[10px] font-sans font-medium text-white/80 hover:text-white px-2 py-0.5 rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
             >
               {isSuspended ? "Turn On Camera ↗" : "Turn Off Camera"}
             </button>

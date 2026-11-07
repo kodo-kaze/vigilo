@@ -13,36 +13,36 @@ export interface TelemetryMetricTileProps {
 /**
  * TelemetryMetricTile
  *
- * Minimalist bento metric tile with hairline borders,
- * uppercase technical label, bold monospace value, and subtle subtitle.
+ * Clean, modern metric tile with aesthetic typography,
+ * high-contrast value, quiet label, and subtle subtitle.
  */
 export default function TelemetryMetricTile({
   label,
   value,
   unit,
-  unitColor = "text-white/60",
+  unitColor = "text-white/50",
   subtitle,
   valueColor = "text-white",
   className = "",
 }: TelemetryMetricTileProps) {
   return (
-    <div
-      className={`rounded-lg border border-white/[0.06] bg-white/[0.02] p-2 flex flex-col justify-between ${className}`}
-    >
-      <span className="text-[9px] font-mono tracking-wider text-white/50 uppercase truncate">
+    <div className={`p-3 flex flex-col justify-between ${className}`}>
+      <span className="text-[11px] font-sans font-medium text-white/50 truncate">
         {label}
       </span>
-      <div className="my-0.5 flex items-baseline gap-1">
+      <div className="my-1 flex items-baseline gap-1.5">
         <span
-          className={`text-xl sm:text-2xl font-bold font-mono tracking-tight ${valueColor}`}
+          className={`text-2xl font-semibold tracking-tight font-sans ${valueColor}`}
         >
           {value}
         </span>
         {unit && (
-          <span className={`text-[9px] font-mono ${unitColor}`}>{unit}</span>
+          <span className={`text-xs font-sans font-normal ${unitColor}`}>
+            {unit}
+          </span>
         )}
       </div>
-      <span className="text-[8px] font-mono text-white/35 truncate">
+      <span className="text-[10px] font-sans text-white/35 truncate">
         {subtitle}
       </span>
     </div>
