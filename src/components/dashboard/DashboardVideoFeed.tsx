@@ -108,11 +108,11 @@ export default function DashboardVideoFeed({
                 onClick={onTogglePower}
                 disabled={isPowerToggling}
                 size="sm"
-                className="font-mono text-[10px] tracking-wider border-emerald-400/40 text-emerald-300 hover:bg-emerald-950/30"
+                className="font-sans text-xs tracking-tight"
                 iconLeft={
                   <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
                   </span>
                 }
               >
@@ -123,23 +123,35 @@ export default function DashboardVideoFeed({
                 <button
                   type="button"
                   onClick={onOpenSourceModal}
-                  className="pointer-events-auto flex items-center gap-1.5 text-[10.5px] font-mono text-cyan-300/90 hover:text-cyan-200 transition-colors py-1 px-3 rounded border border-cyan-500/20 bg-cyan-950/30 hover:border-cyan-400/50 hover:bg-cyan-950/60"
+                  className="pointer-events-auto flex items-center gap-2 text-xs font-sans text-white/70 hover:text-white transition-colors py-1.5 px-4 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20"
                 >
-                  <span>🌐</span>
-                  <span>Switch Camera Node or Configure IP &amp; Port ↗</span>
+                  <svg
+                    className="h-3.5 w-3.5 text-white/50"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.8}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span>Switch Camera Source ↗</span>
                 </button>
               )}
 
               {onToggleAutoStart && (
                 <label
                   onClick={(e) => e.stopPropagation()}
-                  className="pointer-events-auto flex items-center gap-2 cursor-pointer text-[10px] font-mono text-white/50 hover:text-white/80 select-none transition-colors"
+                  className="pointer-events-auto flex items-center gap-2 cursor-pointer text-xs font-sans text-white/50 hover:text-white/80 select-none transition-colors"
                 >
                   <input
                     type="checkbox"
                     checked={autoStartCamera}
                     onChange={onToggleAutoStart}
-                    className="h-3 w-3 rounded border-white/20 bg-black/60 text-cyan-400 focus:ring-0 cursor-pointer accent-cyan-400"
+                    className="h-3.5 w-3.5 rounded border-white/20 bg-black/60 text-white focus:ring-0 cursor-pointer accent-white"
                   />
                   <span>Remember to auto-start camera when opening dashboard</span>
                 </label>
@@ -246,9 +258,10 @@ export default function DashboardVideoFeed({
 
         {/* Top-Left Floating Overlay HUD */}
         <div className="pointer-events-none absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
-          <LiquidPill size="sm" variant={isSuspended ? "warning" : "default"}>
+          {/* Status Pill */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/50 px-3 py-1.5 backdrop-blur-xl shadow-sm text-xs font-sans">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${
+              className={`h-2 w-2 rounded-full ${
                 isSuspended
                   ? "bg-amber-400"
                   : streamConnected
@@ -258,44 +271,33 @@ export default function DashboardVideoFeed({
                   : "bg-amber-400/80"
               }`}
             />
-            <span className="font-semibold uppercase tracking-wider text-white/90">
-              Live Video Footage
-            </span>
-            <span className="text-white/20 select-none">/</span>
-            <span
-              className={`text-[10px] font-mono ${
-                isSuspended
-                  ? "text-amber-300"
-                  : isAlert
-                  ? "text-red-300"
-                  : streamConnected
-                  ? "text-cyan-300/90"
-                  : "text-amber-300/90"
-              }`}
-            >
+            <span className="font-medium text-white/95">Live Video</span>
+            <span className="text-white/20 select-none">•</span>
+            <span className="text-[11px] font-normal text-white/50">
               {isSuspended
-                ? "Suspended"
+                ? "Standby"
                 : streamConnected
                 ? isAlert
                   ? "Surge Alert"
-                  : "AI Active"
+                  : "Active"
                 : "Connecting"}
             </span>
-          </LiquidPill>
+          </div>
 
           {/* Camera Node / Source Selector Quick Switch */}
           {onOpenSourceModal && (
             <button
+              type="button"
               onClick={onOpenSourceModal}
-              title="Click to switch optical camera node or configure IP & Port"
-              className="pointer-events-auto flex items-center gap-1.5 rounded-md border border-white/[0.1] bg-black/60 px-2.5 py-1 text-[10px] font-mono tracking-wider text-cyan-300 hover:border-cyan-400/50 hover:bg-cyan-950/40 hover:text-cyan-200 backdrop-blur-md transition-all duration-200 active:scale-95 shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+              title="Switch camera node or configure IP & Port"
+              className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/50 hover:bg-white/[0.08] hover:border-white/20 px-3 py-1.5 text-xs font-sans font-medium text-white/90 backdrop-blur-xl transition-all duration-200 active:scale-95 shadow-sm"
             >
               <svg
-                className="h-3 w-3 text-cyan-400 shrink-0"
+                className="h-3.5 w-3.5 text-white/60 shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={2}
+                strokeWidth={1.8}
               >
                 <path
                   strokeLinecap="round"
@@ -303,31 +305,34 @@ export default function DashboardVideoFeed({
                   d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
                 />
               </svg>
-              <span className="font-medium truncate max-w-[130px] sm:max-w-[200px]">
-                {stats.camera_ip ? `${stats.camera_ip}:${stats.camera_port}` : stats.camera_source?.split("(")[0]?.trim() || "Select Camera"}
+              <span className="truncate max-w-[140px] sm:max-w-[200px]">
+                {stats.camera_ip
+                  ? `${stats.camera_ip}:${stats.camera_port}`
+                  : stats.camera_source?.split("(")[0]?.trim() || "Select Camera"}
               </span>
-              <span className="text-white/40">▾</span>
+              <span className="text-white/35 text-[10px]">▾</span>
             </button>
           )}
 
           {/* Quick Camera On/Off Power Action */}
           {onTogglePower && (
             <button
+              type="button"
               onClick={onTogglePower}
               disabled={isPowerToggling}
               title={
                 isSuspended
                   ? "Click to activate camera and resume AI inference"
-                  : "Click to turn off camera and suspend AI compute"
+                  : "Click to turn off camera and suspend compute"
               }
-              className={`pointer-events-auto flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[10px] font-mono tracking-wider backdrop-blur-md transition-all duration-200 active:scale-95 ${
+              className={`pointer-events-auto inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-sans font-medium backdrop-blur-xl transition-all duration-200 active:scale-95 shadow-sm ${
                 isSuspended
-                  ? "border-emerald-500/30 bg-emerald-950/60 text-emerald-300 hover:bg-emerald-900/60 shadow-[0_0_12px_rgba(16,185,129,0.3)]"
-                  : "border-white/[0.08] bg-black/60 text-white/70 hover:border-amber-400/40 hover:text-amber-300 hover:bg-amber-950/30"
+                  ? "border-white/15 bg-white/[0.08] text-white hover:bg-white/[0.14] hover:border-white/25"
+                  : "border-white/[0.08] bg-black/50 text-white/70 hover:bg-white/[0.06] hover:border-white/20 hover:text-white"
               }`}
             >
               <svg
-                className={`h-3 w-3 ${isSuspended ? "text-emerald-400" : "text-white/60"}`}
+                className="h-3 w-3 text-white/70"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -339,41 +344,38 @@ export default function DashboardVideoFeed({
                   d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M12 3v9"
                 />
               </svg>
-              <span>{isSuspended ? "TURN ON CAMERA" : "TURN OFF CAMERA"}</span>
+              <span>{isSuspended ? "Turn On" : "Turn Off"}</span>
             </button>
           )}
         </div>
 
         {/* Top-Right Floating Overlay HUD */}
         <div className="pointer-events-none absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 flex items-center gap-2 select-none">
-          <LiquidPill size="sm" variant="default" className="text-white/70">
-            <span className="text-white/50">{stats.resolution || (isSuspended ? "Suspended" : "1280x720")}</span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/50 px-3 py-1.5 backdrop-blur-xl shadow-sm text-xs font-sans">
+            <span className="text-white/50">{stats.resolution || (isSuspended ? "Ready" : "1280×720")}</span>
             <span className="text-white/20 select-none">•</span>
-            <span className={isSuspended ? "text-amber-400/90 font-medium" : "text-emerald-400/90 font-medium"}>
-              {isSuspended ? "Standby (0 FPS)" : stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Ingestion"}
+            <span className="font-medium text-white/80">
+              {isSuspended ? "Standby" : stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Feed"}
             </span>
-          </LiquidPill>
+          </div>
         </div>
 
         {/* Bottom-Left Floating Overlay HUD */}
         <div className="pointer-events-none absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
-          <LiquidPill size="xs" variant="default" className="text-white/70">
-            ZONE: {stats.zone?.split("•")[0]?.trim() || "ZONE 01"}
-          </LiquidPill>
-          <LiquidPill
-            size="xs"
-            variant={isSuspended ? "warning" : isAlert ? "alert" : "success"}
-            className="font-medium"
-          >
-            {stats.status}
-          </LiquidPill>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-black/50 px-2.5 py-1 backdrop-blur-xl text-[11px] font-sans text-white/70 shadow-sm">
+            <span className="text-white/40">Zone:</span>
+            <span>{stats.zone?.split("•")[0]?.trim() || "Main Zone"}</span>
+          </div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-black/50 px-2.5 py-1 backdrop-blur-xl text-[11px] font-sans text-white/70 shadow-sm">
+            <span>{stats.status}</span>
+          </div>
         </div>
 
         {/* Bottom-Right Floating Overlay HUD */}
         <div className="pointer-events-none absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 z-20 select-none">
-          <LiquidPill size="xs" variant="default" className="text-cyan-300/80">
-            FPS: {isSuspended ? "0.0" : stats.fps.toFixed(1)}
-          </LiquidPill>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-black/50 px-2.5 py-1 backdrop-blur-xl text-[11px] font-mono text-white/70 shadow-sm">
+            <span>FPS: {isSuspended ? "0.0" : stats.fps.toFixed(1)}</span>
+          </div>
         </div>
       </div>
     </LiquidGlassCard>
