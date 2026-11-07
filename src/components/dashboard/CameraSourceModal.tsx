@@ -54,7 +54,7 @@ export default function CameraSourceModal({
   const [facilityZone, setFacilityZone] = useState<string>(
     stats.zone || "Terminal Concourse 04 • Zone B"
   );
-  const [showAuth, setShowAuth] = useState<boolean>(false);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -132,9 +132,10 @@ export default function CameraSourceModal({
     zone?: string;
   }) => {
     try {
+      const displayName = cam.name || `Camera ${cam.ip}:${cam.port}`;
       const newEntry: SavedCamera = {
         id: `${cam.ip}:${cam.port}`,
-        name: cam.name || `Camera (${cam.ip}:${cam.port})`,
+        name: displayName,
         ip: cam.ip,
         port: cam.port,
         protocol: cam.protocol,
@@ -179,7 +180,7 @@ export default function CameraSourceModal({
   // Test TCP socket reachability for IP & Port
   const handleTestConnection = async () => {
     if (!ip.trim()) {
-      setStatusMessage({ type: "error", text: "Please enter a valid IP address first." });
+      setStatusMessage({ type: "error", text: "Please enter an IP address or hostname first." });
       return;
     }
     const parsedPort = parseInt(port.trim(), 10);
@@ -210,7 +211,7 @@ export default function CameraSourceModal({
           ip: ip.trim(),
           port: parsedPort,
           latency_ms: 0,
-          message: "Backend returned an error while testing port.",
+          message: "Unable to reach camera on this port.",
         });
       }
     } catch (e: unknown) {
@@ -220,7 +221,7 @@ export default function CameraSourceModal({
         ip: ip.trim(),
         port: parsedPort,
         latency_ms: 0,
-        message: `Failed to reach backend: ${err.message}`,
+        message: `Connection error: ${err.message}`,
       });
     } finally {
       setIsTesting(false);
@@ -258,7 +259,7 @@ export default function CameraSourceModal({
         path: streamPath.trim(),
         username: username.trim() || undefined,
         password: password.trim() || undefined,
-        name: cameraName.trim() || `IP Camera (${ip.trim()}:${parsedPort})`,
+        name: cameraName.trim() || `Camera (${ip.trim()}:${parsedPort})`,
         zone: facilityZone.trim() || undefined,
         auto_resume: true,
       };
@@ -287,7 +288,6 @@ export default function CameraSourceModal({
 
         onCameraSwitched(data);
 
-        // Auto close after brief success indication
         setTimeout(() => {
           onClose();
         }, 800);
@@ -348,7 +348,7 @@ export default function CameraSourceModal({
         }
         setStatusMessage({
           type: "success",
-          text: `Switched optical stream to ${preset.name}`,
+          text: `Switched stream to ${preset.name}`,
         });
         onCameraSwitched(data);
         setTimeout(() => {
@@ -378,7 +378,7 @@ export default function CameraSourceModal({
     if (!customUri.trim()) {
       setStatusMessage({
         type: "error",
-        text: "Please enter a valid RTSP/HTTP URL or file path.",
+        text: "Please enter a valid stream URL or video file path.",
       });
       return;
     }
@@ -411,7 +411,7 @@ export default function CameraSourceModal({
         const err = await res.json().catch(() => ({}));
         setStatusMessage({
           type: "error",
-          text: err.error || "Failed to switch source.",
+          text: err.error || "Failed to switch stream.",
         });
       }
     } catch (e: unknown) {
@@ -453,14 +453,14 @@ export default function CameraSourceModal({
       >
         {/* Top Header Bar */}
         <div className="flex items-center justify-between border-b border-white/[0.08] px-5 sm:px-6 py-4 bg-white/[0.015]">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 shadow-[0_0_18px_rgba(6,182,212,0.25)]">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.22)]">
               <svg
-                className="h-4 w-4"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={2}
+                strokeWidth={1.8}
               >
                 <path
                   strokeLinecap="round"
@@ -470,20 +470,20 @@ export default function CameraSourceModal({
               </svg>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-cyan-400 font-semibold">
-                  Optical Node Switcher
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10.5px] font-mono uppercase tracking-[0.18em] text-cyan-400 font-semibold">
+                  Video Feed Source
                 </span>
                 <span className="text-white/20">•</span>
-                <span className="text-[9px] font-mono text-white/40 uppercase">
-                  Runtime Ingestion
+                <span className="text-[10px] font-sans text-white/40">
+                  Live Vision Ingestion
                 </span>
               </div>
               <h2
                 id="camera-modal-title"
                 className="text-base sm:text-lg font-semibold tracking-tight text-white/95 font-sans"
               >
-                Select Camera Feed &amp; Network Port
+                Select Camera Source
               </h2>
             </div>
           </div>
@@ -498,17 +498,17 @@ export default function CameraSourceModal({
           </button>
         </div>
 
-        {/* Current Active Source Pill Strip */}
-        <div className="flex items-center justify-between px-5 sm:px-6 py-2.5 border-b border-white/[0.06] bg-black/30 backdrop-blur-sm text-[11px] font-mono">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="text-white/40 uppercase text-[10px] tracking-wider shrink-0">
-              Active Sensor:
+        {/* Current Active Source Status Strip */}
+        <div className="flex items-center justify-between px-5 sm:px-6 py-2.5 border-b border-white/[0.06] bg-black/30 backdrop-blur-sm text-xs font-sans">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-white/45 text-[11px] font-medium shrink-0">
+              Active Source:
             </span>
-            <span className="text-white/90 font-medium truncate">
-              {stats.camera_source || "Integrated (Index 0)"}
+            <span className="text-white/90 font-medium truncate text-xs">
+              {stats.camera_source || "Integrated Camera (Device 0)"}
             </span>
             {stats.camera_ip && (
-              <LiquidPill size="xs" variant="cyan">
+              <LiquidPill size="xs" variant="cyan" textClassName="text-[10px] font-mono">
                 {stats.camera_ip}:{stats.camera_port}
               </LiquidPill>
             )}
@@ -523,29 +523,26 @@ export default function CameraSourceModal({
                 }`}
               />
             }
+            textClassName="text-[10px] font-mono font-medium"
           >
-            {stats.camera_connected ? "STREAM LIVE" : "STANDBY"}
+            {stats.camera_connected ? "LIVE FEED" : "STANDBY"}
           </LiquidPill>
         </div>
 
-        {/* Modern Capsule Tab Selector */}
-        <div className="px-5 sm:px-6 pt-3 pb-2 border-b border-white/[0.06] bg-white/[0.01]">
+        {/* Segmented Liquid Glass Navigation Tabs */}
+        <div className="px-5 sm:px-6 pt-3.5 pb-2 border-b border-white/[0.06] bg-white/[0.01]">
           <div className="flex items-center p-1 rounded-xl border border-white/[0.06] bg-black/40 backdrop-blur-md gap-1">
             {[
               {
                 id: "ip_port" as const,
-                label: "Network IP & Port",
+                label: "Network Stream",
+                badge: "IP & Port",
                 icon: (
-                  <svg
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={1.8}
                       d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
                     />
                   </svg>
@@ -553,18 +550,14 @@ export default function CameraSourceModal({
               },
               {
                 id: "presets" as const,
-                label: "Interfaces & Presets",
+                label: "Cameras & Presets",
+                badge: "Local & CCTV",
                 icon: (
-                  <svg
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={1.8}
                       d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
                     />
                   </svg>
@@ -572,18 +565,14 @@ export default function CameraSourceModal({
               },
               {
                 id: "custom_uri" as const,
-                label: "Direct URI / File",
+                label: "Custom URI / File",
+                badge: "Direct Link",
                 icon: (
-                  <svg
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={1.8}
                       d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
                     />
                   </svg>
@@ -599,15 +588,14 @@ export default function CameraSourceModal({
                     setActiveTab(tab.id);
                     setStatusMessage(null);
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-mono font-medium transition-all duration-200 select-none ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-sans font-medium transition-all duration-200 select-none ${
                     isActive
-                      ? "bg-white/[0.08] text-cyan-300 border border-cyan-400/30 shadow-[0_0_12px_rgba(6,182,212,0.18)]"
-                      : "text-white/50 hover:text-white/80 hover:bg-white/[0.02] border border-transparent"
+                      ? "bg-white/[0.08] text-cyan-300 border border-cyan-400/30 shadow-[0_0_14px_rgba(6,182,212,0.18)]"
+                      : "text-white/55 hover:text-white hover:bg-white/[0.02] border border-transparent"
                   }`}
                 >
                   {tab.icon}
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
+                  <span className="font-medium tracking-tight">{tab.label}</span>
                 </button>
               );
             })}
@@ -619,7 +607,7 @@ export default function CameraSourceModal({
           {/* Status Message Banner */}
           {statusMessage && (
             <div
-              className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between backdrop-blur-md transition-all ${
+              className={`p-3.5 rounded-xl border text-xs font-sans flex items-center justify-between backdrop-blur-md transition-all ${
                 statusMessage.type === "success"
                   ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
                   : "border-red-500/40 bg-red-950/40 text-red-300 shadow-[0_0_20px_rgba(239,68,68,0.15)]"
@@ -644,12 +632,18 @@ export default function CameraSourceModal({
           {/* TAB 1: CONNECT BY IP & PORT */}
           {activeTab === "ip_port" && (
             <form onSubmit={handleSwitchByIpPort} className="space-y-4">
-              {/* Protocol Selector */}
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-white/60 mb-2 select-none">
-                  Stream Protocol
-                </label>
-                <div className="grid grid-cols-3 gap-2">
+              {/* Protocol Segmented Pill */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xs font-medium text-white/90 font-sans tracking-tight">
+                    Network Protocol
+                  </h3>
+                  <p className="text-[11px] text-white/40 font-sans mt-0.5">
+                    Select transmission protocol for your camera or phone stream
+                  </p>
+                </div>
+
+                <div className="inline-flex p-1 rounded-xl border border-white/[0.08] bg-black/40 backdrop-blur-md gap-1">
                   {(["rtsp", "http", "https"] as const).map((proto) => {
                     const isSelected = protocol === proto;
                     return (
@@ -662,43 +656,38 @@ export default function CameraSourceModal({
                             setPort("554");
                           if (proto === "http" && port === "554") setPort("8080");
                         }}
-                        className={`py-2 px-3 rounded-xl border text-xs font-mono font-medium transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 select-none ${
+                        className={`px-3.5 py-1 rounded-lg text-xs font-mono font-medium transition-all select-none ${
                           isSelected
-                            ? "border-cyan-400/50 bg-cyan-950/40 text-cyan-300 shadow-[0_0_16px_rgba(6,182,212,0.2)] ring-1 ring-cyan-400/30"
-                            : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/20 hover:bg-white/[0.04] hover:text-white"
+                            ? "bg-white/[0.1] text-cyan-300 shadow-sm border border-cyan-400/40"
+                            : "text-white/50 hover:text-white"
                         }`}
                       >
-                        <span className="uppercase font-semibold">{proto}</span>
-                        <span className="text-[9px] text-white/40">
-                          {proto === "rtsp"
-                            ? "(Default CCTV)"
-                            : proto === "http"
-                            ? "(Web/MJPEG)"
-                            : "(TLS)"}
-                        </span>
+                        {proto.toUpperCase()}
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* IP Address and Port Inputs */}
+              {/* IP Address and Port Inputs in a sleek side-by-side row */}
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                 <div className="sm:col-span-8">
                   <GlassInput
-                    label="Camera IP Address or Hostname"
+                    label="Camera Address"
+                    labelExtra="Wi-Fi IP or Local Hostname"
                     requiredIndicator
                     required
                     type="text"
                     value={ip}
                     onChange={(e) => setIp(e.target.value)}
-                    placeholder="e.g. 192.168.1.100 or cam01.local"
+                    placeholder="e.g. 192.168.29.193 or cam01.local"
                   />
                 </div>
 
                 <div className="sm:col-span-4">
                   <GlassInput
                     label="Port"
+                    labelExtra={protocol === "rtsp" ? "Default: 554" : "Default: 8080"}
                     requiredIndicator
                     required
                     type="number"
@@ -711,99 +700,89 @@ export default function CameraSourceModal({
                 </div>
               </div>
 
-              {/* Stream Path & Facility Zone */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <GlassInput
-                  label="Stream Path / Channel (Optional)"
-                  type="text"
-                  value={streamPath}
-                  onChange={(e) => setStreamPath(e.target.value)}
-                  placeholder="/live or /h264 or /video"
-                />
+              {/* Live Preview Pill */}
+              {constructedUri && (
+                <div className="rounded-xl border border-white/[0.08] bg-black/40 backdrop-blur-sm px-3.5 py-2.5 flex items-center justify-between gap-2 text-xs font-mono">
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="text-white/40 text-[10.5px] uppercase tracking-wider shrink-0 font-sans">
+                      Stream Preview:
+                    </span>
+                    <span className="text-cyan-300 truncate select-all">{constructedUri}</span>
+                  </div>
+                  <span className="text-[10px] text-white/30 shrink-0 font-sans">Auto-Generated</span>
+                </div>
+              )}
 
-                <GlassInput
-                  label="Zone Location Label"
-                  type="text"
-                  value={facilityZone}
-                  onChange={(e) => setFacilityZone(e.target.value)}
-                  placeholder="e.g. Concourse A • Turnstiles"
-                />
-              </div>
-
-              {/* Optional Camera Name */}
-              <GlassInput
-                label="Camera Display Name (Optional)"
-                type="text"
-                value={cameraName}
-                onChange={(e) => setCameraName(e.target.value)}
-                placeholder="e.g. South Transit Hub Camera 04"
-              />
-
-              {/* Camera Authentication Collapsible */}
+              {/* Collapsible Advanced Stream Configuration */}
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.015] p-3 transition-colors">
                 <button
                   type="button"
-                  onClick={() => setShowAuth((prev) => !prev)}
-                  className="flex items-center justify-between w-full text-[10.5px] font-mono text-white/70 hover:text-white transition-colors"
+                  onClick={() => setShowAdvanced((prev) => !prev)}
+                  className="flex items-center justify-between w-full text-xs font-sans font-medium text-white/70 hover:text-white transition-colors select-none"
                 >
                   <span className="flex items-center gap-2">
-                    <svg
-                      className="h-3.5 w-3.5 text-cyan-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                    <span>CCTV Node Authentication (Optional)</span>
+                    <span className="text-cyan-400">⚙</span>
+                    <span>Optional Stream Details &amp; Authentication</span>
                   </span>
-                  <span className="text-white/40 text-[10px]">
-                    {showAuth ? "▲ Hide" : "▼ Show Credentials"}
+                  <span className="text-white/40 text-[11px]">
+                    {showAdvanced ? "Hide options ▲" : "Configure path & login ▼"}
                   </span>
                 </button>
 
-                {showAuth && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-white/[0.06]">
+                {showAdvanced && (
+                  <div className="space-y-3 mt-3 pt-3 border-t border-white/[0.06] animate-in fade-in duration-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <GlassInput
+                        label="Stream Mount Path"
+                        type="text"
+                        value={streamPath}
+                        onChange={(e) => setStreamPath(e.target.value)}
+                        placeholder="/live or /video or /h264"
+                        helperText="Channel or stream path specified by your camera/app"
+                      />
+
+                      <GlassInput
+                        label="Location Tag"
+                        type="text"
+                        value={facilityZone}
+                        onChange={(e) => setFacilityZone(e.target.value)}
+                        placeholder="e.g. Concourse A • Turnstiles"
+                        helperText="Display zone for dashboard alerts and analytics"
+                      />
+                    </div>
+
                     <GlassInput
-                      label="Username"
+                      label="Custom Display Name"
                       type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder="admin"
+                      value={cameraName}
+                      onChange={(e) => setCameraName(e.target.value)}
+                      placeholder="e.g. Main Entrance Gate Camera"
                     />
-                    <GlassInput
-                      label="Password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                    />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <GlassInput
+                        label="Username"
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="admin"
+                      />
+                      <GlassInput
+                        label="Password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Resolved Preview Card */}
-              {constructedUri && (
-                <div className="rounded-xl border border-white/[0.08] bg-black/40 backdrop-blur-sm p-3 font-mono text-xs">
-                  <div className="text-white/40 uppercase text-[9px] tracking-wider mb-1 flex items-center justify-between">
-                    <span>Ingestion Stream URI</span>
-                    <span className="text-cyan-400/80">Active Syntax Preview</span>
-                  </div>
-                  <div className="text-cyan-300 break-all select-all font-mono">
-                    {constructedUri}
-                  </div>
-                </div>
-              )}
-
               {/* Test Reachability Result */}
               {testResult && (
                 <div
-                  className={`p-3 rounded-xl border text-xs font-mono flex items-center gap-2.5 backdrop-blur-sm ${
+                  className={`p-3 rounded-xl border text-xs font-sans flex items-center gap-2.5 backdrop-blur-sm ${
                     testResult.reachable
                       ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300"
                       : "border-amber-500/40 bg-amber-950/30 text-amber-300"
@@ -826,7 +805,7 @@ export default function CameraSourceModal({
                   disabled={isTesting || !ip.trim()}
                   size="sm"
                   variant="subtle"
-                  className="font-mono text-xs uppercase tracking-wider"
+                  className="font-sans text-xs tracking-tight"
                   iconLeft={
                     isTesting ? (
                       <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
@@ -835,7 +814,7 @@ export default function CameraSourceModal({
                     )
                   }
                 >
-                  {isTesting ? "Testing Port..." : "Test IP & Port"}
+                  {isTesting ? "Testing Port..." : "Test Connection"}
                 </LiquidGlassButton>
 
                 <LiquidGlassButton
@@ -843,7 +822,7 @@ export default function CameraSourceModal({
                   disabled={isSwitching || !ip.trim()}
                   size="sm"
                   variant="cyan"
-                  className="font-mono text-xs uppercase tracking-wider"
+                  className="font-sans text-xs tracking-tight font-medium"
                   iconRight={
                     isSwitching ? (
                       <span className="h-3 w-3 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
@@ -852,36 +831,38 @@ export default function CameraSourceModal({
                     )
                   }
                 >
-                  {isSwitching ? "CONNECTING SENSOR..." : "CONNECT & STREAM"}
+                  {isSwitching ? "CONNECTING FEED..." : "CONNECT & STREAM"}
                 </LiquidGlassButton>
               </div>
 
               {/* Saved / Recent IP Cameras */}
               {savedCameras.length > 0 && (
                 <div className="pt-3 border-t border-white/[0.08]">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-white/50 mb-2 flex items-center justify-between">
-                    <span>Recent IP Cameras</span>
-                    <span className="text-white/30 text-[9px]">Click to auto-fill</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-white/70 font-sans tracking-tight">
+                      Recent Streams
+                    </span>
+                    <span className="text-white/40 text-[11px] font-sans">Click to quick-connect</span>
                   </div>
                   <div className="space-y-1.5">
                     {savedCameras.map((cam) => (
                       <div
                         key={cam.id}
                         onClick={() => handleLoadSavedCamera(cam)}
-                        className="group flex items-center justify-between p-2.5 rounded-xl border border-white/[0.06] bg-white/[0.015] hover:border-cyan-500/40 hover:bg-white/[0.04] transition-all cursor-pointer font-mono text-[11px]"
+                        className="group flex items-center justify-between p-2.5 rounded-xl border border-white/[0.06] bg-white/[0.015] hover:border-cyan-500/40 hover:bg-white/[0.04] transition-all cursor-pointer text-xs font-sans"
                       >
                         <div className="flex items-center gap-2.5 truncate">
                           <span className="text-cyan-400">🌐</span>
-                          <span className="text-white/90 group-hover:text-cyan-300 font-medium truncate">
-                            {cam.name}
+                          <span className="text-white/95 group-hover:text-cyan-300 font-medium truncate">
+                            {cam.name || `${cam.ip}:${cam.port}`}
                           </span>
-                          <span className="text-[10px] text-white/40 shrink-0">
+                          <span className="text-[11px] font-mono text-white/40 shrink-0">
                             ({cam.ip}:{cam.port})
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-2.5 shrink-0">
                           {cam.zone && (
-                            <span className="text-[9px] uppercase text-white/40 hidden sm:inline">
+                            <span className="text-[10px] uppercase font-mono text-white/40 hidden sm:inline">
                               {cam.zone}
                             </span>
                           )}
@@ -902,33 +883,37 @@ export default function CameraSourceModal({
             </form>
           )}
 
-          {/* TAB 2: INTERFACES & PRESETS */}
+          {/* TAB 2: CAMERAS & PRESETS */}
           {activeTab === "presets" && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {/* Local Hardware Interfaces */}
               <div>
-                <div className="text-[10px] font-mono uppercase tracking-wider text-white/60 mb-2 flex items-center gap-1.5 select-none">
-                  <span>Local Hardware Sensors</span>
-                  <span className="text-white/30">(Webcams &amp; Capture Cards)</span>
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="text-xs font-medium text-white/90 font-sans tracking-tight">
+                    Local Optical Sensors
+                  </h3>
+                  <span className="text-[11px] text-white/40 font-sans">
+                    Connected Webcams &amp; Capture Devices
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {(
                     sourcesData?.interfaces || [
                       {
                         id: "webcam-0",
-                        name: "Integrated HD Camera (Index 0)",
+                        name: "Integrated HD Camera",
                         type: "webcam",
                         source: "0",
-                        zone: "Local Sensor • Main Desk",
-                        description: "Primary built-in webcam index 0",
+                        zone: "Built-in Sensor • Main Desk",
+                        description: "System default optical sensor",
                       },
                       {
                         id: "webcam-1",
-                        name: "External USB Camera (Index 1)",
+                        name: "External USB Camera",
                         type: "webcam",
                         source: "1",
                         zone: "Auxiliary Ingest • Zone External",
-                        description: "Secondary USB peripheral optical ingestion",
+                        description: "USB peripheral optical device",
                       },
                     ]
                   ).map((item) => {
@@ -939,12 +924,11 @@ export default function CameraSourceModal({
                       <CameraSourceNodeCard
                         key={item.id}
                         name={item.name}
-                        description={item.description || item.zone}
-                        badgeLeft={`Device Index ${item.source}`}
-                        badgeRight={isCurrent ? "Active Sensor" : undefined}
+                        description={item.zone || item.description}
+                        badge={`Device #${item.source}`}
+                        deviceType="webcam"
                         isCurrent={isCurrent}
                         isLoading={isSwitching}
-                        actionLabel="Switch to Device"
                         onSelect={() => handleSelectPreset(item)}
                       />
                     );
@@ -954,9 +938,13 @@ export default function CameraSourceModal({
 
               {/* Pre-configured CCTV Nodes */}
               <div className="pt-2 border-t border-white/[0.08]">
-                <div className="text-[10px] font-mono uppercase tracking-wider text-white/60 mb-2 flex items-center justify-between select-none">
-                  <span>Pre-Configured CCTV Camera Nodes</span>
-                  <span className="text-white/30 text-[9px]">RTSP / HTTP Network Nodes</span>
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="text-xs font-medium text-white/90 font-sans tracking-tight">
+                    Facility CCTV Nodes
+                  </h3>
+                  <span className="text-[11px] text-white/40 font-sans">
+                    Pre-Configured Network Surveillance
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {(
@@ -970,7 +958,7 @@ export default function CameraSourceModal({
                         protocol: "rtsp",
                         path: "/live",
                         source: "rtsp://192.168.1.101:554/live",
-                        zone: "Terminal Concourse 04 • Zone A",
+                        zone: "Terminal 04 • Zone A",
                       },
                       {
                         id: "concourse-b",
@@ -981,7 +969,7 @@ export default function CameraSourceModal({
                         protocol: "rtsp",
                         path: "/live",
                         source: "rtsp://192.168.1.102:554/live",
-                        zone: "Terminal Concourse 04 • Zone B",
+                        zone: "Terminal 04 • Zone B",
                       },
                       {
                         id: "platform-3",
@@ -1003,7 +991,7 @@ export default function CameraSourceModal({
                         protocol: "http",
                         path: "/video",
                         source: "http://192.168.1.104:8080/video",
-                        zone: "North Terminal • Security Screening",
+                        zone: "North Terminal • Screening",
                       },
                     ]
                   ).map((preset) => {
@@ -1015,11 +1003,10 @@ export default function CameraSourceModal({
                         key={preset.id}
                         name={preset.name}
                         description={preset.zone}
-                        badgeLeft={`${preset.ip}:${preset.port}`}
-                        badgeRight={(preset.protocol || "rtsp").toUpperCase()}
+                        badge={`${(preset.protocol || "rtsp").toUpperCase()} • ${preset.port}`}
+                        deviceType="cctv"
                         isCurrent={isCurrent}
                         isLoading={isSwitching}
-                        actionLabel="Switch to Node"
                         onSelect={() => handleSelectPreset(preset)}
                       />
                     );
@@ -1032,19 +1019,41 @@ export default function CameraSourceModal({
           {/* TAB 3: DIRECT URI OR FILE */}
           {activeTab === "custom_uri" && (
             <form onSubmit={handleSwitchByUri} className="space-y-4">
-              <GlassInput
-                label="Stream URI / Video File Path"
-                requiredIndicator
-                required
-                type="text"
-                value={customUri}
-                onChange={(e) => setCustomUri(e.target.value)}
-                placeholder="rtsp://192.168.1.50:554/live or /path/to/cctv_test.mp4"
-                helperText="Accepts complete RTSP stream links, HTTP MJPEG endpoints, or local looping video file paths."
-              />
+              <div>
+                <GlassInput
+                  label="Stream URL or Video File Path"
+                  requiredIndicator
+                  required
+                  type="text"
+                  value={customUri}
+                  onChange={(e) => setCustomUri(e.target.value)}
+                  placeholder="rtsp://192.168.1.50:554/live or /path/to/cctv_test.mp4"
+                  helperText="Supports live RTSP links, HTTP MJPEG endpoints, or local looping video file paths."
+                />
+
+                {/* Quick Template Chips */}
+                <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                  <span className="text-[11px] text-white/40 font-sans">Templates:</span>
+                  <button
+                    type="button"
+                    onClick={() => setCustomUri("rtsp://192.168.1.100:554/live")}
+                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                  >
+                    + RTSP Stream
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCustomUri("http://192.168.1.45:8080/video")}
+                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                  >
+                    + Phone IP Webcam
+                  </button>
+                </div>
+              </div>
 
               <GlassInput
                 label="Facility Zone Label"
+                labelExtra="Optional"
                 type="text"
                 value={facilityZone}
                 onChange={(e) => setFacilityZone(e.target.value)}
@@ -1057,7 +1066,7 @@ export default function CameraSourceModal({
                   disabled={isSwitching || !customUri.trim()}
                   size="sm"
                   variant="cyan"
-                  className="font-mono text-xs uppercase tracking-wider"
+                  className="font-sans text-xs tracking-tight font-medium"
                   iconRight={
                     isSwitching ? (
                       <span className="h-3 w-3 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
@@ -1066,7 +1075,7 @@ export default function CameraSourceModal({
                     )
                   }
                 >
-                  {isSwitching ? "CONNECTING..." : "INGEST STREAM"}
+                  {isSwitching ? "CONNECTING STREAM..." : "CONNECT STREAM"}
                 </LiquidGlassButton>
               </div>
             </form>
@@ -1074,9 +1083,9 @@ export default function CameraSourceModal({
         </div>
 
         {/* Footer info */}
-        <div className="border-t border-white/[0.08] px-5 sm:px-6 py-2.5 bg-black/30 backdrop-blur-sm flex items-center justify-between text-[9.5px] font-mono text-white/40 select-none">
-          <span>Target Backend: {backendUrl}</span>
-          <span className="text-cyan-400/70">Zero-Latency Ingestion Pipeline</span>
+        <div className="border-t border-white/[0.08] px-5 sm:px-6 py-2.5 bg-black/30 backdrop-blur-sm flex items-center justify-between text-[11px] font-sans text-white/40 select-none">
+          <span>Backend Target: {backendUrl}</span>
+          <span className="text-cyan-400/70 font-mono text-[10px]">Active Vision Ingestion</span>
         </div>
       </LiquidGlassCard>
     </div>

@@ -4,7 +4,8 @@ import React, { forwardRef } from "react";
 
 export interface GlassInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  label?: React.ReactNode;
+  labelExtra?: React.ReactNode;
   requiredIndicator?: boolean;
   helperText?: string;
   iconLeft?: React.ReactNode;
@@ -16,13 +17,14 @@ export interface GlassInputProps
  * GlassInput
  *
  * Modern ultra-translucent liquid glass input field.
- * Features smoked glass backing, minimal hairline silver border,
- * subtle cyan glow on focus, and monospace typography matching Vigilo aesthetics.
+ * Features smoked obsidian glass backing, minimal hairline silver border,
+ * subtle cyan glow on focus, and clean high-legibility typography.
  */
 const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
   (
     {
       label,
+      labelExtra,
       requiredIndicator = false,
       helperText,
       iconLeft,
@@ -35,18 +37,28 @@ const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
     ref
   ) => {
     const inputId =
-      id || (label ? `input-${label.toLowerCase().replace(/[^a-z0-9]/g, "-")}` : undefined);
+      id ||
+      (typeof label === "string"
+        ? `input-${label.toLowerCase().replace(/[^a-z0-9]/g, "-")}`
+        : undefined);
 
     return (
       <div className={`flex flex-col gap-1.5 ${containerClassName}`}>
         {label && (
-          <label
-            htmlFor={inputId}
-            className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-white/60 select-none"
-          >
-            <span>{label}</span>
-            {requiredIndicator && <span className="text-cyan-400 font-bold">*</span>}
-          </label>
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor={inputId}
+              className="flex items-center gap-1.5 text-xs font-medium text-white/85 font-sans tracking-tight select-none"
+            >
+              <span>{label}</span>
+              {requiredIndicator && <span className="text-cyan-400 font-bold">*</span>}
+            </label>
+            {labelExtra && (
+              <span className="text-[11px] text-white/40 font-sans font-normal">
+                {labelExtra}
+              </span>
+            )}
+          </div>
         )}
         <div className="relative flex items-center">
           {iconLeft && (
@@ -57,7 +69,7 @@ const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
           <input
             id={inputId}
             ref={ref}
-            className={`w-full rounded-xl border border-white/[0.08] bg-white/[0.025] px-3.5 py-2 text-xs font-mono text-white placeholder-white/25 backdrop-blur-md transition-all duration-200 hover:border-white/15 hover:bg-white/[0.04] focus:border-cyan-400/60 focus:bg-white/[0.06] focus:outline-none focus:ring-1 focus:ring-cyan-400/30 disabled:opacity-50 disabled:cursor-not-allowed ${
+            className={`w-full rounded-xl border border-white/[0.08] bg-white/[0.025] px-3.5 py-2.5 text-xs font-mono text-white placeholder-white/25 backdrop-blur-md transition-all duration-200 hover:border-white/15 hover:bg-white/[0.04] focus:border-cyan-400/60 focus:bg-white/[0.05] focus:outline-none focus:ring-1 focus:ring-cyan-400/30 disabled:opacity-50 disabled:cursor-not-allowed ${
               iconLeft ? "pl-9" : ""
             } ${iconRight ? "pr-9" : ""} ${className}`}
             {...props}
@@ -69,7 +81,7 @@ const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
           )}
         </div>
         {helperText && (
-          <span className="text-[10px] font-mono text-white/40 leading-snug">
+          <span className="text-[10.5px] text-white/40 font-sans leading-snug">
             {helperText}
           </span>
         )}
