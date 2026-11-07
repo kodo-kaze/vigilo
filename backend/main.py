@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import asyncio
 from contextlib import asynccontextmanager
 import time
 from typing import Optional
@@ -83,25 +84,34 @@ def healthcheck():
 
 
 @app.get("/video_feed")
-def video_feed():
+async def video_feed(request: Request):
     """
     Continuous Multipart MJPEG video stream accessible directly by HTML <img> tags.
-    Pauses frame generation when the server or camera is suspended.
+    Exits immediately when client disconnects or server initiates shutdown.
     """
-    def frame_generator():
-        while True:
-            if broadcaster is None or broadcaster.suspended:
-                time.sleep(0.08)
-                continue
-            frame_bytes = broadcaster.get_latest_frame()
-            if frame_bytes is None:
-                time.sleep(0.02)
-                continue
-            yield (
-                b"--frame\r\n"
-                b"Content-Type: image/jpeg\r\n\r\n" + frame_bytes + b"\r\n"
-            )
-            time.sleep(0.01)
+    async def frame_generator():
+        try:
+            while broadcaster is not None and broadcaster.running:
+                # Terminate loop immediately if client disconnected
+                if await request.is_disconnected():
+                    break
+
+                if broadcaster.suspended:
+                    await asyncio.sleep(0.08)
+                    continue
+
+                frame_bytes = broadcaster.get_latest_frame()
+                if frame_bytes is None:
+                    await asyncio.sleep(0.02)
+                    continue
+
+                yield (
+                    b"--frame\r\n"
+                    b"Content-Type: image/jpeg\r\n\r\n" + frame_bytes + b"\r\n"
+                )
+                await asyncio.sleep(0.01)
+        except (asyncio.CancelledError, GeneratorExit):
+            pass
 
     return StreamingResponse(
         frame_generator(),
@@ -287,7 +297,13 @@ def main():
         suspended=start_suspended
     )
 
-    uvicorn.run(app, host=args.host, port=args.port, log_level="info")
+    uvicorn.run(
+        app,
+        host=args.host,
+        port=args.port,
+        log_level="info",
+        timeout_graceful_shutdown=1
+    )
 
 
 if __name__ == "__main__":
