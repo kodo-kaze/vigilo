@@ -5,15 +5,18 @@ import {
   LiquidGlassCard,
   LiquidGlassButton,
   LiquidPill,
-  GlassInput,
+  LiquidInnerCard,
 } from "@/src/components/ui";
-import CameraSourceNodeCard from "./CameraSourceNodeCard";
+import CameraNetworkStreamTab from "./CameraNetworkStreamTab";
+import CameraPresetsTab from "./CameraPresetsTab";
+import CameraCustomUriTab from "./CameraCustomUriTab";
 import {
   TelemetryStats,
   CameraPreset,
   CameraSourcesResponse,
   SwitchCameraRequest,
   TestConnectionResponse,
+  SavedCamera,
 } from "./types";
 
 const RECENT_CAMERAS_KEY = "vigilo_recent_ip_cameras";
@@ -24,16 +27,6 @@ export interface CameraSourceModalProps {
   backendUrl: string;
   stats: TelemetryStats;
   onCameraSwitched: (newSourceInfo: Record<string, unknown>) => void;
-}
-
-interface SavedCamera {
-  id: string;
-  name: string;
-  ip: string;
-  port: number;
-  protocol: "rtsp" | "http" | "https";
-  path?: string;
-  zone?: string;
 }
 
 export default function CameraSourceModal({
@@ -630,13 +623,13 @@ export default function CameraSourceModal({
 
         {/* Modal Scrollable Body */}
         <div className="overflow-y-auto p-5 sm:p-6 space-y-4">
-          {/* Status Message Banner (Clean matte glass, no glow) */}
+          {/* Status Message Banner (Clean LiquidInnerCard) */}
           {statusMessage && (
-            <div
-              className={`p-3.5 rounded-xl border text-xs font-sans flex items-center justify-between backdrop-blur-md transition-all ${
+            <LiquidInnerCard
+              className={`p-3.5 text-xs font-sans flex items-center justify-between ${
                 statusMessage.type === "success"
-                  ? "border-emerald-500/30 bg-emerald-950/30 text-emerald-300"
-                  : "border-red-500/30 bg-red-950/30 text-red-300"
+                  ? "!border-emerald-500/30 !bg-emerald-950/40 text-emerald-300"
+                  : "!border-red-500/30 !bg-red-950/40 text-red-300"
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -652,459 +645,62 @@ export default function CameraSourceModal({
               >
                 ✕
               </button>
-            </div>
+            </LiquidInnerCard>
           )}
 
           {/* TAB 1: CONNECT BY IP & PORT */}
           {activeTab === "ip_port" && (
-            <form onSubmit={handleSwitchByIpPort} className="space-y-4">
-              {/* Protocol Segmented Pill */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xs font-medium text-white/90 font-sans tracking-tight">
-                    Network Protocol
-                  </h3>
-                  <p className="text-[11px] text-white/40 font-sans mt-0.5">
-                    Select transmission protocol for your camera or phone stream
-                  </p>
-                </div>
-
-                <div className="inline-flex p-1 rounded-xl border border-white/[0.08] bg-black/40 backdrop-blur-md gap-1">
-                  {(["rtsp", "http", "https"] as const).map((proto) => {
-                    const isSelected = protocol === proto;
-                    return (
-                      <button
-                        key={proto}
-                        type="button"
-                        onClick={() => {
-                          setProtocol(proto);
-                          if (proto === "rtsp" && (port === "8080" || port === "80"))
-                            setPort("554");
-                          if (proto === "http" && port === "554") setPort("8080");
-                        }}
-                        className={`px-3.5 py-1 rounded-lg text-xs font-mono font-medium transition-all select-none ${
-                          isSelected
-                            ? "bg-white/[0.1] text-white border border-white/25"
-                            : "text-white/50 hover:text-white"
-                        }`}
-                      >
-                        {proto.toUpperCase()}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* IP Address and Port Inputs in a sleek side-by-side row */}
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                <div className="sm:col-span-8">
-                  <GlassInput
-                    label="Camera Address"
-                    labelExtra="Wi-Fi IP or Local Hostname"
-                    requiredIndicator
-                    required
-                    type="text"
-                    value={ip}
-                    onChange={(e) => setIp(e.target.value)}
-                    placeholder="e.g. 192.168.29.193 or cam01.local"
-                  />
-                </div>
-
-                <div className="sm:col-span-4">
-                  <GlassInput
-                    label="Port"
-                    labelExtra={protocol === "rtsp" ? "Default: 554" : "Default: 8080"}
-                    requiredIndicator
-                    required
-                    type="number"
-                    min={1}
-                    max={65535}
-                    value={port}
-                    onChange={(e) => setPort(e.target.value)}
-                    placeholder={protocol === "rtsp" ? "554" : "8080"}
-                  />
-                </div>
-              </div>
-
-              {/* Live Preview Pill (Monochrome matte) */}
-              {constructedUri && (
-                <div className="rounded-xl border border-white/[0.08] bg-black/40 backdrop-blur-sm px-3.5 py-2.5 flex items-center justify-between gap-2 text-xs font-mono">
-                  <div className="flex items-center gap-2 truncate">
-                    <span className="text-white/40 text-[10.5px] uppercase tracking-wider shrink-0 font-sans">
-                      Stream Preview:
-                    </span>
-                    <span className="text-white/90 truncate select-all">{constructedUri}</span>
-                  </div>
-                  <span className="text-[10px] text-white/30 shrink-0 font-sans">Auto-Generated</span>
-                </div>
-              )}
-
-              {/* Collapsible Advanced Stream Configuration */}
-              <div className="rounded-xl border border-white/[0.08] bg-white/[0.015] p-3 transition-colors">
-                <button
-                  type="button"
-                  onClick={() => setShowAdvanced((prev) => !prev)}
-                  className="flex items-center justify-between w-full text-xs font-sans font-medium text-white/70 hover:text-white transition-colors select-none"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="text-white/40">⚙</span>
-                    <span>Optional Stream Details &amp; Authentication</span>
-                  </span>
-                  <span className="text-white/40 text-[11px]">
-                    {showAdvanced ? "Hide options ▲" : "Configure path & login ▼"}
-                  </span>
-                </button>
-
-                {showAdvanced && (
-                  <div className="space-y-3 mt-3 pt-3 border-t border-white/[0.06] animate-in fade-in duration-200">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <GlassInput
-                        label="Stream Mount Path"
-                        type="text"
-                        value={streamPath}
-                        onChange={(e) => setStreamPath(e.target.value)}
-                        placeholder="/live or /video or /h264"
-                        helperText="Channel or stream path specified by your camera/app"
-                      />
-
-                      <GlassInput
-                        label="Location Tag"
-                        type="text"
-                        value={facilityZone}
-                        onChange={(e) => setFacilityZone(e.target.value)}
-                        placeholder="e.g. Concourse A • Turnstiles"
-                        helperText="Display zone for dashboard alerts and analytics"
-                      />
-                    </div>
-
-                    <GlassInput
-                      label="Custom Display Name"
-                      type="text"
-                      value={cameraName}
-                      onChange={(e) => setCameraName(e.target.value)}
-                      placeholder="e.g. Main Entrance Gate Camera"
-                    />
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                      <GlassInput
-                        label="Username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="admin"
-                      />
-                      <GlassInput
-                        label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Test Reachability Result */}
-              {testResult && (
-                <div
-                  className={`p-3 rounded-xl border text-xs font-sans flex items-center gap-2.5 backdrop-blur-sm ${
-                    testResult.reachable
-                      ? "border-emerald-500/30 bg-emerald-950/25 text-emerald-300"
-                      : "border-amber-500/30 bg-amber-950/25 text-amber-300"
-                  }`}
-                >
-                  <span
-                    className={`h-2 w-2 rounded-full shrink-0 ${
-                      testResult.reachable ? "bg-emerald-400" : "bg-amber-400"
-                    }`}
-                  />
-                  <span>{testResult.message}</span>
-                </div>
-              )}
-
-              {/* Form Action Buttons (Clean silver liquid buttons, no neon glow) */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/[0.08]">
-                <LiquidGlassButton
-                  type="button"
-                  onClick={handleTestConnection}
-                  disabled={isTesting || !ip.trim()}
-                  size="sm"
-                  variant="subtle"
-                  className="font-sans text-xs tracking-tight"
-                  iconLeft={
-                    isTesting ? (
-                      <span className="h-2 w-2 rounded-full bg-white/70 animate-ping" />
-                    ) : (
-                      <span>⚡</span>
-                    )
-                  }
-                >
-                  {isTesting ? "Testing Port..." : "Test Connection"}
-                </LiquidGlassButton>
-
-                <LiquidGlassButton
-                  type="submit"
-                  disabled={isSwitching || !ip.trim()}
-                  size="sm"
-                  variant="default"
-                  className="font-sans text-xs tracking-tight font-medium"
-                  iconRight={
-                    isSwitching ? (
-                      <span className="h-3 w-3 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
-                    ) : (
-                      <span>↗</span>
-                    )
-                  }
-                >
-                  {isSwitching ? "CONNECTING FEED..." : "CONNECT & STREAM"}
-                </LiquidGlassButton>
-              </div>
-
-              {/* Saved / Recent IP Cameras */}
-              {savedCameras.length > 0 && (
-                <div className="pt-3 border-t border-white/[0.08]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-white/70 font-sans tracking-tight">
-                      Recent Streams
-                    </span>
-                    <span className="text-white/40 text-[11px] font-sans">Click to quick-connect</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    {savedCameras.map((cam) => (
-                      <div
-                        key={cam.id}
-                        onClick={() => handleLoadSavedCamera(cam)}
-                        className="group flex items-center justify-between p-2.5 rounded-xl border border-white/[0.06] bg-white/[0.015] hover:border-white/20 hover:bg-white/[0.04] transition-all cursor-pointer text-xs font-sans"
-                      >
-                        <div className="flex items-center gap-2.5 truncate">
-                          <span className="text-white/40">🌐</span>
-                          <span className="text-white/95 group-hover:text-white font-medium truncate">
-                            {cam.name || `${cam.ip}:${cam.port}`}
-                          </span>
-                          <span className="text-[11px] font-mono text-white/40 shrink-0">
-                            ({cam.ip}:{cam.port})
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2.5 shrink-0">
-                          {cam.zone && (
-                            <span className="text-[10px] uppercase font-mono text-white/40 hidden sm:inline">
-                              {cam.zone}
-                            </span>
-                          )}
-                          <button
-                            type="button"
-                            onClick={(e) => removeRecentCamera(cam.id, e)}
-                            className="text-white/30 hover:text-red-400 transition-colors p-1"
-                            title="Remove from history"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </form>
+            <CameraNetworkStreamTab
+              protocol={protocol}
+              setProtocol={setProtocol}
+              ip={ip}
+              setIp={setIp}
+              port={port}
+              setPort={setPort}
+              streamPath={streamPath}
+              setStreamPath={setStreamPath}
+              cameraName={cameraName}
+              setCameraName={setCameraName}
+              facilityZone={facilityZone}
+              setFacilityZone={setFacilityZone}
+              username={username}
+              setUsername={setUsername}
+              password={password}
+              setPassword={setPassword}
+              showAdvanced={showAdvanced}
+              setShowAdvanced={setShowAdvanced}
+              constructedUri={constructedUri}
+              isTesting={isTesting}
+              isSwitching={isSwitching}
+              onTestConnection={handleTestConnection}
+              onSubmit={handleSwitchByIpPort}
+              savedCameras={savedCameras}
+              onLoadSavedCamera={handleLoadSavedCamera}
+              onDeleteSavedCamera={removeRecentCamera}
+            />
           )}
 
           {/* TAB 2: CAMERAS & PRESETS */}
           {activeTab === "presets" && (
-            <div className="space-y-5">
-              {/* Local Hardware Interfaces */}
-              <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <h3 className="text-xs font-medium text-white/90 font-sans tracking-tight">
-                    Local Optical Sensors
-                  </h3>
-                  <span className="text-[11px] text-white/40 font-sans">
-                    Connected Webcams &amp; Capture Devices
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {(
-                    sourcesData?.interfaces || [
-                      {
-                        id: "webcam-0",
-                        name: "Integrated HD Camera",
-                        type: "webcam",
-                        source: "0",
-                        zone: "Built-in Sensor • Main Desk",
-                        description: "System default optical sensor",
-                      },
-                      {
-                        id: "webcam-1",
-                        name: "External USB Camera",
-                        type: "webcam",
-                        source: "1",
-                        zone: "Auxiliary Ingest • Zone External",
-                        description: "USB peripheral optical device",
-                      },
-                    ]
-                  ).map((item) => {
-                    const isCurrent =
-                      stats.camera_source?.includes(`(${item.source})`) ||
-                      stats.camera_source === item.name;
-                    return (
-                      <CameraSourceNodeCard
-                        key={item.id}
-                        name={item.name}
-                        description={item.zone || item.description}
-                        badge={`Device #${item.source}`}
-                        deviceType="webcam"
-                        isCurrent={isCurrent}
-                        isLoading={isSwitching}
-                        onSelect={() => handleSelectPreset(item)}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Pre-configured CCTV Nodes */}
-              <div className="pt-2 border-t border-white/[0.08]">
-                <div className="flex items-center justify-between mb-2.5">
-                  <h3 className="text-xs font-medium text-white/90 font-sans tracking-tight">
-                    Facility CCTV Nodes
-                  </h3>
-                  <span className="text-[11px] text-white/40 font-sans">
-                    Pre-Configured Network Surveillance
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {(
-                    sourcesData?.presets || [
-                      {
-                        id: "concourse-a",
-                        name: "Concourse A — Turnstiles",
-                        type: "ip_camera",
-                        ip: "192.168.1.101",
-                        port: 554,
-                        protocol: "rtsp",
-                        path: "/live",
-                        source: "rtsp://192.168.1.101:554/live",
-                        zone: "Terminal 04 • Zone A",
-                      },
-                      {
-                        id: "concourse-b",
-                        name: "Concourse B — Main Escalator Gate",
-                        type: "ip_camera",
-                        ip: "192.168.1.102",
-                        port: 554,
-                        protocol: "rtsp",
-                        path: "/live",
-                        source: "rtsp://192.168.1.102:554/live",
-                        zone: "Terminal 04 • Zone B",
-                      },
-                      {
-                        id: "platform-3",
-                        name: "Platform 03 — Boarding Hall",
-                        type: "ip_camera",
-                        ip: "192.168.1.103",
-                        port: 554,
-                        protocol: "rtsp",
-                        path: "/h264",
-                        source: "rtsp://192.168.1.103:554/h264",
-                        zone: "Platform Hub • Level 2 North",
-                      },
-                      {
-                        id: "security-gate",
-                        name: "Security Checkpoint 01 Entry",
-                        type: "ip_camera",
-                        ip: "192.168.1.104",
-                        port: 8080,
-                        protocol: "http",
-                        path: "/video",
-                        source: "http://192.168.1.104:8080/video",
-                        zone: "North Terminal • Screening",
-                      },
-                    ]
-                  ).map((preset) => {
-                    const isCurrent =
-                      stats.camera_ip === preset.ip &&
-                      Number(stats.camera_port) === preset.port;
-                    return (
-                      <CameraSourceNodeCard
-                        key={preset.id}
-                        name={preset.name}
-                        description={preset.zone}
-                        badge={`${(preset.protocol || "rtsp").toUpperCase()} • ${preset.port}`}
-                        deviceType="cctv"
-                        isCurrent={isCurrent}
-                        isLoading={isSwitching}
-                        onSelect={() => handleSelectPreset(preset)}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <CameraPresetsTab
+              interfaces={sourcesData?.interfaces || []}
+              presets={sourcesData?.presets || []}
+              stats={stats}
+              isSwitching={isSwitching}
+              onSelectPreset={handleSelectPreset}
+            />
           )}
 
           {/* TAB 3: DIRECT URI OR FILE */}
           {activeTab === "custom_uri" && (
-            <form onSubmit={handleSwitchByUri} className="space-y-4">
-              <div>
-                <GlassInput
-                  label="Stream URL or Video File Path"
-                  requiredIndicator
-                  required
-                  type="text"
-                  value={customUri}
-                  onChange={(e) => setCustomUri(e.target.value)}
-                  placeholder="rtsp://192.168.1.50:554/live or /path/to/cctv_test.mp4"
-                  helperText="Supports live RTSP links, HTTP MJPEG endpoints, or local looping video file paths."
-                />
-
-                {/* Quick Template Chips */}
-                <div className="flex flex-wrap items-center gap-2 mt-2.5">
-                  <span className="text-[11px] text-white/40 font-sans">Templates:</span>
-                  <button
-                    type="button"
-                    onClick={() => setCustomUri("rtsp://192.168.1.100:554/live")}
-                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-white/20 hover:text-white transition-colors"
-                  >
-                    + RTSP Stream
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCustomUri("http://192.168.1.45:8080/video")}
-                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-white/20 hover:text-white transition-colors"
-                  >
-                    + Phone IP Webcam
-                  </button>
-                </div>
-              </div>
-
-              <GlassInput
-                label="Facility Zone Label"
-                labelExtra="Optional"
-                type="text"
-                value={facilityZone}
-                onChange={(e) => setFacilityZone(e.target.value)}
-                placeholder="e.g. Custom Stream Zone • Concourse 04"
-              />
-
-              <div className="flex justify-end pt-3 border-t border-white/[0.08]">
-                <LiquidGlassButton
-                  type="submit"
-                  disabled={isSwitching || !customUri.trim()}
-                  size="sm"
-                  variant="default"
-                  className="font-sans text-xs tracking-tight font-medium"
-                  iconRight={
-                    isSwitching ? (
-                      <span className="h-3 w-3 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
-                    ) : (
-                      <span>↗</span>
-                    )
-                  }
-                >
-                  {isSwitching ? "CONNECTING STREAM..." : "CONNECT STREAM"}
-                </LiquidGlassButton>
-              </div>
-            </form>
+            <CameraCustomUriTab
+              customUri={customUri}
+              setCustomUri={setCustomUri}
+              facilityZone={facilityZone}
+              setFacilityZone={setFacilityZone}
+              isSwitching={isSwitching}
+              onSubmit={handleSwitchByUri}
+            />
           )}
         </div>
 

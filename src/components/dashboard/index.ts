@@ -16,10 +16,20 @@ export type { CameraSourceNodeCardProps } from "./CameraSourceNodeCard";
 export { default as TelemetryMetricTile } from "./TelemetryMetricTile";
 export type { TelemetryMetricTileProps } from "./TelemetryMetricTile";
 
+export { default as CameraNetworkStreamTab } from "./CameraNetworkStreamTab";
+export type { CameraNetworkStreamTabProps } from "./CameraNetworkStreamTab";
+
+export { default as CameraPresetsTab } from "./CameraPresetsTab";
+export type { CameraPresetsTabProps } from "./CameraPresetsTab";
+
+export { default as CameraCustomUriTab } from "./CameraCustomUriTab";
+export type { CameraCustomUriTabProps } from "./CameraCustomUriTab";
+
 export type {
   TelemetryStats,
   CameraPreset,
   CameraSourcesResponse,
   SwitchCameraRequest,
   TestConnectionResponse,
+  SavedCamera,
 } from "./types";

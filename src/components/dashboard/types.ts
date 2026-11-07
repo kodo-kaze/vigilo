@@ -71,3 +71,13 @@ export interface TestConnectionResponse {
   message: string;
   error?: string;
 }
+
+export interface SavedCamera {
+  id: string;
+  name: string;
+  ip: string;
+  port: number;
+  protocol: "rtsp" | "http" | "https";
+  path?: string;
+  zone?: string;
+}
