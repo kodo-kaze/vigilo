@@ -120,41 +120,66 @@ export default function DashboardVideoFeed({
               </LiquidGlassButton>
 
               {onOpenSourceModal && (
-                <button
-                  type="button"
+                <LiquidGlassButton
                   onClick={onOpenSourceModal}
-                  className="pointer-events-auto flex items-center gap-2 text-xs font-sans text-white/70 hover:text-white transition-colors py-1.5 px-4 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20"
+                  size="sm"
+                  variant="subtle"
+                  className="pointer-events-auto text-xs font-sans font-medium"
+                  iconLeft={
+                    <svg
+                      className="h-3.5 w-3.5 text-white/70 shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.8}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  }
+                  iconRight={<span className="text-white/60">↗</span>}
                 >
-                  <svg
-                    className="h-3.5 w-3.5 text-white/50"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.8}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span>Switch Camera Source ↗</span>
-                </button>
+                  Switch Camera Source
+                </LiquidGlassButton>
               )}
 
               {onToggleAutoStart && (
-                <label
-                  onClick={(e) => e.stopPropagation()}
-                  className="pointer-events-auto flex items-center gap-2 cursor-pointer text-xs font-sans text-white/50 hover:text-white/80 select-none transition-colors"
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleAutoStart();
+                  }}
+                  className="pointer-events-auto flex items-center gap-2.5 cursor-pointer text-xs font-sans text-white/60 hover:text-white select-none transition-colors group"
                 >
-                  <input
-                    type="checkbox"
-                    checked={autoStartCamera}
-                    onChange={onToggleAutoStart}
-                    className="h-3.5 w-3.5 rounded border-white/20 bg-black/60 text-white focus:ring-0 cursor-pointer accent-white"
-                  />
+                  <div
+                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-all duration-200 ${
+                      autoStartCamera
+                        ? "border-white bg-white text-black shadow-[0_0_8px_rgba(255,255,255,0.35)]"
+                        : "border-white/30 bg-black/40 group-hover:border-white/50"
+                    }`}
+                  >
+                    {autoStartCamera && (
+                      <svg
+                        className="h-2.5 w-2.5 text-black"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </div>
                   <span>Remember to auto-start camera when opening dashboard</span>
-                </label>
+                </button>
               )}
             </div>
           </div>
