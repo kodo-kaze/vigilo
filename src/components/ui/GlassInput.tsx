@@ -18,7 +18,7 @@ export interface GlassInputProps
  *
  * Modern ultra-translucent liquid glass input field.
  * Features smoked obsidian glass backing, minimal hairline silver border,
- * subtle cyan glow on focus, and clean high-legibility typography.
+ * clean high-legibility typography, and no artificial neon glow.
  */
 const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
   (
@@ -51,7 +51,7 @@ const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
               className="flex items-center gap-1.5 text-xs font-medium text-white/85 font-sans tracking-tight select-none"
             >
               <span>{label}</span>
-              {requiredIndicator && <span className="text-cyan-400 font-bold">*</span>}
+              {requiredIndicator && <span className="text-white/50 font-normal">*</span>}
             </label>
             {labelExtra && (
               <span className="text-[11px] text-white/40 font-sans font-normal">
@@ -69,7 +69,7 @@ const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
           <input
             id={inputId}
             ref={ref}
-            className={`w-full rounded-xl border border-white/[0.08] bg-white/[0.025] px-3.5 py-2.5 text-xs font-mono text-white placeholder-white/25 backdrop-blur-md transition-all duration-200 hover:border-white/15 hover:bg-white/[0.04] focus:border-cyan-400/60 focus:bg-white/[0.05] focus:outline-none focus:ring-1 focus:ring-cyan-400/30 disabled:opacity-50 disabled:cursor-not-allowed ${
+            className={`w-full rounded-xl border border-white/[0.08] bg-white/[0.025] px-3.5 py-2.5 text-xs font-mono text-white placeholder-white/25 backdrop-blur-md transition-all duration-200 hover:border-white/15 hover:bg-white/[0.04] focus:border-white/30 focus:bg-white/[0.05] focus:outline-none focus:ring-1 focus:ring-white/10 disabled:opacity-50 disabled:cursor-not-allowed ${
               iconLeft ? "pl-9" : ""
             } ${iconRight ? "pr-9" : ""} ${className}`}
             {...props}

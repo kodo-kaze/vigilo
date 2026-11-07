@@ -42,8 +42,8 @@ export default function CameraSourceNodeCard({
       }}
       className={`group relative p-3 sm:p-3.5 rounded-xl flex items-center justify-between gap-3.5 transition-all duration-300 select-none cursor-pointer ${
         isCurrent
-          ? "border-emerald-500/40 bg-emerald-950/25 shadow-[0_0_24px_rgba(16,185,129,0.18)] ring-1 ring-emerald-500/30"
-          : "border-white/[0.08] bg-white/[0.02] hover:border-cyan-400/40 hover:bg-white/[0.045] hover:-translate-y-0.5 shadow-[0_4px_20px_rgba(0,0,0,0.35)]"
+          ? "border-emerald-500/35 bg-emerald-950/20 ring-1 ring-emerald-500/25"
+          : "border-white/[0.08] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] hover:-translate-y-0.5"
       } ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0">
@@ -51,8 +51,8 @@ export default function CameraSourceNodeCard({
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-300 ${
             isCurrent
-              ? "border-emerald-500/40 bg-emerald-950/50 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.25)]"
-              : "border-white/[0.08] bg-white/[0.03] text-white/50 group-hover:border-cyan-400/40 group-hover:text-cyan-300 group-hover:bg-cyan-950/30"
+              ? "border-emerald-500/30 bg-emerald-950/40 text-emerald-400"
+              : "border-white/[0.08] bg-white/[0.03] text-white/50 group-hover:border-white/20 group-hover:text-white/80 group-hover:bg-white/[0.05]"
           }`}
         >
           {deviceType === "webcam" ? (
@@ -89,13 +89,13 @@ export default function CameraSourceNodeCard({
         {/* Center Metadata Column */}
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="text-xs sm:text-[13px] font-medium text-white/95 font-sans tracking-tight truncate group-hover:text-cyan-300 transition-colors">
+            <h4 className="text-xs sm:text-[13px] font-medium text-white/95 font-sans tracking-tight truncate group-hover:text-white transition-colors">
               {name}
             </h4>
             {badge && (
               <LiquidPill
                 size="xs"
-                variant={isCurrent ? "cyan" : "default"}
+                variant={isCurrent ? "success" : "default"}
                 textClassName="text-[9.5px] font-mono tracking-normal"
               >
                 {badge}
@@ -125,17 +125,17 @@ export default function CameraSourceNodeCard({
           <button
             type="button"
             disabled={disabled || isLoading}
-            className="px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] text-[11px] font-sans font-medium text-white/70 group-hover:border-cyan-400/40 group-hover:bg-cyan-950/40 group-hover:text-cyan-300 transition-all duration-200 flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] text-[11px] font-sans font-medium text-white/70 group-hover:border-white/20 group-hover:bg-white/[0.06] group-hover:text-white transition-all duration-200 flex items-center gap-1.5"
           >
             {isLoading ? (
               <>
-                <span className="h-2 w-2 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+                <span className="h-2 w-2 rounded-full border-2 border-white/60 border-t-transparent animate-spin" />
                 <span>Connecting...</span>
               </>
             ) : (
               <>
                 <span>Select</span>
-                <span className="text-white/40 group-hover:text-cyan-400 transition-colors">→</span>
+                <span className="text-white/40 group-hover:text-white/70 transition-colors">→</span>
               </>
             )}
           </button>

@@ -454,24 +454,18 @@ export default function CameraSourceModal({
         {/* Top Header Bar */}
         <div className="flex items-center justify-between border-b border-white/[0.08] px-5 sm:px-6 py-4 bg-white/[0.015]">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.22)]">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.8}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
+            {/* App Logo Emblem (Replacing old cyan camera icon) */}
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/[0.04] p-1.5 overflow-hidden select-none">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt="Vigilo"
+                className="h-full w-full object-contain"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[10.5px] font-mono uppercase tracking-[0.18em] text-cyan-400 font-semibold">
+                <span className="text-[10.5px] font-mono uppercase tracking-[0.18em] text-white/50 font-medium">
                   Video Feed Source
                 </span>
                 <span className="text-white/20">•</span>
@@ -508,7 +502,7 @@ export default function CameraSourceModal({
               {stats.camera_source || "Integrated Camera (Device 0)"}
             </span>
             {stats.camera_ip && (
-              <LiquidPill size="xs" variant="cyan" textClassName="text-[10px] font-mono">
+              <LiquidPill size="xs" variant="default" textClassName="text-[10px] font-mono text-white/80">
                 {stats.camera_ip}:{stats.camera_port}
               </LiquidPill>
             )}
@@ -529,7 +523,7 @@ export default function CameraSourceModal({
           </LiquidPill>
         </div>
 
-        {/* Segmented Liquid Glass Navigation Tabs */}
+        {/* Segmented Liquid Glass Navigation Tabs (No neon glow) */}
         <div className="px-5 sm:px-6 pt-3.5 pb-2 border-b border-white/[0.06] bg-white/[0.01]">
           <div className="flex items-center p-1 rounded-xl border border-white/[0.06] bg-black/40 backdrop-blur-md gap-1">
             {[
@@ -590,7 +584,7 @@ export default function CameraSourceModal({
                   }}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-sans font-medium transition-all duration-200 select-none ${
                     isActive
-                      ? "bg-white/[0.08] text-cyan-300 border border-cyan-400/30 shadow-[0_0_14px_rgba(6,182,212,0.18)]"
+                      ? "bg-white/[0.1] text-white border border-white/20"
                       : "text-white/55 hover:text-white hover:bg-white/[0.02] border border-transparent"
                   }`}
                 >
@@ -604,13 +598,13 @@ export default function CameraSourceModal({
 
         {/* Modal Scrollable Body */}
         <div className="overflow-y-auto p-5 sm:p-6 space-y-4">
-          {/* Status Message Banner */}
+          {/* Status Message Banner (Clean matte glass, no glow) */}
           {statusMessage && (
             <div
               className={`p-3.5 rounded-xl border text-xs font-sans flex items-center justify-between backdrop-blur-md transition-all ${
                 statusMessage.type === "success"
-                  ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
-                  : "border-red-500/40 bg-red-950/40 text-red-300 shadow-[0_0_20px_rgba(239,68,68,0.15)]"
+                  ? "border-emerald-500/30 bg-emerald-950/30 text-emerald-300"
+                  : "border-red-500/30 bg-red-950/30 text-red-300"
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -658,7 +652,7 @@ export default function CameraSourceModal({
                         }}
                         className={`px-3.5 py-1 rounded-lg text-xs font-mono font-medium transition-all select-none ${
                           isSelected
-                            ? "bg-white/[0.1] text-cyan-300 shadow-sm border border-cyan-400/40"
+                            ? "bg-white/[0.1] text-white border border-white/25"
                             : "text-white/50 hover:text-white"
                         }`}
                       >
@@ -700,14 +694,14 @@ export default function CameraSourceModal({
                 </div>
               </div>
 
-              {/* Live Preview Pill */}
+              {/* Live Preview Pill (Monochrome matte) */}
               {constructedUri && (
                 <div className="rounded-xl border border-white/[0.08] bg-black/40 backdrop-blur-sm px-3.5 py-2.5 flex items-center justify-between gap-2 text-xs font-mono">
                   <div className="flex items-center gap-2 truncate">
                     <span className="text-white/40 text-[10.5px] uppercase tracking-wider shrink-0 font-sans">
                       Stream Preview:
                     </span>
-                    <span className="text-cyan-300 truncate select-all">{constructedUri}</span>
+                    <span className="text-white/90 truncate select-all">{constructedUri}</span>
                   </div>
                   <span className="text-[10px] text-white/30 shrink-0 font-sans">Auto-Generated</span>
                 </div>
@@ -721,7 +715,7 @@ export default function CameraSourceModal({
                   className="flex items-center justify-between w-full text-xs font-sans font-medium text-white/70 hover:text-white transition-colors select-none"
                 >
                   <span className="flex items-center gap-2">
-                    <span className="text-cyan-400">⚙</span>
+                    <span className="text-white/40">⚙</span>
                     <span>Optional Stream Details &amp; Authentication</span>
                   </span>
                   <span className="text-white/40 text-[11px]">
@@ -784,20 +778,20 @@ export default function CameraSourceModal({
                 <div
                   className={`p-3 rounded-xl border text-xs font-sans flex items-center gap-2.5 backdrop-blur-sm ${
                     testResult.reachable
-                      ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300"
-                      : "border-amber-500/40 bg-amber-950/30 text-amber-300"
+                      ? "border-emerald-500/30 bg-emerald-950/25 text-emerald-300"
+                      : "border-amber-500/30 bg-amber-950/25 text-amber-300"
                   }`}
                 >
                   <span
                     className={`h-2 w-2 rounded-full shrink-0 ${
-                      testResult.reachable ? "bg-emerald-400 animate-ping" : "bg-amber-400"
+                      testResult.reachable ? "bg-emerald-400" : "bg-amber-400"
                     }`}
                   />
                   <span>{testResult.message}</span>
                 </div>
               )}
 
-              {/* Form Action Buttons */}
+              {/* Form Action Buttons (Clean silver liquid buttons, no neon glow) */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/[0.08]">
                 <LiquidGlassButton
                   type="button"
@@ -808,7 +802,7 @@ export default function CameraSourceModal({
                   className="font-sans text-xs tracking-tight"
                   iconLeft={
                     isTesting ? (
-                      <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
+                      <span className="h-2 w-2 rounded-full bg-white/70 animate-ping" />
                     ) : (
                       <span>⚡</span>
                     )
@@ -821,11 +815,11 @@ export default function CameraSourceModal({
                   type="submit"
                   disabled={isSwitching || !ip.trim()}
                   size="sm"
-                  variant="cyan"
+                  variant="default"
                   className="font-sans text-xs tracking-tight font-medium"
                   iconRight={
                     isSwitching ? (
-                      <span className="h-3 w-3 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+                      <span className="h-3 w-3 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
                     ) : (
                       <span>↗</span>
                     )
@@ -849,11 +843,11 @@ export default function CameraSourceModal({
                       <div
                         key={cam.id}
                         onClick={() => handleLoadSavedCamera(cam)}
-                        className="group flex items-center justify-between p-2.5 rounded-xl border border-white/[0.06] bg-white/[0.015] hover:border-cyan-500/40 hover:bg-white/[0.04] transition-all cursor-pointer text-xs font-sans"
+                        className="group flex items-center justify-between p-2.5 rounded-xl border border-white/[0.06] bg-white/[0.015] hover:border-white/20 hover:bg-white/[0.04] transition-all cursor-pointer text-xs font-sans"
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <span className="text-cyan-400">🌐</span>
-                          <span className="text-white/95 group-hover:text-cyan-300 font-medium truncate">
+                          <span className="text-white/40">🌐</span>
+                          <span className="text-white/95 group-hover:text-white font-medium truncate">
                             {cam.name || `${cam.ip}:${cam.port}`}
                           </span>
                           <span className="text-[11px] font-mono text-white/40 shrink-0">
@@ -1037,14 +1031,14 @@ export default function CameraSourceModal({
                   <button
                     type="button"
                     onClick={() => setCustomUri("rtsp://192.168.1.100:554/live")}
-                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-white/20 hover:text-white transition-colors"
                   >
                     + RTSP Stream
                   </button>
                   <button
                     type="button"
                     onClick={() => setCustomUri("http://192.168.1.45:8080/video")}
-                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                    className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[10.5px] font-mono text-white/70 hover:border-white/20 hover:text-white transition-colors"
                   >
                     + Phone IP Webcam
                   </button>
@@ -1065,11 +1059,11 @@ export default function CameraSourceModal({
                   type="submit"
                   disabled={isSwitching || !customUri.trim()}
                   size="sm"
-                  variant="cyan"
+                  variant="default"
                   className="font-sans text-xs tracking-tight font-medium"
                   iconRight={
                     isSwitching ? (
-                      <span className="h-3 w-3 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+                      <span className="h-3 w-3 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
                     ) : (
                       <span>↗</span>
                     )
@@ -1085,7 +1079,7 @@ export default function CameraSourceModal({
         {/* Footer info */}
         <div className="border-t border-white/[0.08] px-5 sm:px-6 py-2.5 bg-black/30 backdrop-blur-sm flex items-center justify-between text-[11px] font-sans text-white/40 select-none">
           <span>Backend Target: {backendUrl}</span>
-          <span className="text-cyan-400/70 font-mono text-[10px]">Active Vision Ingestion</span>
+          <span className="text-white/40 font-mono text-[10px]">Active Vision Ingestion</span>
         </div>
       </LiquidGlassCard>
     </div>
