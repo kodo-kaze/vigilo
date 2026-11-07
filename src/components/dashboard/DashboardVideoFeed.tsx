@@ -258,8 +258,8 @@ export default function DashboardVideoFeed({
 
         {/* Top-Left Floating Overlay HUD */}
         <div className="pointer-events-none absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
-          {/* Status Pill */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/50 px-3 py-1.5 backdrop-blur-xl shadow-sm text-xs font-sans">
+          {/* Status Pill (Crisp visible liquid glass boundary) */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-1.5 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)] text-xs font-sans select-none">
             <span
               className={`h-2 w-2 rounded-full ${
                 isSuspended
@@ -272,8 +272,8 @@ export default function DashboardVideoFeed({
               }`}
             />
             <span className="font-medium text-white/95">Live Video</span>
-            <span className="text-white/20 select-none">•</span>
-            <span className="text-[11px] font-normal text-white/50">
+            <span className="text-white/25 select-none">•</span>
+            <span className="text-[11px] font-normal text-white/60">
               {isSuspended
                 ? "Standby"
                 : streamConnected
@@ -284,77 +284,73 @@ export default function DashboardVideoFeed({
             </span>
           </div>
 
-          {/* Camera Node / Source Selector Quick Switch */}
+          {/* Camera Node / Source Selector Quick Switch (LiquidGlassButton) */}
           {onOpenSourceModal && (
-            <button
-              type="button"
+            <LiquidGlassButton
               onClick={onOpenSourceModal}
-              title="Switch camera node or configure IP & Port"
-              className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/50 hover:bg-white/[0.08] hover:border-white/20 px-3 py-1.5 text-xs font-sans font-medium text-white/90 backdrop-blur-xl transition-all duration-200 active:scale-95 shadow-sm"
+              size="sm"
+              variant="subtle"
+              className="pointer-events-auto !px-3.5 !py-1.5 text-xs font-sans font-medium !border-white/20 hover:!border-white/40 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)]"
+              iconLeft={
+                <svg
+                  className="h-3.5 w-3.5 text-white/70 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.8}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              }
+              iconRight={<span className="text-white/40 text-[10px]">▾</span>}
             >
-              <svg
-                className="h-3.5 w-3.5 text-white/60 shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.8}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
               <span className="truncate max-w-[140px] sm:max-w-[200px]">
                 {stats.camera_ip
                   ? `${stats.camera_ip}:${stats.camera_port}`
                   : stats.camera_source?.split("(")[0]?.trim() || "Select Camera"}
               </span>
-              <span className="text-white/35 text-[10px]">▾</span>
-            </button>
+            </LiquidGlassButton>
           )}
 
-          {/* Quick Camera On/Off Power Action */}
+          {/* Quick Camera On/Off Power Action (LiquidGlassButton) */}
           {onTogglePower && (
-            <button
-              type="button"
+            <LiquidGlassButton
               onClick={onTogglePower}
               disabled={isPowerToggling}
-              title={
-                isSuspended
-                  ? "Click to activate camera and resume AI inference"
-                  : "Click to turn off camera and suspend compute"
+              size="sm"
+              variant={isSuspended ? "default" : "subtle"}
+              className="pointer-events-auto !px-3.5 !py-1.5 text-xs font-sans font-medium shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_4px_16px_rgba(0,0,0,0.5)]"
+              iconLeft={
+                <svg
+                  className="h-3.5 w-3.5 text-white/85"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M12 3v9"
+                  />
+                </svg>
               }
-              className={`pointer-events-auto inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-sans font-medium backdrop-blur-xl transition-all duration-200 active:scale-95 shadow-sm ${
-                isSuspended
-                  ? "border-white/15 bg-white/[0.08] text-white hover:bg-white/[0.14] hover:border-white/25"
-                  : "border-white/[0.08] bg-black/50 text-white/70 hover:bg-white/[0.06] hover:border-white/20 hover:text-white"
-              }`}
             >
-              <svg
-                className="h-3 w-3 text-white/70"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M12 3v9"
-                />
-              </svg>
-              <span>{isSuspended ? "Turn On" : "Turn Off"}</span>
-            </button>
+              {isSuspended ? "Turn On" : "Turn Off"}
+            </LiquidGlassButton>
           )}
         </div>
 
-        {/* Top-Right Floating Overlay HUD */}
+        {/* Top-Right Floating Overlay HUD (Crisp visible liquid glass boundary) */}
         <div className="pointer-events-none absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 flex items-center gap-2 select-none">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/50 px-3 py-1.5 backdrop-blur-xl shadow-sm text-xs font-sans">
-            <span className="text-white/50">{stats.resolution || (isSuspended ? "Ready" : "1280×720")}</span>
-            <span className="text-white/20 select-none">•</span>
-            <span className="font-medium text-white/80">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-1.5 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)] text-xs font-sans select-none">
+            <span className="text-white/60">{stats.resolution || (isSuspended ? "Ready" : "1280×720")}</span>
+            <span className="text-white/25 select-none">•</span>
+            <span className="font-medium text-white/90">
               {isSuspended ? "Standby" : stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Feed"}
             </span>
           </div>
