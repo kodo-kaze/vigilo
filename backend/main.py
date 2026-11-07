@@ -26,6 +26,19 @@ from stream import CrowdStreamBroadcaster
 broadcaster: Optional[CrowdStreamBroadcaster] = None
 
 
+class CleanStreamingResponse(StreamingResponse):
+    """
+    Subclass of Starlette StreamingResponse that cleanly suppresses
+    asyncio.CancelledError during server shutdown or client disconnection,
+    preventing noisy ASGI application exception tracebacks in the terminal.
+    """
+    async def __call__(self, scope, receive, send) -> None:
+        try:
+            await super().__call__(scope, receive, send)
+        except (asyncio.CancelledError, GeneratorExit):
+            pass
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global broadcaster
@@ -113,7 +126,7 @@ async def video_feed(request: Request):
         except (asyncio.CancelledError, GeneratorExit):
             pass
 
-    return StreamingResponse(
+    return CleanStreamingResponse(
         frame_generator(),
         media_type="multipart/x-mixed-replace; boundary=frame"
     )
@@ -297,13 +310,25 @@ def main():
         suspended=start_suspended
     )
 
-    uvicorn.run(
+    config = uvicorn.Config(
         app,
         host=args.host,
         port=args.port,
         log_level="info",
         timeout_graceful_shutdown=1
     )
+    server = uvicorn.Server(config)
+
+    # Intercept exit signal to immediately halt the broadcaster and release connections
+    original_handle_exit = server.handle_exit
+
+    def handle_exit(sig: int, frame) -> None:
+        if broadcaster:
+            broadcaster.stop()
+        original_handle_exit(sig, frame)
+
+    server.handle_exit = handle_exit
+    server.run()
 
 
 if __name__ == "__main__":
