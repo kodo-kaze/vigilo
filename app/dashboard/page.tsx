@@ -18,8 +18,10 @@ export default function DashboardPage() {
   const backendUrl = DEFAULT_BACKEND_URL;
   const [streamConnected, setStreamConnected] = useState(false);
   const [streamError, setStreamError] = useState(false);
+  const [isPowerToggling, setIsPowerToggling] = useState(false);
   const [stats, setStats] = useState<TelemetryStats>({
     status: "CONNECTING",
+    is_suspended: false,
     is_crowd: false,
     crowd_probability: 0.0,
     people_count: 0,
@@ -49,8 +51,10 @@ export default function DashboardPage() {
         const data = await res.json();
         setStats(data);
         setStreamError(false);
-        if (data.camera_connected) {
+        if (data.camera_connected && !data.is_suspended) {
           setStreamConnected(true);
+        } else if (data.is_suspended) {
+          setStreamConnected(false);
         }
       } else {
         setStreamConnected(false);
@@ -80,6 +84,34 @@ export default function DashboardPage() {
     setStreamKey((prev) => prev + 1);
     fetchTelemetry();
   };
+
+  // Toggle backend camera & inference power suspension
+  const handleTogglePower = useCallback(async () => {
+    setIsPowerToggling(true);
+    try {
+      const res = await fetch(`${DEFAULT_BACKEND_URL}/camera/toggle`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setStats((prev) => ({
+          ...prev,
+          is_suspended: data.suspended,
+          status: data.suspended ? "SUSPENDED" : "INITIALIZING",
+        }));
+        if (!data.suspended) {
+          setStreamError(false);
+          setStreamKey((prev) => prev + 1);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to toggle camera power:", e);
+    } finally {
+      setIsPowerToggling(false);
+      fetchTelemetry();
+    }
+  }, [fetchTelemetry]);
 
   const isAlert = stats.is_crowd || stats.status === "CROWD ALERT";
   const probabilityPercent = Math.round(stats.crowd_probability * 100);
@@ -141,6 +173,8 @@ export default function DashboardPage() {
             setStreamError(true);
             setStreamConnected(false);
           }}
+          onTogglePower={handleTogglePower}
+          isPowerToggling={isPowerToggling}
         />
 
         {/* BOTTOM ROW: RECTANGULAR BENTO GRID (INSET SLIGHTLY LESSER WIDTH THAN VIDEO) */}
@@ -156,6 +190,8 @@ export default function DashboardPage() {
           <CameraDetailsCard
             stats={stats}
             formatUptime={formatUptime}
+            onTogglePower={handleTogglePower}
+            isPowerToggling={isPowerToggling}
           />
         </section>
       </div>

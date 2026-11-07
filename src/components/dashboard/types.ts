@@ -1,5 +1,6 @@
 export interface TelemetryStats {
   status: string;
+  is_suspended?: boolean;
   is_crowd: boolean;
   crowd_probability: number;
   people_count: number;

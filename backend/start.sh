@@ -9,6 +9,8 @@ if [ -d "$DIR/.venv" ]; then
     PYTHON="$DIR/.venv/bin/python"
 elif [ -d "$DIR/venv" ]; then
     PYTHON="$DIR/venv/bin/python"
+elif [ -d "$DIR/../model/venv" ]; then
+    PYTHON="$DIR/../model/venv/bin/python"
 elif [ -d "/Users/aditya/coding/pedestrian-crowd-detection-models/venv" ]; then
     PYTHON="/Users/aditya/coding/pedestrian-crowd-detection-models/venv/bin/python"
 elif command -v python3 &>/dev/null; then

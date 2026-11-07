@@ -13,38 +13,83 @@ class RTSPCameraStream:
     """
     Decoupled background capture thread.
     Continuously retrieves the absolute freshest frame to prevent RTSP/webcam buffer buildup.
+    Supports on-demand suspension to release camera hardware and conserve compute.
     """
-    def __init__(self, source):
+    def __init__(self, source, suspended: bool = False):
         self.source = int(source) if str(source).isdigit() else source
         self.is_video_file = isinstance(self.source, str) and not (
             str(self.source).startswith("rtsp://") or str(self.source).startswith("http://")
         )
-        self.cap = cv2.VideoCapture(self.source)
         self.lock = threading.Lock()
         self.latest_frame: Optional[np.ndarray] = None
         self.running = True
+        self.suspended = suspended
         self.connected = False
         self.width = 0
         self.height = 0
         self.capture_fps = 0.0
+        self.cap: Optional[cv2.VideoCapture] = None
 
-        if self.cap.isOpened():
-            self.connected = True
-            ret, frame = self.cap.read()
-            if ret and frame is not None:
-                self.latest_frame = frame
-                self.height, self.width = frame.shape[:2]
+        if not self.suspended:
+            self._open_capture()
 
         self.thread = threading.Thread(target=self._update_loop, daemon=True)
         self.thread.start()
 
+    def _open_capture(self) -> bool:
+        try:
+            if self.cap is not None and self.cap.isOpened():
+                return True
+            self.cap = cv2.VideoCapture(self.source)
+            if self.cap.isOpened():
+                self.connected = True
+                ret, frame = self.cap.read()
+                if ret and frame is not None:
+                    with self.lock:
+                        self.latest_frame = frame
+                        self.height, self.width = frame.shape[:2]
+                return True
+        except Exception as e:
+            print(f"[Camera Open Error]: {e}")
+        self.connected = False
+        return False
+
+    def _release_capture(self):
+        try:
+            if self.cap is not None and self.cap.isOpened():
+                self.cap.release()
+        except Exception as e:
+            print(f"[Camera Release Error]: {e}")
+        self.cap = None
+        self.connected = False
+
+    def suspend(self):
+        with self.lock:
+            self.suspended = True
+            self.connected = False
+            self.latest_frame = None
+            self.capture_fps = 0.0
+            self._release_capture()
+
+    def resume(self):
+        with self.lock:
+            if not self.suspended:
+                return
+            self.suspended = False
+        # The update loop will automatically re-open capture cleanly
+
     def _update_loop(self):
         last_frame_time = time.time()
         while self.running:
-            if not self.cap.isOpened():
+            if self.suspended:
+                time.sleep(0.1)
+                continue
+
+            if self.cap is None or not self.cap.isOpened():
                 self.connected = False
-                time.sleep(1.0)
-                self.cap = cv2.VideoCapture(self.source)
+                time.sleep(0.5)
+                if not self.suspended and self.running:
+                    self._open_capture()
                 continue
 
             ret, frame = self.cap.read()
@@ -57,7 +102,7 @@ class RTSPCameraStream:
                     self.capture_fps = 1.0 / max(now - last_frame_time, 1e-4)
                 last_frame_time = now
             else:
-                if self.is_video_file:
+                if self.is_video_file and self.cap is not None:
                     # Loop sample video files smoothly
                     self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 else:
@@ -75,23 +120,24 @@ class RTSPCameraStream:
         with self.lock:
             return {
                 "connected": self.connected,
+                "suspended": self.suspended,
                 "width": self.width,
                 "height": self.height,
-                "resolution": f"{self.width}x{self.height}" if self.width > 0 else "Offline / Standby",
-                "capture_fps": round(self.capture_fps, 1),
+                "resolution": f"{self.width}x{self.height}" if self.width > 0 and self.connected else ("Suspended (Idle)" if self.suspended else "Offline / Standby"),
+                "capture_fps": round(self.capture_fps, 1) if not self.suspended else 0.0,
                 "source": str(self.source)
             }
 
     def stop(self):
         self.running = False
-        if self.cap.isOpened():
-            self.cap.release()
+        self._release_capture()
 
 
 class CrowdStreamBroadcaster:
     """
     Runs the YOLO + Spatial Features + Random Forest pipeline in a continuous loop.
     Distributes annotated JPEG frames and live telemetry metrics.
+    Supports instant on/off suspension to freeze neural compute and free optical devices.
     """
     def __init__(
         self,
@@ -100,7 +146,8 @@ class CrowdStreamBroadcaster:
         iou: float = DEFAULT_IOU,
         stride: int = DEFAULT_STRIDE,
         smooth: int = DEFAULT_SMOOTH,
-        zone: str = DEFAULT_ZONE
+        zone: str = DEFAULT_ZONE,
+        suspended: bool = False
     ):
         self.source = source
         self.conf = conf
@@ -108,15 +155,17 @@ class CrowdStreamBroadcaster:
         self.stride = max(1, stride)
         self.smooth = max(1, smooth)
         self.zone = zone
+        self.suspended = suspended
 
         self.detector = CrowdDetector(conf=self.conf, iou=self.iou)
-        self.camera = RTSPCameraStream(self.source)
+        self.camera = RTSPCameraStream(self.source, suspended=self.suspended)
 
         # Thread-safe broadcast state
         self.lock = threading.Lock()
         self.latest_jpeg: Optional[bytes] = None
         self.stats = {
-            "status": "INITIALIZING",
+            "status": "SUSPENDED" if self.suspended else "INITIALIZING",
+            "is_suspended": self.suspended,
             "is_crowd": False,
             "crowd_probability": 0.0,
             "people_count": 0,
@@ -125,7 +174,7 @@ class CrowdStreamBroadcaster:
             "fps": 0.0,
             "camera_connected": False,
             "uptime_seconds": 0,
-            "resolution": "Offline",
+            "resolution": "Suspended (Idle)" if self.suspended else "Offline",
             "camera_source": self._human_source_name(self.source),
             "zone": self.zone,
             "model_mesh": "YOLO26m + Conflux Random Forest",
@@ -146,12 +195,44 @@ class CrowdStreamBroadcaster:
             return f"IP Camera Stream ({s[:30]}...)"
         return f"Video Stream ({s})"
 
+    def suspend(self):
+        """Immediately halts camera hardware polling and neural inference pipeline."""
+        with self.lock:
+            self.suspended = True
+            self.latest_jpeg = None
+            self.stats["is_suspended"] = True
+            self.stats["status"] = "SUSPENDED"
+            self.stats["camera_connected"] = False
+            self.stats["fps"] = 0.0
+            self.stats["capture_fps"] = 0.0
+            self.stats["resolution"] = "Suspended (Idle)"
+        self.camera.suspend()
+        print("[Broadcaster] Camera & inference suspended (power-saving idle).")
+
+    def resume(self):
+        """Re-engages camera hardware and resumes real-time inference."""
+        with self.lock:
+            self.suspended = False
+            self.stats["is_suspended"] = False
+            self.stats["status"] = "INITIALIZING"
+        self.camera.resume()
+        print("[Broadcaster] Camera & inference resumed.")
+
+    def toggle(self) -> bool:
+        """Toggles between active and suspended states. Returns new suspended state."""
+        if self.suspended:
+            self.resume()
+            return False
+        else:
+            self.suspend()
+            return True
+
     def switch_source(self, new_source):
         """Allows switching camera sources without restarting the FastAPI server."""
         with self.lock:
             old_cam = self.camera
             self.source = new_source
-            self.camera = RTSPCameraStream(self.source)
+            self.camera = RTSPCameraStream(self.source, suspended=self.suspended)
             self.stats["camera_source"] = self._human_source_name(self.source)
         if old_cam:
             old_cam.stop()
@@ -172,14 +253,19 @@ class CrowdStreamBroadcaster:
         cached_is_crowd = False
 
         while self.running:
+            if self.suspended:
+                time.sleep(0.15)
+                continue
+
             frame = self.camera.read()
             cam_info = self.camera.get_info()
 
             if frame is None:
                 with self.lock:
                     self.stats["camera_connected"] = False
-                    self.stats["status"] = "CAMERA STANDBY"
+                    self.stats["status"] = "SUSPENDED" if self.suspended else "CAMERA STANDBY"
                     self.stats["resolution"] = cam_info["resolution"]
+                    self.stats["is_suspended"] = self.suspended
                 time.sleep(0.04)
                 continue
 
@@ -203,13 +289,13 @@ class CrowdStreamBroadcaster:
                 except Exception as e:
                     print(f"[Inference Error]: {e}")
 
-            # Draw sleek bounding boxes on detected pedestrians (no top HUD overlay, as requested)
+            # Draw sleek bounding boxes on detected pedestrians (clean UI video feed)
             annotated_frame = draw_annotations(
                 frame=frame,
                 boxes=cached_boxes,
                 confidences=cached_confs,
                 is_crowd=cached_is_crowd,
-                show_hud=False  # Clean video feed for website dashboard!
+                show_hud=False
             )
 
             # Compress JPEG for client streaming
@@ -220,6 +306,7 @@ class CrowdStreamBroadcaster:
                     self.latest_jpeg = jpeg_bytes
                     self.stats = {
                         "status": "CROWD ALERT" if cached_is_crowd else "NORMAL",
+                        "is_suspended": False,
                         "is_crowd": cached_is_crowd,
                         "crowd_probability": round(cached_prob, 4),
                         "people_count": cached_features["person_count"],
@@ -241,7 +328,9 @@ class CrowdStreamBroadcaster:
 
     def get_stats(self) -> Dict[str, Any]:
         with self.lock:
-            return dict(self.stats)
+            stats = dict(self.stats)
+            stats["is_suspended"] = self.suspended
+            return stats
 
     def stop(self):
         self.running = False

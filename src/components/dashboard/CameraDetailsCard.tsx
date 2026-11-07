@@ -5,6 +5,8 @@ import { TelemetryStats } from "./types";
 export interface CameraDetailsCardProps {
   stats: TelemetryStats;
   formatUptime: (seconds: number) => string;
+  onTogglePower?: () => void;
+  isPowerToggling?: boolean;
   className?: string;
 }
 
@@ -17,8 +19,12 @@ export interface CameraDetailsCardProps {
 export default function CameraDetailsCard({
   stats,
   formatUptime,
+  onTogglePower,
+  isPowerToggling = false,
   className = "",
 }: CameraDetailsCardProps) {
+  const isSuspended = Boolean(stats.is_suspended || stats.status === "SUSPENDED");
+
   return (
     <LiquidGlassCard
       hasTopSpecular={false}
@@ -28,13 +34,17 @@ export default function CameraDetailsCard({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/[0.08] pb-1.5 mb-2">
           <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isSuspended ? "bg-amber-400" : "bg-emerald-400"
+              }`}
+            />
             <h2 className="text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-white/90">
               Location &amp; Camera Details
             </h2>
           </div>
           <span className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
-            Node Config
+            {isSuspended ? "Engine Standby" : "Node Config"}
           </span>
         </div>
 
@@ -46,10 +56,12 @@ export default function CameraDetailsCard({
               OPTICAL SENSOR
             </span>
             <span
-              className="font-medium text-white truncate text-[10px]"
+              className={`font-medium truncate text-[10px] ${
+                isSuspended ? "text-amber-300/80" : "text-white"
+              }`}
               title={stats.camera_source}
             >
-              {stats.camera_source || "Integrated (0)"}
+              {isSuspended ? "Powered Off (Idle)" : stats.camera_source || "Integrated (0)"}
             </span>
           </div>
 
@@ -69,7 +81,9 @@ export default function CameraDetailsCard({
               CAPTURE
             </span>
             <span className="font-medium text-white text-[10px]">
-              {stats.resolution || "1280x720"} @ {stats.capture_fps || 30}
+              {isSuspended
+                ? "Standby @ 0 FPS"
+                : `${stats.resolution || "1280x720"} @ ${stats.capture_fps || 30}`}
             </span>
           </div>
 
@@ -79,7 +93,7 @@ export default function CameraDetailsCard({
               STREAM PROTOCOL
             </span>
             <span className="font-medium text-white/90 text-[10px]">
-              MJPEG Zero-latency
+              {isSuspended ? "Standby / Suspended" : "MJPEG Zero-latency"}
             </span>
           </div>
 
@@ -88,8 +102,12 @@ export default function CameraDetailsCard({
             <span className="text-white/45 text-[8.5px] uppercase truncate">
               AI PIPELINE
             </span>
-            <span className="font-medium text-white/90 text-[10px]">
-              YOLO26m + RF-21
+            <span
+              className={`font-medium text-[10px] ${
+                isSuspended ? "text-amber-300/80" : "text-white/90"
+              }`}
+            >
+              {isSuspended ? "Suspended (0% Compute)" : "YOLO26m + RF-21"}
             </span>
           </div>
 
@@ -108,10 +126,26 @@ export default function CameraDetailsCard({
       {/* Quick Actions / Status Footer */}
       <div className="pt-1.5 mt-2 border-t border-white/[0.08] flex items-center justify-between text-[9px] font-mono text-white/50">
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          Driver: AVFoundation
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isSuspended ? "bg-amber-400" : "bg-emerald-400"
+            }`}
+          />
+          {isSuspended ? "Engine: Suspended (Idle)" : "Engine: Nominal (Inference Active)"}
         </span>
-        <span>Mesh Sync: Nominal</span>
+        {onTogglePower && (
+          <button
+            onClick={onTogglePower}
+            disabled={isPowerToggling}
+            className={`text-[9px] font-mono uppercase tracking-wider transition-colors hover:underline ${
+              isSuspended
+                ? "text-emerald-400 hover:text-emerald-300"
+                : "text-amber-400/80 hover:text-amber-300"
+            }`}
+          >
+            {isSuspended ? "Turn On Camera ↗" : "Turn Off Camera"}
+          </button>
+        )}
       </div>
     </LiquidGlassCard>
   );

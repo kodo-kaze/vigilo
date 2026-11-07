@@ -16,6 +16,8 @@ export interface DashboardVideoFeedProps {
   onRetry: () => void;
   onStreamLoad: () => void;
   onStreamError: () => void;
+  onTogglePower?: () => void;
+  isPowerToggling?: boolean;
   className?: string;
 }
 
@@ -24,7 +26,7 @@ export interface DashboardVideoFeedProps {
  *
  * Full-screen live video monitor display wrapped in translucent liquid glass.
  * Features live MJPEG stream ingestion, animated radar offline fallback,
- * and floating HUD telemetry overlay pills.
+ * power-saving suspension overlay, and floating HUD telemetry overlay pills.
  */
 export default function DashboardVideoFeed({
   backendUrl,
@@ -36,8 +38,12 @@ export default function DashboardVideoFeed({
   onRetry,
   onStreamLoad,
   onStreamError,
+  onTogglePower,
+  isPowerToggling = false,
   className = "",
 }: DashboardVideoFeedProps) {
+  const isSuspended = Boolean(stats.is_suspended || stats.status === "SUSPENDED");
+
   return (
     <LiquidGlassCard
       hasTopSpecular={false}
@@ -45,21 +51,73 @@ export default function DashboardVideoFeed({
     >
       {/* Video Player Display Area */}
       <div className="relative w-full h-full min-h-[200px] bg-black/20 flex items-center justify-center overflow-hidden">
-        {/* The Live MJPEG Stream */}
+        {/* The Live MJPEG Stream (Hidden when suspended) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           key={streamKey}
           src={`${backendUrl}/video_feed`}
           alt=""
           className={`h-full w-full object-contain transition-opacity duration-300 select-none pointer-events-none ${
-            streamConnected && !streamError ? "opacity-100" : "opacity-0 hidden"
+            streamConnected && !streamError && !isSuspended
+              ? "opacity-100"
+              : "opacity-0 hidden"
           }`}
           onLoad={onStreamLoad}
           onError={onStreamError}
         />
 
-        {/* Offline / Connecting State Overlay (Translucent Glass, Not Muddy Black) */}
-        {streamError && (
+        {/* Suspended State Overlay (Hardware released, CPU/GPU at 0%) */}
+        {isSuspended && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-black/45 backdrop-blur-md select-none">
+            {/* Standby Pulse Icon */}
+            <div className="relative mb-3 flex h-14 w-14 items-center justify-center">
+              <div className="absolute inset-0 rounded-full border border-amber-500/20 animate-ping opacity-40" />
+              <div className="absolute inset-2 rounded-full border border-amber-400/30" />
+              <div className="absolute inset-4 rounded-full border border-white/10" />
+              <svg
+                className="h-5 w-5 text-amber-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824-2.179a5 5 0 014.243 1.414M3 3l18 18"
+                />
+              </svg>
+            </div>
+
+            <h3 className="text-sm sm:text-base font-semibold tracking-wide text-white">
+              Surveillance Suspended (Compute Engine Idle)
+            </h3>
+            <p className="mt-1 max-w-md text-[11px] sm:text-xs text-gray-400 leading-relaxed font-sans">
+              Camera hardware device is released and the neural inference pipeline
+              is paused to eliminate compute and power usage.
+            </p>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+              <LiquidGlassButton
+                onClick={onTogglePower}
+                disabled={isPowerToggling}
+                size="sm"
+                className="font-mono text-[10px] tracking-wider border-emerald-400/40 text-emerald-300 hover:bg-emerald-950/30"
+                iconLeft={
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                  </span>
+                }
+              >
+                {isPowerToggling ? "INITIALIZING SENSOR..." : "TURN ON CAMERA & INFERENCE"}
+              </LiquidGlassButton>
+            </div>
+          </div>
+        )}
+
+        {/* Offline / Connecting State Overlay (Only when not suspended) */}
+        {!isSuspended && streamError && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-black/35 backdrop-blur-md">
             {/* Radar Grid Animation */}
             <div className="relative mb-3 flex h-14 w-14 items-center justify-center">
@@ -131,10 +189,12 @@ export default function DashboardVideoFeed({
 
         {/* Top-Left Floating Overlay HUD */}
         <div className="pointer-events-none absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20 flex flex-wrap items-center gap-2 select-none">
-          <LiquidPill size="sm" variant="default">
+          <LiquidPill size="sm" variant={isSuspended ? "warning" : "default"}>
             <span
               className={`h-1.5 w-1.5 rounded-full ${
-                streamConnected
+                isSuspended
+                  ? "bg-amber-400"
+                  : streamConnected
                   ? isAlert
                     ? "bg-red-400 animate-ping"
                     : "bg-emerald-400 animate-pulse"
@@ -145,23 +205,68 @@ export default function DashboardVideoFeed({
               Live Video Footage
             </span>
             <span className="text-white/20 select-none">/</span>
-            <span className="text-cyan-300/90 text-[10px]">
-              {streamConnected
+            <span
+              className={`text-[10px] font-mono ${
+                isSuspended
+                  ? "text-amber-300"
+                  : isAlert
+                  ? "text-red-300"
+                  : streamConnected
+                  ? "text-cyan-300/90"
+                  : "text-amber-300/90"
+              }`}
+            >
+              {isSuspended
+                ? "Suspended"
+                : streamConnected
                 ? isAlert
                   ? "Surge Alert"
                   : "AI Active"
                 : "Connecting"}
             </span>
           </LiquidPill>
+
+          {/* Quick Camera On/Off Power Action */}
+          {onTogglePower && (
+            <button
+              onClick={onTogglePower}
+              disabled={isPowerToggling}
+              title={
+                isSuspended
+                  ? "Click to activate camera and resume AI inference"
+                  : "Click to turn off camera and suspend AI compute"
+              }
+              className={`pointer-events-auto flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[10px] font-mono tracking-wider backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                isSuspended
+                  ? "border-emerald-500/30 bg-emerald-950/60 text-emerald-300 hover:bg-emerald-900/60 shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                  : "border-white/[0.08] bg-black/60 text-white/70 hover:border-amber-400/40 hover:text-amber-300 hover:bg-amber-950/30"
+              }`}
+            >
+              <svg
+                className={`h-3 w-3 ${isSuspended ? "text-emerald-400" : "text-white/60"}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M12 3v9"
+                />
+              </svg>
+              <span>{isSuspended ? "TURN ON CAMERA" : "TURN OFF CAMERA"}</span>
+            </button>
+          )}
         </div>
 
         {/* Top-Right Floating Overlay HUD */}
         <div className="pointer-events-none absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 flex items-center gap-2 select-none">
           <LiquidPill size="sm" variant="default" className="text-white/70">
-            <span className="text-white/50">{stats.resolution || "1280x720"}</span>
+            <span className="text-white/50">{stats.resolution || (isSuspended ? "Suspended" : "1280x720")}</span>
             <span className="text-white/20 select-none">•</span>
-            <span className="text-emerald-400/90 font-medium">
-              {stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Ingestion"}
+            <span className={isSuspended ? "text-amber-400/90 font-medium" : "text-emerald-400/90 font-medium"}>
+              {isSuspended ? "Standby (0 FPS)" : stats.capture_fps ? `${stats.capture_fps} FPS` : "Live Ingestion"}
             </span>
           </LiquidPill>
         </div>
@@ -173,7 +278,7 @@ export default function DashboardVideoFeed({
           </LiquidPill>
           <LiquidPill
             size="xs"
-            variant={isAlert ? "alert" : "success"}
+            variant={isSuspended ? "warning" : isAlert ? "alert" : "success"}
             className="font-medium"
           >
             {stats.status}
@@ -183,7 +288,7 @@ export default function DashboardVideoFeed({
         {/* Bottom-Right Floating Overlay HUD */}
         <div className="pointer-events-none absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 z-20 select-none">
           <LiquidPill size="xs" variant="default" className="text-cyan-300/80">
-            FPS: {stats.fps.toFixed(1)}
+            FPS: {isSuspended ? "0.0" : stats.fps.toFixed(1)}
           </LiquidPill>
         </div>
       </div>
