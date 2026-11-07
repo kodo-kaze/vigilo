@@ -10,6 +10,9 @@ export type { CameraDetailsCardProps } from "./CameraDetailsCard";
 export { default as CameraSourceModal } from "./CameraSourceModal";
 export type { CameraSourceModalProps } from "./CameraSourceModal";
 
+export { default as CameraSourceNodeCard } from "./CameraSourceNodeCard";
+export type { CameraSourceNodeCardProps } from "./CameraSourceNodeCard";
+
 export { default as TelemetryMetricTile } from "./TelemetryMetricTile";
 export type { TelemetryMetricTileProps } from "./TelemetryMetricTile";
 
