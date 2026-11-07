@@ -1,31 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 /**
  * Root Template
  *
  * Provides smooth, elegant liquid-glass page transitions on route changes.
- * Next.js App Router creates a new instance of template.tsx on every
- * navigation, ensuring the fluid entrance animation, specular top streak,
- * and atmospheric radiance trigger reliably across all page changes.
+ * Keyed by pathname to guarantee instant, reliable entrance animations,
+ * fluid lens blur-focus, and specular top streak across all navigations.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [isTransitioning, setIsTransitioning] = useState(true);
+
+  useEffect(() => {
+    setIsTransitioning(true);
+    const timer = setTimeout(() => {
+      setIsTransitioning(false);
+    }, 650);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   return (
     <div
+      key={pathname}
       className={`page-transition-wrapper ${
         isTransitioning ? "page-entering" : ""
       }`}
-      onAnimationEnd={(e) => {
-        if (
-          e.animationName === "vigiloPageEnter" ||
-          e.animationName === "vigiloPageFade"
-        ) {
-          setIsTransitioning(false);
-        }
-      }}
     >
       {isTransitioning && (
         <>

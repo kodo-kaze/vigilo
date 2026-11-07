@@ -2,6 +2,7 @@ import {
     UiloraCloudBackground,
     LiquidGlassButton,
     LiquidPill,
+    LiquidNavMenu,
 } from '@/src/components/ui';
 
 export default function Home() {
@@ -40,6 +41,9 @@ export default function Home() {
                     </LiquidGlassButton>
                 </div>
             </div>
+
+            {/* Speed Dial Navigation */}
+            <LiquidNavMenu position="bottom-right" />
 
         </main>
     );
