@@ -111,16 +111,34 @@ export default function CameraSourceModal({
     }
   }, [isOpen, fetchSources]);
 
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = useCallback(() => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 220);
+  }, [isClosing, onClose]);
+
+  // Reset closing flag when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsClosing(false);
+    }
+  }, [isOpen]);
+
   // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
+      if (e.key === "Escape" && isOpen && !isClosing) {
+        handleClose();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, isClosing, handleClose]);
 
   // Helper to persist a successful camera to recent list
   const persistRecentCamera = (cam: {
@@ -443,12 +461,16 @@ export default function CameraSourceModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="camera-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"
-      onClick={onClose}
+      className={`liquid-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md ${
+        isClosing ? "closing" : ""
+      }`}
+      onClick={handleClose}
     >
       <LiquidGlassCard
         hasTopSpecular={true}
-        className="w-full max-w-2xl p-0 rounded-2xl border-white/[0.08] shadow-[0_24px_80px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden max-h-[90vh]"
+        className={`liquid-modal-content w-full max-w-2xl p-0 rounded-2xl border-white/[0.08] shadow-[0_24px_80px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden max-h-[90vh] ${
+          isClosing ? "closing" : ""
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Bar */}
@@ -483,7 +505,7 @@ export default function CameraSourceModal({
           </div>
 
           <LiquidGlassButton
-            onClick={onClose}
+            onClick={handleClose}
             size="sm"
             variant="subtle"
             className="!h-9 !w-9 !p-0 !rounded-full shrink-0 flex items-center justify-center !border-white/20 hover:!border-white/40 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)]"
