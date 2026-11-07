@@ -1,5 +1,5 @@
 import React from "react";
-import { LiquidGlassCard } from "@/src/components/ui";
+import { LiquidGlassCard, LiquidGlassButton } from "@/src/components/ui";
 import { TelemetryStats } from "./types";
 
 export interface CameraDetailsCardProps {
@@ -51,15 +51,16 @@ export default function CameraDetailsCard({
           </div>
           <div className="flex items-center gap-2">
             {onOpenSourceModal && (
-              <button
-                type="button"
+              <LiquidGlassButton
                 onClick={onOpenSourceModal}
-                className="inline-flex items-center gap-1 text-[11px] font-sans font-medium text-white/70 hover:text-white px-2.5 py-0.5 rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+                size="sm"
+                variant="subtle"
+                className="!px-3 !py-1 text-[11px] font-sans font-medium !border-white/20 hover:!border-white/40 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)]"
+                iconRight={<span className="text-[10px] text-white/60">↗</span>}
                 title="Switch optical camera node or configure IP & Port"
               >
-                <span>Switch Node</span>
-                <span className="text-[10px]">↗</span>
-              </button>
+                Switch Node
+              </LiquidGlassButton>
             )}
             <span className="text-[10px] font-sans font-medium text-white/40 hidden sm:inline">
               {isSuspended ? "Standby" : "Active"}
@@ -189,14 +190,17 @@ export default function CameraDetailsCard({
             </button>
           )}
           {onTogglePower && (
-            <button
-              type="button"
+            <LiquidGlassButton
               onClick={onTogglePower}
               disabled={isPowerToggling}
-              className="text-[10px] font-sans font-medium text-white/80 hover:text-white px-2 py-0.5 rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+              size="sm"
+              variant={isSuspended ? "default" : "subtle"}
+              className="!px-3 !py-1 text-[11px] font-sans font-medium !border-white/20 hover:!border-white/40 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)]"
+              iconRight={<span className="text-[10px] text-white/60">↗</span>}
+              title={isSuspended ? "Turn on camera hardware sensor" : "Suspend camera to save power"}
             >
-              {isSuspended ? "Turn On Camera ↗" : "Turn Off Camera"}
-            </button>
+              {isSuspended ? "Turn On Camera" : "Turn Off Camera"}
+            </LiquidGlassButton>
           )}
         </div>
       </div>
