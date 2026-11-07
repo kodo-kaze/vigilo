@@ -1,5 +1,5 @@
 import React from "react";
-import { LiquidGlassCard, LiquidPill } from "@/src/components/ui";
+import { LiquidGlassCard, LiquidPill, LiquidInnerCard } from "@/src/components/ui";
 import { TelemetryStats } from "./types";
 import TelemetryMetricTile from "./TelemetryMetricTile";
 
@@ -41,8 +41,8 @@ export default function CrowdDynamicsCard({
           </LiquidPill>
         </div>
 
-        {/* Crowd Probability Progress Gauge (Clean integrated section) */}
-        <div className="mb-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 flex flex-col gap-2">
+        {/* Crowd Probability Progress Gauge (Darker LiquidInnerCard) */}
+        <LiquidInnerCard className="mb-3 p-3 flex flex-col gap-2">
           <div className="flex items-center justify-between font-sans">
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-white/70">
@@ -87,10 +87,10 @@ export default function CrowdDynamicsCard({
             <span>50% (Surge Threshold)</span>
             <span>100% (Dense Bottleneck)</span>
           </div>
-        </div>
+        </LiquidInnerCard>
 
-        {/* 4 Metric Columns in 1 Unified Strip with Vertical Dividers */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 rounded-xl border border-white/[0.08] bg-white/[0.02] divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06] mb-3">
+        {/* 4 Metric Columns in 1 Unified Strip with Vertical Dividers (Darker LiquidInnerCard) */}
+        <LiquidInnerCard className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06] mb-3">
           {/* Metric 1: People Count */}
           <TelemetryMetricTile
             label="Detected People"
@@ -121,7 +121,7 @@ export default function CrowdDynamicsCard({
             unit="fps"
             subtitle="Neural Engine Speed"
           />
-        </div>
+        </LiquidInnerCard>
       </div>
 
       {/* Bottom Footnote (Clean sans-serif) */}

@@ -1,5 +1,10 @@
 import React from "react";
-import { LiquidGlassCard, LiquidGlassButton, LiquidPill } from "@/src/components/ui";
+import {
+  LiquidGlassCard,
+  LiquidGlassButton,
+  LiquidPill,
+  LiquidInnerCard,
+} from "@/src/components/ui";
 import { TelemetryStats } from "./types";
 
 export interface CameraDetailsCardProps {
@@ -72,8 +77,8 @@ export default function CameraDetailsCard({
           </div>
         </div>
 
-        {/* 2-Column Bento Specs Grid (Unified clean container, no crowded separate boxes) */}
-        <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 mb-3">
+        {/* 2-Column Bento Specs Grid (Darker LiquidInnerCard) */}
+        <LiquidInnerCard className="p-3 mb-3">
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 font-sans">
             {/* 1. Optical Sensor */}
             <div className="flex flex-col justify-center">
@@ -160,7 +165,7 @@ export default function CameraDetailsCard({
               </span>
             </div>
           </div>
-        </div>
+        </LiquidInnerCard>
       </div>
 
       {/* Quick Actions / Status Footer (Steady dot, clean font-sans) */}

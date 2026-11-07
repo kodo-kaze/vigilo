@@ -7,6 +7,9 @@ export type { LiquidGlassButtonProps } from "./LiquidGlassButton";
 export { default as LiquidPill } from "./LiquidPill";
 export type { LiquidPillProps } from "./LiquidPill";
 
+export { default as LiquidInnerCard } from "./LiquidInnerCard";
+export type { LiquidInnerCardProps } from "./LiquidInnerCard";
+
 export { default as GlassInput } from "./GlassInput";
 export type { GlassInputProps } from "./GlassInput";
 
