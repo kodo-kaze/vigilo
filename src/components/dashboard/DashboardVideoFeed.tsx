@@ -84,9 +84,6 @@ export default function DashboardVideoFeed({
                   alt="Vigilo"
                   className="h-full w-full object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
                 />
-                <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-black/80 bg-[#0c1017] shadow-sm">
-                  <span className="h-2 w-2 rounded-full bg-amber-400" />
-                </span>
               </div>
             </div>
 
@@ -204,9 +201,6 @@ export default function DashboardVideoFeed({
                   alt="Vigilo"
                   className="h-full w-full object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] opacity-85"
                 />
-                <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-black/80 bg-[#0c1017] shadow-sm">
-                  <span className="h-2 w-2 rounded-full bg-amber-400/90 animate-pulse" />
-                </span>
               </div>
             </div>
 
