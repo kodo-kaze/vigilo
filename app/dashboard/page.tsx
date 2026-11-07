@@ -13,15 +13,20 @@ import {
 const DEFAULT_BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
+const AUTO_START_STORAGE_KEY = "vigilo_auto_start_camera";
+
 export default function DashboardPage() {
   const [isPaused, setIsPaused] = useState(false);
   const backendUrl = DEFAULT_BACKEND_URL;
   const [streamConnected, setStreamConnected] = useState(false);
   const [streamError, setStreamError] = useState(false);
   const [isPowerToggling, setIsPowerToggling] = useState(false);
+  const [autoStartCamera, setAutoStartCamera] = useState<boolean>(false);
+  const hasAutoEngagedRef = useRef(false);
+
   const [stats, setStats] = useState<TelemetryStats>({
     status: "CONNECTING",
-    is_suspended: false,
+    is_suspended: true,
     is_crowd: false,
     crowd_probability: 0.0,
     people_count: 0,
@@ -39,6 +44,30 @@ export default function DashboardPage() {
 
   const [streamKey, setStreamKey] = useState(0);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Load auto-start preference from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(AUTO_START_STORAGE_KEY);
+      if (stored !== null) {
+        setAutoStartCamera(stored === "true");
+      }
+    } catch {
+      // localStorage may be unavailable
+    }
+  }, []);
+
+  const handleToggleAutoStart = useCallback(() => {
+    setAutoStartCamera((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(AUTO_START_STORAGE_KEY, String(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  }, []);
 
   // Poll telemetry metrics from backend /stats
   const fetchTelemetry = useCallback(async () => {
@@ -77,6 +106,25 @@ export default function DashboardPage() {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     };
   }, [fetchTelemetry]);
+
+  // If user enabled auto-start, automatically wake up the camera once on dashboard load
+  useEffect(() => {
+    if (autoStartCamera && !hasAutoEngagedRef.current && stats.is_suspended) {
+      hasAutoEngagedRef.current = true;
+      fetch(`${DEFAULT_BACKEND_URL}/camera/resume`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+      })
+        .then((res) => {
+          if (res.ok) {
+            setStreamError(false);
+            setStreamKey((k) => k + 1);
+            fetchTelemetry();
+          }
+        })
+        .catch(() => {});
+    }
+  }, [autoStartCamera, stats.is_suspended, fetchTelemetry]);
 
   // Restart stream image on retry
   const handleRetry = () => {
@@ -175,6 +223,8 @@ export default function DashboardPage() {
           }}
           onTogglePower={handleTogglePower}
           isPowerToggling={isPowerToggling}
+          autoStartCamera={autoStartCamera}
+          onToggleAutoStart={handleToggleAutoStart}
         />
 
         {/* BOTTOM ROW: RECTANGULAR BENTO GRID (INSET SLIGHTLY LESSER WIDTH THAN VIDEO) */}
@@ -192,6 +242,8 @@ export default function DashboardPage() {
             formatUptime={formatUptime}
             onTogglePower={handleTogglePower}
             isPowerToggling={isPowerToggling}
+            autoStartCamera={autoStartCamera}
+            onToggleAutoStart={handleToggleAutoStart}
           />
         </section>
       </div>

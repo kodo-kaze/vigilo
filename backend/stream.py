@@ -15,7 +15,7 @@ class RTSPCameraStream:
     Continuously retrieves the absolute freshest frame to prevent RTSP/webcam buffer buildup.
     Supports on-demand suspension to release camera hardware and conserve compute.
     """
-    def __init__(self, source, suspended: bool = False):
+    def __init__(self, source, suspended: bool = True):
         self.source = int(source) if str(source).isdigit() else source
         self.is_video_file = isinstance(self.source, str) and not (
             str(self.source).startswith("rtsp://") or str(self.source).startswith("http://")
@@ -147,7 +147,7 @@ class CrowdStreamBroadcaster:
         stride: int = DEFAULT_STRIDE,
         smooth: int = DEFAULT_SMOOTH,
         zone: str = DEFAULT_ZONE,
-        suspended: bool = False
+        suspended: bool = True
     ):
         self.source = source
         self.conf = conf

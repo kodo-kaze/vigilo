@@ -18,6 +18,8 @@ export interface DashboardVideoFeedProps {
   onStreamError: () => void;
   onTogglePower?: () => void;
   isPowerToggling?: boolean;
+  autoStartCamera?: boolean;
+  onToggleAutoStart?: () => void;
   className?: string;
 }
 
@@ -40,6 +42,8 @@ export default function DashboardVideoFeed({
   onStreamError,
   onTogglePower,
   isPowerToggling = false,
+  autoStartCamera = false,
+  onToggleAutoStart,
   className = "",
 }: DashboardVideoFeedProps) {
   const isSuspended = Boolean(stats.is_suspended || stats.status === "SUSPENDED");
@@ -97,7 +101,7 @@ export default function DashboardVideoFeed({
               is paused to eliminate compute and power usage.
             </p>
 
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+            <div className="mt-4 flex flex-col items-center justify-center gap-3">
               <LiquidGlassButton
                 onClick={onTogglePower}
                 disabled={isPowerToggling}
@@ -112,6 +116,21 @@ export default function DashboardVideoFeed({
               >
                 {isPowerToggling ? "INITIALIZING SENSOR..." : "TURN ON CAMERA & INFERENCE"}
               </LiquidGlassButton>
+
+              {onToggleAutoStart && (
+                <label
+                  onClick={(e) => e.stopPropagation()}
+                  className="pointer-events-auto flex items-center gap-2 cursor-pointer text-[10px] font-mono text-white/50 hover:text-white/80 select-none transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={autoStartCamera}
+                    onChange={onToggleAutoStart}
+                    className="h-3 w-3 rounded border-white/20 bg-black/60 text-cyan-400 focus:ring-0 cursor-pointer accent-cyan-400"
+                  />
+                  <span>Remember to auto-start camera when opening dashboard</span>
+                </label>
+              )}
             </div>
           </div>
         )}

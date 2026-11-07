@@ -244,13 +244,20 @@ def parse_args():
     parser.add_argument("--stride", type=int, default=DEFAULT_STRIDE, help="Inference stride (1 = every frame)")
     parser.add_argument("--smooth", type=int, default=DEFAULT_SMOOTH, help="Temporal probability smoothing window")
     parser.add_argument("--zone", default=DEFAULT_ZONE, help="Facility zone label")
-    parser.add_argument("--suspended", action="store_true", help="Start server in suspended standby mode without turning on camera")
+    parser.add_argument(
+        "--auto-start",
+        "--active",
+        dest="auto_start",
+        action="store_true",
+        help="Immediately activate camera upon startup (default: starts suspended in power-saving standby)"
+    )
     return parser.parse_args()
 
 
 def main():
     global broadcaster
     args = parse_args()
+    start_suspended = not args.auto_start
 
     print()
     print("=" * 75)
@@ -258,6 +265,7 @@ def main():
     print("=" * 75)
     print(f" Camera Source  : {args.source}")
     print(f" Zone Location  : {args.zone}")
+    print(f" Initial State  : {'SUSPENDED (Standby - Camera Off)' if start_suspended else 'ACTIVE (Streaming)'}")
     print(f" Server URL     : http://{args.host}:{args.port}")
     print(f" Video Stream   : http://localhost:{args.port}/video_feed")
     print(f" Telemetry API  : http://localhost:{args.port}/stats")
@@ -268,7 +276,7 @@ def main():
     print("=" * 75)
     print()
 
-    # Initialize the live AI stream broadcaster
+    # Initialize the live AI stream broadcaster (Defaults to Suspended standby)
     broadcaster = CrowdStreamBroadcaster(
         source=args.source,
         conf=args.conf,
@@ -276,7 +284,7 @@ def main():
         stride=args.stride,
         smooth=args.smooth,
         zone=args.zone,
-        suspended=args.suspended
+        suspended=start_suspended
     )
 
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")

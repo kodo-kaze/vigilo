@@ -7,6 +7,8 @@ export interface CameraDetailsCardProps {
   formatUptime: (seconds: number) => string;
   onTogglePower?: () => void;
   isPowerToggling?: boolean;
+  autoStartCamera?: boolean;
+  onToggleAutoStart?: () => void;
   className?: string;
 }
 
@@ -21,6 +23,8 @@ export default function CameraDetailsCard({
   formatUptime,
   onTogglePower,
   isPowerToggling = false,
+  autoStartCamera = false,
+  onToggleAutoStart,
   className = "",
 }: CameraDetailsCardProps) {
   const isSuspended = Boolean(stats.is_suspended || stats.status === "SUSPENDED");
@@ -131,21 +135,34 @@ export default function CameraDetailsCard({
               isSuspended ? "bg-amber-400" : "bg-emerald-400"
             }`}
           />
-          {isSuspended ? "Engine: Suspended (Idle)" : "Engine: Nominal (Inference Active)"}
+          {isSuspended ? "Engine: Standby (Idle)" : "Engine: Nominal (Inference Active)"}
         </span>
-        {onTogglePower && (
-          <button
-            onClick={onTogglePower}
-            disabled={isPowerToggling}
-            className={`text-[9px] font-mono uppercase tracking-wider transition-colors hover:underline ${
-              isSuspended
-                ? "text-emerald-400 hover:text-emerald-300"
-                : "text-amber-400/80 hover:text-amber-300"
-            }`}
-          >
-            {isSuspended ? "Turn On Camera ↗" : "Turn Off Camera"}
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {onToggleAutoStart && (
+            <button
+              onClick={onToggleAutoStart}
+              title="Remember to auto-start camera directly on dashboard visit"
+              className={`text-[9px] font-mono uppercase tracking-wider transition-colors hover:underline ${
+                autoStartCamera ? "text-cyan-300 font-semibold" : "text-white/40 hover:text-white/70"
+              }`}
+            >
+              Auto-Start: {autoStartCamera ? "ON" : "OFF"}
+            </button>
+          )}
+          {onTogglePower && (
+            <button
+              onClick={onTogglePower}
+              disabled={isPowerToggling}
+              className={`text-[9px] font-mono uppercase tracking-wider transition-colors hover:underline ${
+                isSuspended
+                  ? "text-emerald-400 hover:text-emerald-300"
+                  : "text-amber-400/80 hover:text-amber-300"
+              }`}
+            >
+              {isSuspended ? "Turn On Camera ↗" : "Turn Off Camera"}
+            </button>
+          )}
+        </div>
       </div>
     </LiquidGlassCard>
   );
