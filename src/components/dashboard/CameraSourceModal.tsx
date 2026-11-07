@@ -482,14 +482,24 @@ export default function CameraSourceModal({
             </div>
           </div>
 
-          <button
-            type="button"
+          <LiquidGlassButton
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/50 hover:border-white/20 hover:bg-white/[0.08] hover:text-white transition-all duration-200"
+            size="sm"
+            variant="subtle"
+            className="!h-9 !w-9 !p-0 !rounded-full shrink-0 flex items-center justify-center !border-white/20 hover:!border-white/40 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)]"
             aria-label="Close dialog"
+            title="Close dialog"
           >
-            ✕
-          </button>
+            <svg
+              className="h-4 w-4 text-white/70 group-hover:text-white transition-colors"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </LiquidGlassButton>
         </div>
 
         {/* Current Active Source Status Strip */}
