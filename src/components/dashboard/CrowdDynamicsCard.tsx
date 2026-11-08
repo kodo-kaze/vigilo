@@ -36,9 +36,21 @@ export default function CrowdDynamicsCard({
               Crowd Dynamics &amp; Flow Telemetry
             </h2>
           </div>
-          <LiquidPill size="xs" className="text-[10px] text-white/70">
-            Real-Time Inference
-          </LiquidPill>
+          <div className="flex items-center gap-2">
+            {(stats.dense_clusters_count ?? 0) > 0 && (
+              <LiquidPill size="xs" dotColor="bg-rose-500" className="text-[10px] text-rose-300">
+                {stats.dense_clusters_count} Dense Zone{stats.dense_clusters_count! > 1 ? "s" : ""}
+              </LiquidPill>
+            )}
+            {(stats.gatherings_count ?? 0) > 0 && (
+              <LiquidPill size="xs" dotColor="bg-sky-400" className="text-[10px] text-sky-300">
+                {stats.gatherings_count} Gathering{stats.gatherings_count! > 1 ? "s" : ""}
+              </LiquidPill>
+            )}
+            <LiquidPill size="xs" className="text-[10px] text-white/70">
+              Real-Time Inference
+            </LiquidPill>
+          </div>
         </div>
 
         {/* Crowd Probability Progress Gauge (Darker LiquidInnerCard) */}
@@ -89,8 +101,8 @@ export default function CrowdDynamicsCard({
           </div>
         </LiquidInnerCard>
 
-        {/* 4 Metric Columns in 1 Unified Strip with Vertical Dividers (Darker LiquidInnerCard) */}
-        <LiquidInnerCard className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06] mb-3">
+        {/* 6 Metric Columns in 1 Unified Strip with Vertical Dividers (Darker LiquidInnerCard) */}
+        <LiquidInnerCard className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06] mb-3">
           {/* Metric 1: People Count */}
           <TelemetryMetricTile
             label="Detected People"
@@ -107,14 +119,32 @@ export default function CrowdDynamicsCard({
             subtitle="Area Saturation Index"
           />
 
-          {/* Metric 3: NN Proximity */}
+          {/* Metric 3: Dense Zones (>=6) */}
+          <TelemetryMetricTile
+            label="Dense Zones (≥6)"
+            value={stats.dense_clusters_count ?? 0}
+            unit="zones"
+            valueColor={(stats.dense_clusters_count ?? 0) > 0 ? "text-rose-400" : "text-white"}
+            subtitle="Clustered Crowd Hulls"
+          />
+
+          {/* Metric 4: Gatherings (3-5) */}
+          <TelemetryMetricTile
+            label="Gatherings (3–5)"
+            value={stats.gatherings_count ?? 0}
+            unit="huddles"
+            valueColor={(stats.gatherings_count ?? 0) > 0 ? "text-sky-300" : "text-white"}
+            subtitle="Group Formations"
+          />
+
+          {/* Metric 5: NN Proximity */}
           <TelemetryMetricTile
             label="NN Proximity"
             value={stats.nearest_neighbor_distance.toFixed(3)}
             subtitle="Cluster Tightness Ratio"
           />
 
-          {/* Metric 4: Inference FPS */}
+          {/* Metric 6: Inference FPS */}
           <TelemetryMetricTile
             label="Inference Speed"
             value={stats.fps.toFixed(1)}
@@ -128,7 +158,7 @@ export default function CrowdDynamicsCard({
       <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-[10px] font-sans text-white/40">
         <span>Telemetry Ingestion: Active (0.45s loop)</span>
         <span className="hidden sm:inline">
-          Classification: Random Forest Temporal Smoothing
+          Spatial Clustering: Continuous 2D Heatmap • Graph Proximity Hulls
         </span>
       </div>
     </LiquidGlassCard>

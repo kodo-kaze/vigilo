@@ -49,3 +49,5 @@ DEFAULT_IOU = float(os.getenv("IOU_THRESHOLD", "0.70"))
 DEFAULT_STRIDE = int(os.getenv("FRAME_STRIDE", "1"))
 DEFAULT_SMOOTH = int(os.getenv("SMOOTH_WINDOW", "10"))
 DEFAULT_ZONE = os.getenv("CAMERA_ZONE", "Terminal Concourse 04 • Zone B")
+DEFAULT_HEATMAP = os.getenv("ENABLE_HEATMAP", "true").lower() == "true"
+DEFAULT_CLUSTERS = os.getenv("ENABLE_CLUSTERS", "true").lower() == "true"

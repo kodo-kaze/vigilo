@@ -49,13 +49,18 @@ export default function DashboardPage() {
     people_count: 0,
     density_per_megapixel: 0.0,
     nearest_neighbor_distance: 0.0,
+    dense_clusters_count: 0,
+    gatherings_count: 0,
+    isolated_count: 0,
+    heatmap_enabled: true,
+    clusters_enabled: true,
     fps: 0.0,
     capture_fps: 0.0,
     camera_connected: false,
     resolution: "Detecting...",
     camera_source: "Integrated Camera (Index 0)",
     zone: "Terminal Concourse 04 • Zone B",
-    model_mesh: "YOLO26m + Conflux Random Forest",
+    model_mesh: "YOLO26m + Conflux Random Forest + Spatial Clustering",
     uptime_seconds: 0,
   });
 
@@ -174,6 +179,34 @@ export default function DashboardPage() {
     }
   }, [fetchTelemetry]);
 
+  // Toggle 2D ground thermal density heatmap
+  const handleToggleHeatmap = useCallback(async () => {
+    const nextVal = !(stats.heatmap_enabled ?? true);
+    setStats((prev) => ({ ...prev, heatmap_enabled: nextVal }));
+    try {
+      await fetch(`${DEFAULT_BACKEND_URL}/camera/options?heatmap=${nextVal}`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+      });
+    } catch (e) {
+      console.error("Failed to toggle ground heatmap:", e);
+    }
+  }, [stats.heatmap_enabled]);
+
+  // Toggle density-aware spatial cluster hulls and gatherings
+  const handleToggleClusters = useCallback(async () => {
+    const nextVal = !(stats.clusters_enabled ?? true);
+    setStats((prev) => ({ ...prev, clusters_enabled: nextVal }));
+    try {
+      await fetch(`${DEFAULT_BACKEND_URL}/camera/options?clusters=${nextVal}`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+      });
+    } catch (e) {
+      console.error("Failed to toggle spatial clusters:", e);
+    }
+  }, [stats.clusters_enabled]);
+
   const isAlert = stats.is_crowd || stats.status === "CROWD ALERT";
   const probabilityPercent = Math.round(stats.crowd_probability * 100);
 
@@ -239,6 +272,8 @@ export default function DashboardPage() {
           autoStartCamera={autoStartCamera}
           onToggleAutoStart={handleToggleAutoStart}
           onOpenSourceModal={() => setIsSourceModalOpen(true)}
+          onToggleHeatmap={handleToggleHeatmap}
+          onToggleClusters={handleToggleClusters}
         />
 
         {/* BOTTOM ROW: RECTANGULAR BENTO GRID (INSET SLIGHTLY LESSER WIDTH THAN VIDEO) */}

@@ -12,8 +12,28 @@ import numpy as np
 # Optimize OpenCV RTSP streaming: prioritize TCP to prevent packet fragmentation and set 5s socket timeout
 os.environ.setdefault("OPENCV_FFMPEG_CAPTURE_OPTIONS", "rtsp_transport;tcp|timeout;5000000")
 
-from config import DEFAULT_CONF, DEFAULT_IOU, DEFAULT_STRIDE, DEFAULT_SMOOTH, DEFAULT_ZONE
-from detector import CrowdDetector, draw_annotations
+try:
+    from config import (
+        DEFAULT_CONF,
+        DEFAULT_IOU,
+        DEFAULT_STRIDE,
+        DEFAULT_SMOOTH,
+        DEFAULT_ZONE,
+        DEFAULT_HEATMAP,
+        DEFAULT_CLUSTERS,
+    )
+    from detector import CrowdDetector, draw_annotations, detect_spatial_clusters
+except ImportError:
+    from backend.config import (
+        DEFAULT_CONF,
+        DEFAULT_IOU,
+        DEFAULT_STRIDE,
+        DEFAULT_SMOOTH,
+        DEFAULT_ZONE,
+        DEFAULT_HEATMAP,
+        DEFAULT_CLUSTERS,
+    )
+    from backend.detector import CrowdDetector, draw_annotations, detect_spatial_clusters
 
 
 def parse_camera_source(source) -> Dict[str, Any]:
@@ -242,7 +262,9 @@ class CrowdStreamBroadcaster:
         stride: int = DEFAULT_STRIDE,
         smooth: int = DEFAULT_SMOOTH,
         zone: str = DEFAULT_ZONE,
-        suspended: bool = True
+        suspended: bool = True,
+        show_heatmap: bool = DEFAULT_HEATMAP,
+        show_clusters: bool = DEFAULT_CLUSTERS,
     ):
         self.source = source
         self.conf = conf
@@ -251,6 +273,8 @@ class CrowdStreamBroadcaster:
         self.smooth = max(1, smooth)
         self.zone = zone
         self.suspended = suspended
+        self.show_heatmap = show_heatmap
+        self.show_clusters = show_clusters
 
         self.detector = CrowdDetector(conf=self.conf, iou=self.iou)
         self.camera = RTSPCameraStream(self.source, suspended=self.suspended)
@@ -267,6 +291,11 @@ class CrowdStreamBroadcaster:
             "people_count": 0,
             "density_per_megapixel": 0.0,
             "nearest_neighbor_distance": 0.0,
+            "dense_clusters_count": 0,
+            "gatherings_count": 0,
+            "isolated_count": 0,
+            "heatmap_enabled": self.show_heatmap,
+            "clusters_enabled": self.show_clusters,
             "fps": 0.0,
             "capture_fps": 0.0,
             "camera_connected": False,
@@ -278,13 +307,24 @@ class CrowdStreamBroadcaster:
             "camera_ip": self.source_meta.get("ip"),
             "camera_port": self.source_meta.get("port"),
             "zone": self.zone,
-            "model_mesh": "YOLO26m + Conflux Random Forest",
+            "model_mesh": "YOLO26m + Conflux Random Forest + Spatial Clustering",
         }
 
         self.running = True
         self.start_time = time.time()
         self.worker_thread = threading.Thread(target=self._inference_loop, daemon=True)
         self.worker_thread.start()
+
+    def set_display_options(self, heatmap: Optional[bool] = None, clusters: Optional[bool] = None):
+        """Dynamically enables or disables ground density heatmap and cluster polygons."""
+        with self.lock:
+            if heatmap is not None:
+                self.show_heatmap = bool(heatmap)
+                self.stats["heatmap_enabled"] = self.show_heatmap
+            if clusters is not None:
+                self.show_clusters = bool(clusters)
+                self.stats["clusters_enabled"] = self.show_clusters
+        print(f"[Broadcaster] Display options updated: Heatmap={self.show_heatmap}, Clusters={self.show_clusters}")
 
     def _human_source_name(self, source) -> str:
         meta = parse_camera_source(source)
@@ -389,6 +429,12 @@ class CrowdStreamBroadcaster:
         }
         cached_prob = 0.0
         cached_is_crowd = False
+        cached_dense_clusters = []
+        cached_gatherings = []
+        cached_isolated = []
+        cached_dense_cnt = 0
+        cached_gather_cnt = 0
+        cached_isolated_cnt = 0
 
         while self.running:
             if self.suspended:
@@ -424,16 +470,33 @@ class CrowdStreamBroadcaster:
                     smoothed_prob = float(np.mean(prob_history))
                     cached_prob = smoothed_prob
                     cached_is_crowd = smoothed_prob >= 0.50
+
+                    dense_clusters, gatherings, isolated = detect_spatial_clusters(cached_boxes)
+                    cached_dense_clusters = dense_clusters
+                    cached_gatherings = gatherings
+                    cached_isolated = isolated
+                    cached_dense_cnt = len(dense_clusters)
+                    cached_gather_cnt = len(gatherings)
+                    cached_isolated_cnt = len(isolated)
                 except Exception as e:
                     print(f"[Inference Error]: {e}")
 
-            # Draw sleek bounding boxes on detected pedestrians (clean UI video feed)
-            annotated_frame = draw_annotations(
+            with self.lock:
+                cur_heatmap = self.show_heatmap
+                cur_clusters = self.show_clusters
+
+            # Draw sleek bounding boxes, dynamic ground heatmap, and spatial cluster hulls/boxes
+            annotated_frame, dense_cnt, gather_cnt, isolated_cnt = draw_annotations(
                 frame=frame,
                 boxes=cached_boxes,
                 confidences=cached_confs,
                 is_crowd=cached_is_crowd,
-                show_hud=False
+                show_hud=False,
+                show_heatmap=cur_heatmap,
+                show_clusters=cur_clusters,
+                dense_clusters=cached_dense_clusters,
+                gatherings=cached_gatherings,
+                isolated=cached_isolated
             )
 
             # Compress JPEG for client streaming
@@ -450,6 +513,11 @@ class CrowdStreamBroadcaster:
                         "people_count": cached_features["person_count"],
                         "density_per_megapixel": round(cached_features["people_per_megapixel"], 2),
                         "nearest_neighbor_distance": round(cached_features["average_nearest_neighbor_distance"], 4),
+                        "dense_clusters_count": dense_cnt,
+                        "gatherings_count": gather_cnt,
+                        "isolated_count": isolated_cnt,
+                        "heatmap_enabled": cur_heatmap,
+                        "clusters_enabled": cur_clusters,
                         "fps": round(fps_instant, 1),
                         "capture_fps": cam_info["capture_fps"],
                         "camera_connected": cam_info["connected"],
@@ -460,7 +528,7 @@ class CrowdStreamBroadcaster:
                         "camera_ip": self.source_meta.get("ip"),
                         "camera_port": self.source_meta.get("port"),
                         "zone": self.zone,
-                        "model_mesh": "YOLO26m + Conflux Random Forest",
+                        "model_mesh": "YOLO26m + Conflux Random Forest + Spatial Clustering",
                         "uptime_seconds": int(time.time() - self.start_time),
                     }
 

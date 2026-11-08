@@ -6,6 +6,11 @@ export interface TelemetryStats {
   people_count: number;
   density_per_megapixel: number;
   nearest_neighbor_distance: number;
+  dense_clusters_count?: number;
+  gatherings_count?: number;
+  isolated_count?: number;
+  heatmap_enabled?: boolean;
+  clusters_enabled?: boolean;
   fps: number;
   capture_fps?: number;
   camera_connected: boolean;

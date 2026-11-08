@@ -11,17 +11,30 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 import uvicorn
 
-from config import (
-    DEFAULT_SOURCE,
-    DEFAULT_HOST,
-    DEFAULT_PORT,
-    DEFAULT_CONF,
-    DEFAULT_IOU,
-    DEFAULT_STRIDE,
-    DEFAULT_SMOOTH,
-    DEFAULT_ZONE
-)
-from stream import CrowdStreamBroadcaster
+try:
+    from config import (
+        DEFAULT_SOURCE,
+        DEFAULT_HOST,
+        DEFAULT_PORT,
+        DEFAULT_CONF,
+        DEFAULT_IOU,
+        DEFAULT_STRIDE,
+        DEFAULT_SMOOTH,
+        DEFAULT_ZONE
+    )
+    from stream import CrowdStreamBroadcaster
+except ImportError:
+    from backend.config import (
+        DEFAULT_SOURCE,
+        DEFAULT_HOST,
+        DEFAULT_PORT,
+        DEFAULT_CONF,
+        DEFAULT_IOU,
+        DEFAULT_STRIDE,
+        DEFAULT_SMOOTH,
+        DEFAULT_ZONE
+    )
+    from backend.stream import CrowdStreamBroadcaster
 
 # Global broadcaster instance
 broadcaster: Optional[CrowdStreamBroadcaster] = None
@@ -153,6 +166,8 @@ def index():
             "suspend": "/camera/suspend",
             "resume": "/camera/resume",
             "toggle": "/camera/toggle",
+            "options": "/camera/options",
+            "toggle_display": "/toggle",
             "health": "/health"
         },
         "status": "online"
@@ -221,6 +236,11 @@ def get_stats():
             "people_count": 0,
             "density_per_megapixel": 0.0,
             "nearest_neighbor_distance": 0.0,
+            "dense_clusters_count": 0,
+            "gatherings_count": 0,
+            "isolated_count": 0,
+            "heatmap_enabled": True,
+            "clusters_enabled": True,
             "fps": 0.0,
             "capture_fps": 0.0,
             "camera_connected": False,
@@ -439,6 +459,39 @@ def toggle_camera():
     }
 
 
+class DisplayOptionsRequest(BaseModel):
+    heatmap: Optional[bool] = None
+    clusters: Optional[bool] = None
+
+
+@app.post("/camera/options")
+@app.get("/camera/options")
+@app.post("/toggle")
+@app.get("/toggle")
+def toggle_display(
+    heatmap: Optional[bool] = None,
+    clusters: Optional[bool] = None,
+    req: Optional[DisplayOptionsRequest] = None
+):
+    """
+    Dynamically enables or disables ground density heatmap and spatial cluster polygons.
+    Accepts query parameters (?heatmap=true&clusters=true) or JSON body.
+    """
+    global broadcaster
+    if broadcaster is None:
+        return JSONResponse(status_code=503, content={"error": "Broadcaster not initialized"})
+
+    h_val = req.heatmap if (req and req.heatmap is not None) else heatmap
+    c_val = req.clusters if (req and req.clusters is not None) else clusters
+
+    broadcaster.set_display_options(heatmap=h_val, clusters=c_val)
+    return {
+        "status": "ok",
+        "heatmap_enabled": broadcaster.show_heatmap,
+        "clusters_enabled": broadcaster.show_clusters
+    }
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Vigilo Crowd Detection & Intelligence Server",
@@ -452,6 +505,8 @@ def parse_args():
     parser.add_argument("--stride", type=int, default=DEFAULT_STRIDE, help="Inference stride (1 = every frame)")
     parser.add_argument("--smooth", type=int, default=DEFAULT_SMOOTH, help="Temporal probability smoothing window")
     parser.add_argument("--zone", default=DEFAULT_ZONE, help="Facility zone label")
+    parser.add_argument("--no-heatmap", action="store_true", help="Start with ground density heatmap disabled")
+    parser.add_argument("--no-clusters", action="store_true", help="Start with spatial cluster polygons disabled")
     parser.add_argument(
         "--auto-start",
         "--active",
@@ -471,16 +526,19 @@ def main():
     print("=" * 75)
     print(" VIGILO — REAL-TIME CROWD INTELLIGENCE BACKEND SERVER")
     print("=" * 75)
-    print(f" Camera Source  : {args.source}")
-    print(f" Zone Location  : {args.zone}")
-    print(f" Initial State  : {'SUSPENDED (Standby - Camera Off)' if start_suspended else 'ACTIVE (Streaming)'}")
-    print(f" Server URL     : http://{args.host}:{args.port}")
-    print(f" Video Stream   : http://localhost:{args.port}/video_feed")
-    print(f" Telemetry API  : http://localhost:{args.port}/stats")
-    print(f" Camera Info API: http://localhost:{args.port}/camera/info")
-    print(f" Suspend API    : POST http://localhost:{args.port}/camera/suspend")
-    print(f" Resume API     : POST http://localhost:{args.port}/camera/resume")
-    print(f" Toggle API     : POST http://localhost:{args.port}/camera/toggle")
+    print(f" Camera Source    : {args.source}")
+    print(f" Zone Location    : {args.zone}")
+    print(f" Initial State    : {'SUSPENDED (Standby - Camera Off)' if start_suspended else 'ACTIVE (Streaming)'}")
+    print(f" Ground Heatmap   : {'Disabled' if args.no_heatmap else 'Enabled'}")
+    print(f" Spatial Clusters : {'Disabled' if args.no_clusters else 'Enabled'}")
+    print(f" Server URL       : http://{args.host}:{args.port}")
+    print(f" Video Stream     : http://localhost:{args.port}/video_feed")
+    print(f" Telemetry API    : http://localhost:{args.port}/stats")
+    print(f" Options / Toggle : http://localhost:{args.port}/camera/options")
+    print(f" Camera Info API  : http://localhost:{args.port}/camera/info")
+    print(f" Suspend API      : POST http://localhost:{args.port}/camera/suspend")
+    print(f" Resume API       : POST http://localhost:{args.port}/camera/resume")
+    print(f" Toggle API       : POST http://localhost:{args.port}/camera/toggle")
     print("=" * 75)
     print()
 
@@ -492,7 +550,9 @@ def main():
         stride=args.stride,
         smooth=args.smooth,
         zone=args.zone,
-        suspended=start_suspended
+        suspended=start_suspended,
+        show_heatmap=not args.no_heatmap,
+        show_clusters=not args.no_clusters
     )
 
     config = uvicorn.Config(

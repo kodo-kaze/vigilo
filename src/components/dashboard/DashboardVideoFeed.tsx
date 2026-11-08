@@ -21,6 +21,8 @@ export interface DashboardVideoFeedProps {
   autoStartCamera?: boolean;
   onToggleAutoStart?: () => void;
   onOpenSourceModal?: () => void;
+  onToggleHeatmap?: () => void;
+  onToggleClusters?: () => void;
   className?: string;
 }
 
@@ -46,6 +48,8 @@ export default function DashboardVideoFeed({
   autoStartCamera = false,
   onToggleAutoStart,
   onOpenSourceModal,
+  onToggleHeatmap,
+  onToggleClusters,
   className = "",
 }: DashboardVideoFeedProps) {
   const isSuspended = Boolean(stats.is_suspended || stats.status === "SUSPENDED");
@@ -369,8 +373,34 @@ export default function DashboardVideoFeed({
           )}
         </div>
 
-        {/* Top-Right Floating Overlay HUD (LiquidPill) */}
-        <div className="pointer-events-none absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 flex items-center gap-2 select-none">
+        {/* Top-Right Floating Overlay HUD (Controls & Resolution) */}
+        <div className="pointer-events-none absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 flex flex-wrap items-center justify-end gap-2 select-none">
+          {/* Ground Heatmap Live Toggle */}
+          {onToggleHeatmap && !isSuspended && (
+            <LiquidGlassButton
+              onClick={onToggleHeatmap}
+              size="sm"
+              variant={stats.heatmap_enabled !== false ? "default" : "subtle"}
+              className="pointer-events-auto !px-3 !py-1 text-xs font-sans font-medium !border-white/20 hover:!border-white/40 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)]"
+              title="Toggle Ground Density Heatmap"
+            >
+              Heatmap: {stats.heatmap_enabled !== false ? "ON" : "OFF"}
+            </LiquidGlassButton>
+          )}
+
+          {/* Spatial Clusters Live Toggle */}
+          {onToggleClusters && !isSuspended && (
+            <LiquidGlassButton
+              onClick={onToggleClusters}
+              size="sm"
+              variant={stats.clusters_enabled !== false ? "default" : "subtle"}
+              className="pointer-events-auto !px-3 !py-1 text-xs font-sans font-medium !border-white/20 hover:!border-white/40 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35),0_4px_16px_rgba(0,0,0,0.5)]"
+              title="Toggle Density-Aware Cluster Polygons & Gatherings"
+            >
+              Clusters: {stats.clusters_enabled !== false ? "ON" : "OFF"}
+            </LiquidGlassButton>
+          )}
+
           <LiquidPill size="md">
             <span className="text-white/60">
               {stats.resolution || (isSuspended ? "Ready" : "1280×720")}
@@ -395,6 +425,16 @@ export default function DashboardVideoFeed({
           <LiquidPill size="xs" className="!px-3 !py-1 text-[11px] text-white/80">
             <span>{stats.status}</span>
           </LiquidPill>
+          {(stats.dense_clusters_count ?? 0) > 0 && (
+            <LiquidPill size="xs" dotColor="bg-rose-500" className="!px-3 !py-1 text-[11px] text-rose-300">
+              <span>{stats.dense_clusters_count} Dense Zone{stats.dense_clusters_count! > 1 ? "s" : ""}</span>
+            </LiquidPill>
+          )}
+          {(stats.gatherings_count ?? 0) > 0 && (
+            <LiquidPill size="xs" dotColor="bg-sky-400" className="!px-3 !py-1 text-[11px] text-sky-300">
+              <span>{stats.gatherings_count} Gathering{stats.gatherings_count! > 1 ? "s" : ""}</span>
+            </LiquidPill>
+          )}
         </div>
 
         {/* Bottom-Right Floating Overlay HUD */}
