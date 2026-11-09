@@ -706,7 +706,7 @@ export default function CameraSourceModal({
 
         {/* Footer info */}
         <div className="border-t border-white/[0.08] px-5 sm:px-6 py-2.5 bg-black/30 backdrop-blur-sm flex items-center justify-between text-[11px] font-sans text-white/40 select-none">
-          <span>Backend Target: {backendUrl}</span>
+          <span>Backend Target: {backendUrl || "http://localhost:8000"}</span>
           <span className="text-white/40 font-mono text-[10px]">Active Vision Ingestion</span>
         </div>
       </LiquidGlassCard>

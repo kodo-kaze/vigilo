@@ -214,7 +214,7 @@ export default function DashboardVideoFeed({
             <p className="mt-1 max-w-sm text-xs text-white/55 leading-relaxed font-sans">
               Waiting for live video ingestion from{" "}
               <code className="text-white/80 font-mono text-[11px] bg-white/[0.06] px-1.5 py-0.5 rounded border border-white/10">
-                {backendUrl}
+                {backendUrl || "http://localhost:8000"}
               </code>
               . Verify camera feed is active.
             </p>

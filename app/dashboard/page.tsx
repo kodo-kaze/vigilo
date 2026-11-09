@@ -12,7 +12,7 @@ import {
 } from "@/src/components/ui";
 
 const DEFAULT_BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_BACKEND_URL ?? "";
 
 const AUTO_START_STORAGE_KEY = "vigilo_auto_start_camera";
 

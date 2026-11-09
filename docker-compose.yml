@@ -1,0 +1,19 @@
+services:
+  vigilo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vigilo:latest
+    container_name: vigilo
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "8000:8000"
+    environment:
+      - CROWD_STREAM_SOURCE=0
+      - CAMERA_ZONE=Terminal Concourse 04 • Zone B
+      - ENABLE_HEATMAP=true
+      - ENABLE_CLUSTERS=true
+    # To pass a local Linux USB webcam into the container, uncomment:
+    # devices:
+    #   - /dev/video0:/dev/video0
